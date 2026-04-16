@@ -2434,8 +2434,8 @@
   <div class="deco deco-blur" style="width: 240px; height: 240px; background: var(--accent-yellow); bottom: 15%; right: -60px; opacity: 0.15;" data-parallax="0.04"></div>
   <section id="services">
     <p class="section-label">Start Here</p>
-    <h2 class="section-title">The AI Audit. A playbook in two weeks.</h2>
-    <p class="section-desc">We map your workflows, identify what AI can actually fix, and deliver a prioritized playbook you own — whether you hire us to build it or not. Pick the audit that matches where the pain is sharpest, or run both for $6K.</p>
+    <h2 class="section-title">AI Audit and Playbook.<br><em>Delivered in two weeks.</em></h2>
+    <p class="section-desc">We dive in across your organization to identify pain-points and deliver a 6-month playbook. It's yours to action on your own, or keep us on to build the systems and train your team.</p>
     <a href="#" class="btn-secondary tracks-intro-cta">See an Example Playbook →</a>
     <div class="tracks-grid">
     <div class="track-card">
@@ -2955,7 +2955,11 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     if (href !== '#' && document.querySelector(href)) {
       e.preventDefault();
       const target = document.querySelector(href);
-      const offsetTop = target.offsetTop - 80;
+      // Use getBoundingClientRect so we get the position relative to the
+      // viewport regardless of the target's offsetParent. Sections sit
+      // inside positioned wrapper divs, so target.offsetTop is relative
+      // to the wrapper (always near 0), not the document.
+      const offsetTop = target.getBoundingClientRect().top + window.scrollY - 80;
       window.scrollTo({ top: offsetTop, behavior: 'smooth' });
       // Close mobile nav on link click
       const navLinks = document.querySelector('.nav-links');
