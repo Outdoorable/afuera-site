@@ -36,7 +36,11 @@ cd ~/Desktop/afuera-site && set -a && source .env.local && set +a && \
 
 **Both** `git push` and `vercel --prod` are needed today — the GitHub→Vercel webhook isn't wired (the user can fix this in Vercel Settings → Git → reconnect with the GitHub App installed for this repo, but it's not done yet). Until then, push to git for source-of-truth + deploy via CLI for live update.
 
-## Design system (don't change without asking)
+## Design system
+
+**Full design system is in the `afuera-design` skill** (`.claude/skills/afuera-design/SKILL.md`). Read that BEFORE making any visual change — it covers brand identity, typography, full color palette with hex values, section background system, card patterns, button system, animation principles, decorative element rules, imagery treatment, layout principles, voice, and explicit do/don't lists.
+
+Quick reference (full detail in the skill):
 
 - **Fonts**: `Space Grotesk` (headings) + `DM Sans` (body), both via Google Fonts
 - **Palette** (CSS vars at the top of `index.html`):
