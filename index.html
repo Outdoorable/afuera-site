@@ -424,6 +424,11 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
+  /* Word spans inside hero h1 — used for mobile-only word-drop animation */
+  .hero h1 .hero-word {
+    display: inline-block;
+  }
+
   @keyframes heroFloat {
     0%, 100% { transform: translateY(-5px); }
     50%      { transform: translateY(5px); }
@@ -1663,6 +1668,10 @@
     color: var(--text-light-secondary);
   }
 
+  /* Desktop: about-heading is transparent (h2 + mobile img act like direct children) */
+  .about-heading { display: contents; }
+  .mobile-headshot { display: none; }
+
   /* ── HEADSHOT (rounded square with decorative collage) ── */
   .headshot-frame {
     position: relative;
@@ -1742,10 +1751,31 @@
   }
 
   @media (max-width: 820px) {
-    .headshot-frame { width: 240px; height: 280px; }
-    .headshot-deco--mustard { width: 120px; height: 120px; top: -24px; right: -28px; }
-    .headshot-deco--coral { width: 140px; height: 100px; bottom: -24px; left: -32px; }
-    .headshot-deco--forest { width: 56px; height: 72px; left: -24px; }
+    /* Hide the big collage headshot-frame on mobile */
+    .about-grid > div:last-child { display: none; }
+
+    /* Show the small headshot beside the h2 */
+    .about-heading {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .mobile-headshot {
+      display: block;
+      flex-shrink: 0;
+      width: 84px;
+      height: 84px;
+      border-radius: 14px;
+      object-fit: cover;
+      object-position: center top;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    }
+    .about-heading .section-title {
+      margin-bottom: 0;
+      line-height: 1.05;
+    }
   }
 
   /* ── CURVY JOURNEY TIMELINE ── */
@@ -2671,6 +2701,36 @@
     }
     .hero-graphic { flex: none; max-width: 340px; width: 100%; margin: 0 auto; }
 
+    /* Mobile-only bold word-drop hero animation */
+    .hero h1 {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      overflow: hidden;
+      padding-bottom: 0.1em;
+    }
+    .hero h1 .hero-word {
+      transform: translateY(100%) scale(0.85);
+      opacity: 0;
+      animation: heroWordDrop 0.85s cubic-bezier(0.2, 0.9, 0.32, 1.15) forwards;
+      animation-delay: calc(var(--i, 1) * 0.14s + 0.2s);
+    }
+    .hero h1 em .hero-word:last-child {
+      animation-duration: 1.4s;
+      animation-name: heroWordDropBounce;
+    }
+    @keyframes heroWordDrop {
+      0%   { transform: translateY(100%) scale(0.85); opacity: 0; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    @keyframes heroWordDropBounce {
+      0%   { transform: translateY(100%) scale(0.85); opacity: 0; }
+      45%  { transform: translateY(0) scale(1); opacity: 1; }
+      60%  { transform: translateY(0) scale(1.08); }
+      75%  { transform: translateY(0) scale(1); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
     section { padding: 4rem 2rem; }
 
     .final-cta { padding: 4rem 2rem; }
@@ -2944,7 +3004,7 @@
   <div class="deco" style="width: 10px; height: 10px; background: var(--accent-pink); top: 38%; left: 42%; opacity: 0.4;" data-parallax="0.03"></div>
   <div class="hero">
     <div class="hero-content">
-      <h1>Think outside <em>the docs.</em></h1>
+      <h1><span class="hero-word" style="--i:1">Think</span> <span class="hero-word" style="--i:2">outside</span> <em><span class="hero-word" style="--i:3">the</span> <span class="hero-word" style="--i:4">docs.</span></em></h1>
       <p class="hero-sub">You're too buried in spreadsheets to focus on your clients. We fix that, building automatic processes for tour operators, trip designers, and travel advisors — custom-built by AI experts who know travel ops first hand.</p>
       <div class="hero-ctas">
         <a href="#contact" class="btn-primary">Book a Call</a>
@@ -2961,7 +3021,6 @@
   <div class="deco deco-blur" style="width: 340px; height: 340px; background: var(--accent-pink); top: 20%; right: -100px; opacity: 0.3;" data-parallax="0.035"></div>
   <div class="deco deco-ring" style="width: 28px; height: 28px; top: 12%; left: 6%; color: var(--accent-orange); opacity: 0.25;" data-parallax="0.05"></div>
   <section id="problem">
-    <div class="section-label">The Problem</div>
     <h2 class="section-title">AI-powered systems empower <em>better human experiences.</em></h2>
     <p class="section-desc">Every hour your team spends in spreadsheets is an hour not spent designing a better trip, following up with a warm lead, or making a guest feel like the whole thing was built just for them.</p>
     <div class="problem-grid">
@@ -3119,7 +3178,10 @@
 <div class="section-deep-teal section-blend" style="--blend-from: rgba(35, 31, 46, 0.9);">
   <section id="about">
   <p class="section-label">About</p>
-  <h2 class="section-title">Meet Ali — Your AI Sherpa</h2>
+  <div class="about-heading">
+    <img src="ali-headshot.png" alt="Ali Murphy" class="mobile-headshot">
+    <h2 class="section-title">Meet Ali — Your AI Sherpa</h2>
+  </div>
   <div class="about-grid">
     <div>
       <p class="section-desc" style="margin-bottom: 1rem;">Ali Murphy is an active travel guide, turned custom trip designer, turned travel executive for a global tour operator. She knows what you're going through.</p>
@@ -3250,7 +3312,7 @@
   <div class="deco deco-blur" style="width: 260px; height: 260px; background: var(--accent-yellow); bottom: 18%; left: -70px; opacity: 0.1;" data-parallax="0.04"></div>
   <section id="who-we-work">
     <h2 class="section-title">Who We Work With</h2>
-    <p class="section-desc">If you got a problem, yo we'll solve it.</p>
+    <p class="section-desc">Get custom workflows and solutions built just for you — by people who were in your role before becoming AI experts.</p>
     <div class="icp-v2" id="icp-v2">
       <div class="icp-titles" role="tablist">
         <button class="icp-title" role="tab" data-icp="0">Travel Advisors</button>
@@ -3519,7 +3581,27 @@ const staggerObserver = new IntersectionObserver((entries) => {
       staggerObserver.unobserve(entry.target);
     }
   });
-}, { threshold: 0.1 });
+}, { threshold: 0.1, rootMargin: '0px 0px -5% 0px' });
+
+// Opt major card grids into scroll-reveal with per-grid stagger, so
+// sections like the Problem / AI Audit / Engineering / Funnel / Blog
+// feel alive (especially on mobile where there's no hover + parallax
+// to carry the sense of motion).
+[
+  '#problem .problem-grid',
+  '#engineering .problem-grid',
+  '#services .tracks-grid',
+  '#how .funnel-steps',
+  '.blog-grid-v2',
+  '.market-strip',
+].forEach(sel => {
+  document.querySelectorAll(sel).forEach(grid => {
+    Array.from(grid.children).forEach((child, i) => {
+      child.classList.add('stagger-reveal');
+      child.dataset.delay = i * 110;
+    });
+  });
+});
 
 document.querySelectorAll('.stagger-reveal').forEach(el => {
   staggerObserver.observe(el);
