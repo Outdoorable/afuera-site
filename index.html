@@ -1189,34 +1189,19 @@
 
   .icp-panels {
     position: relative;
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    border-radius: 20px;
-    padding: 2.75rem 2.75rem 2.5rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05),
-                0 2px 8px rgba(0, 0, 0, 0.03);
     min-height: 360px;
-    display: flex;
-    align-items: center;
-  }
-
-  .icp-panels::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 2.75rem;
-    bottom: 2.75rem;
-    width: 3px;
-    background: var(--accent-orange);
-    border-radius: 0 2px 2px 0;
-    opacity: 0.85;
   }
 
   .icp-panel {
     position: absolute;
-    inset: 2.75rem;
+    inset: 0;
+    padding: 2.75rem 2.75rem 2.5rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05),
+                0 2px 8px rgba(0, 0, 0, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     opacity: 0;
     pointer-events: none;
     transform: translateY(16px);
@@ -1228,9 +1213,45 @@
     opacity: 1;
     pointer-events: auto;
     transform: translateY(0);
-    position: relative;
-    inset: auto;
-    width: 100%;
+  }
+
+  /* Per-panel ombre gradient + accent color */
+  .icp-panel[data-icp="0"] {
+    background: linear-gradient(135deg, rgba(244, 166, 181, 0.24) 0%, rgba(255, 255, 255, 0.88) 65%);
+    --panel-accent: #D9708A;
+  }
+  .icp-panel[data-icp="1"] {
+    background: linear-gradient(135deg, rgba(255, 209, 102, 0.26) 0%, rgba(255, 255, 255, 0.88) 65%);
+    --panel-accent: #C89526;
+  }
+  .icp-panel[data-icp="2"] {
+    background: linear-gradient(135deg, rgba(46, 196, 182, 0.18) 0%, rgba(255, 255, 255, 0.88) 65%);
+    --panel-accent: #1E8C7F;
+  }
+  .icp-panel[data-icp="3"] {
+    background: linear-gradient(135deg, rgba(255, 122, 89, 0.20) 0%, rgba(255, 255, 255, 0.88) 65%);
+    --panel-accent: #D95C3F;
+  }
+  .icp-panel[data-icp="4"] {
+    background: linear-gradient(135deg, rgba(46, 196, 182, 0.16) 0%, rgba(255, 209, 102, 0.18) 100%);
+    --panel-accent: #1E8C7F;
+  }
+  .icp-panel[data-icp="5"] {
+    background: linear-gradient(135deg, rgba(244, 166, 181, 0.20) 0%, rgba(255, 209, 102, 0.18) 100%);
+    --panel-accent: #C4743A;
+  }
+
+  /* Orange left rule themed per-panel */
+  .icp-panel::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 2.75rem;
+    bottom: 2.75rem;
+    width: 3px;
+    background: var(--panel-accent, var(--accent-orange));
+    border-radius: 0 2px 2px 0;
+    opacity: 0.85;
   }
 
   .icp-panel .icp-tag {
@@ -1240,7 +1261,7 @@
     font-weight: 600;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--accent-orange);
+    color: var(--panel-accent, var(--accent-orange));
     margin-bottom: 1.25rem;
     opacity: 1;
   }
@@ -1280,9 +1301,9 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--accent-orange);
+    background: var(--panel-accent, var(--accent-orange));
     margin-top: 0.55rem;
-    opacity: 0.6;
+    opacity: 0.7;
   }
 
   /* Mobile: collapse to stacked dropdowns-style */
@@ -2869,7 +2890,6 @@
   <div class="deco deco-blur" style="width: 380px; height: 380px; background: var(--accent-pink); top: 10%; right: -120px; opacity: 0.12;" data-parallax="0.03"></div>
   <div class="deco deco-blur" style="width: 260px; height: 260px; background: var(--accent-yellow); bottom: 18%; left: -70px; opacity: 0.1;" data-parallax="0.04"></div>
   <section id="who-we-work">
-    <div class="section-label">Who We Work With</div>
     <h2 class="section-title">Who We Work With</h2>
     <div class="icp-v2" id="icp-v2">
       <div class="icp-titles" role="tablist">
