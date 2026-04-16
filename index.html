@@ -593,6 +593,20 @@
     color: var(--accent-orange);
   }
 
+  /* Problem section h2 — make the italic finale "better human experiences"
+     a big bold visual moment, on its own line. Larger than the headline. */
+  #problem .section-title em {
+    display: block;
+    font-family: 'Space Grotesk', sans-serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(2.75rem, 7vw, 5.25rem);
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    color: var(--accent-orange);
+    margin-top: 0.4rem;
+  }
+
   .section-eggplant .section-title em,
   .section-deep-teal .section-title em {
     color: var(--accent-pink);
@@ -2693,83 +2707,94 @@
   @media (max-width: 900px) {
     nav { padding: 1rem 1.5rem; }
 
-    /* Mobile hero = layered composition: big bold headline left-aligned,
-       graphic floating upper-right, italic "docs." weaves IN FRONT of
-       the graphic while "Think outside" sits BEHIND it. */
+    /* Mobile hero: graphic LEFT, big right-aligned headline RIGHT,
+       sub-copy + CTAs centered beneath both. */
     .hero {
       padding: 7rem 1.5rem 3rem;
-      display: block;
-      position: relative;
-      gap: 0;
+      display: grid;
+      grid-template-columns: 38% 1fr;
+      grid-template-rows: auto auto auto;
+      grid-template-areas:
+        "graphic h1"
+        "sub     sub"
+        "cta     cta";
+      column-gap: 0.9rem;
+      row-gap: 1.75rem;
+      align-items: center;
       min-height: auto;
     }
 
-    .hero-content {
-      position: relative;
-      z-index: 1;
-    }
+    /* Flatten hero-content's children into the grid so they can occupy areas */
+    .hero-content { display: contents; }
 
     .hero-graphic {
-      position: absolute;
-      top: 9rem;
-      right: -6%;
-      width: 58%;
-      max-width: 260px;
+      grid-area: graphic;
+      position: static;
+      width: 100%;
+      max-width: none;
       margin: 0;
-      z-index: 2;
       flex: none;
     }
+    .hero-graphic img { border-radius: 12px; }
 
-    /* Big bold headline, left-aligned */
     .hero h1 {
-      font-size: clamp(3.25rem, 14vw, 5.5rem);
-      letter-spacing: -0.035em;
+      grid-area: h1;
+      text-align: right;
+      font-size: clamp(2.5rem, 11vw, 4.5rem);
       line-height: 0.95;
+      letter-spacing: -0.035em;
       max-width: 100%;
-      margin-right: -1rem; /* let the headline run wide */
+      margin: 0;
       animation: none !important;
       opacity: 1 !important;
       transform: none !important;
-      position: relative;
-      z-index: 1; /* default plain words sit BEHIND the graphic */
     }
 
-    /* Italic "the docs." weaves IN FRONT of the graphic */
+    /* On mobile, drop the gradient text-fill on em — when combined with
+       inline-block child spans it stops painting the spans' text. Use a
+       flat pink color instead. */
     .hero h1 em {
-      position: relative;
-      z-index: 3;
-      display: inline-block;
+      background: none !important;
+      -webkit-background-clip: border-box !important;
+              background-clip: border-box !important;
+      -webkit-text-fill-color: var(--accent-pink) !important;
+      color: var(--accent-pink);
+      display: inline;
     }
 
-    .hero-sub,
+    .hero-sub {
+      grid-area: sub;
+      text-align: center;
+      margin: 0 auto;
+      max-width: 460px;
+    }
+
     .hero-ctas {
-      position: relative;
-      z-index: 4;
-      margin-top: 2.25rem;
+      grid-area: cta;
+      justify-content: center;
     }
-    .hero-ctas { margin-top: 1.5rem; }
 
-    /* Mobile word-drop: stagger with a subtle bounce on the italic finale */
+    /* Word-drop animation: stagger with subtle bounce on the italic finale */
     .hero h1 .hero-word {
-      transform: translateY(100%) scale(0.85);
+      transform: translateY(40%);
       opacity: 0;
       animation: heroWordDrop 0.85s cubic-bezier(0.2, 0.9, 0.32, 1.15) forwards;
-      animation-delay: calc(var(--i, 1) * 0.14s + 0.2s);
+      animation-delay: calc(var(--i, 1) * 0.13s + 0.2s);
     }
     .hero h1 em .hero-word:last-child {
       animation-duration: 1.4s;
       animation-name: heroWordDropBounce;
     }
     @keyframes heroWordDrop {
-      0%   { transform: translateY(100%) scale(0.85); opacity: 0; }
-      100% { transform: translateY(0) scale(1); opacity: 1; }
+      0%   { transform: translateY(40%); opacity: 0; }
+      100% { transform: translateY(0);   opacity: 1; }
     }
     @keyframes heroWordDropBounce {
-      0%   { transform: translateY(100%) scale(0.85); opacity: 0; }
-      45%  { transform: translateY(0) scale(1); opacity: 1; }
-      60%  { transform: translateY(0) scale(1.08); }
-      75%  { transform: translateY(0) scale(1); }
-      100% { transform: translateY(0) scale(1); }
+      0%   { transform: translateY(40%) scale(0.95); opacity: 0; }
+      45%  { transform: translateY(0)   scale(1);    opacity: 1; }
+      60%  { transform: translateY(0)   scale(1.08); }
+      75%  { transform: translateY(0)   scale(1); }
+      100% { transform: translateY(0)   scale(1); }
     }
 
     section { padding: 4rem 2rem; }
