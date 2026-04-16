@@ -1774,33 +1774,75 @@
     transform: translateX(0);
   }
 
-  .curvy-dot {
+  /* Map-marker pins (replace the old dots) */
+  .curvy-marker {
     position: absolute;
     left: 50%;
-    top: 0.4rem;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 3px solid var(--bg-deep-teal);
-    transform: translateX(-50%) scale(0);
+    top: -10px;
+    width: 28px;
+    height: 36px;
     z-index: 3;
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.6s ease;
+    color: var(--accent-orange);
+    transform: translateX(-50%) scale(0);
+    transform-origin: 50% 100%;
+    transition: transform 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
+    pointer-events: none;
   }
 
-  .curvy-node.visible .curvy-dot {
+  .curvy-node.visible .curvy-marker {
     transform: translateX(-50%) scale(1);
+    animation: markerFloat 3.8s ease-in-out infinite;
+    animation-delay: 0.6s;
   }
 
-  /* Dot + glow accent colors */
-  .curvy-node[data-color="orange"] .curvy-dot { background: var(--accent-orange); }
-  .curvy-node[data-color="orange"].visible .curvy-dot { box-shadow: 0 0 0 6px rgba(255,122,89,0.15), 0 0 24px rgba(255,122,89,0.35); }
-  .curvy-node[data-color="teal"] .curvy-dot { background: var(--accent-teal); }
-  .curvy-node[data-color="teal"].visible .curvy-dot { box-shadow: 0 0 0 6px rgba(46,196,182,0.15), 0 0 24px rgba(46,196,182,0.35); }
-  .curvy-node[data-color="yellow"] .curvy-dot { background: var(--accent-yellow); }
-  .curvy-node[data-color="yellow"].visible .curvy-dot { box-shadow: 0 0 0 6px rgba(255,209,102,0.15), 0 0 24px rgba(255,209,102,0.35); }
-  .curvy-node[data-color="pink"] .curvy-dot { background: var(--accent-pink); }
-  .curvy-node[data-color="pink"].visible .curvy-dot { box-shadow: 0 0 0 6px rgba(244,166,181,0.15), 0 0 24px rgba(244,166,181,0.35); }
+  @keyframes markerFloat {
+    0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+    50%      { transform: translateX(-50%) translateY(-3px) scale(1); }
+  }
+
+  .curvy-marker-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .curvy-marker-svg path {
+    fill: currentColor;
+  }
+
+  .curvy-marker-svg circle {
+    fill: var(--bg-deep-teal);
+  }
+
+  /* Radar-ping pulse from pin tip */
+  .curvy-marker-pulse {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 10px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    transform: translateX(-50%);
+    opacity: 0;
+  }
+
+  .curvy-node.visible .curvy-marker-pulse {
+    animation: markerPulse 2.4s cubic-bezier(0.3, 0, 0.3, 1) infinite;
+    animation-delay: 1s;
+  }
+
+  @keyframes markerPulse {
+    0%   { width: 10px;  height: 4px;  opacity: 0.55; }
+    100% { width: 52px;  height: 18px; opacity: 0; }
+  }
+
+  /* Per-node marker color */
+  .curvy-node[data-color="orange"] .curvy-marker { color: var(--accent-orange); }
+  .curvy-node[data-color="teal"]   .curvy-marker { color: var(--accent-teal); }
+  .curvy-node[data-color="yellow"] .curvy-marker { color: var(--accent-yellow); }
+  .curvy-node[data-color="pink"]   .curvy-marker { color: var(--accent-pink); }
 
   .curvy-index {
     font-family: 'Space Grotesk', sans-serif;
@@ -1849,12 +1891,21 @@
     .curvy-node.curvy-left { transform: translateX(0); }
     .curvy-node.curvy-right { transform: translateX(0); }
     .curvy-node.curvy-left .curvy-desc { margin-left: 0; }
-    .curvy-dot {
-      left: 0;
+    .curvy-marker {
+      left: -6px;
+      top: -4px;
+      width: 22px;
+      height: 28px;
       transform: translateX(0) scale(0);
     }
-    .curvy-node.visible .curvy-dot {
+    .curvy-node.visible .curvy-marker {
       transform: translateX(0) scale(1);
+      animation: markerFloatMobile 3.8s ease-in-out infinite;
+      animation-delay: 0.6s;
+    }
+    @keyframes markerFloatMobile {
+      0%, 100% { transform: translateX(0) translateY(0) scale(1); }
+      50%      { transform: translateX(0) translateY(-3px) scale(1); }
     }
     /* Mobile straight line */
     .curvy-timeline::before {
@@ -2807,7 +2858,7 @@
   <div class="hero">
     <div class="hero-content">
       <h1>Think outside <em>the docs.</em></h1>
-      <p class="hero-sub">You're too buried in spreadsheets to focus on your clients. We fix that, building bespoke AI processes for tour operators, custom trip designers, and travel advisors — built by AI experts who know travel ops first hand.</p>
+      <p class="hero-sub">You're too buried in spreadsheets to focus on your clients. We fix that, building automatic processes for tour operators, trip designers, and travel advisors — custom-built by AI experts who know travel ops first hand.</p>
       <div class="hero-ctas">
         <a href="#contact" class="btn-primary">Book a Call</a>
       </div>
@@ -3014,7 +3065,13 @@
     </svg>
 
     <div class="curvy-node curvy-left" data-color="orange">
-      <div class="curvy-dot"></div>
+      <div class="curvy-marker">
+        <svg class="curvy-marker-svg" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 8.52 12 20 12 20s12-11.48 12-20c0-6.627-5.373-12-12-12z"/>
+          <circle cx="12" cy="11" r="4.2"/>
+        </svg>
+        <span class="curvy-marker-pulse"></span>
+      </div>
       <div class="curvy-content">
         <p class="curvy-index">01</p>
         <h4 class="curvy-role">Active Travel Guide</h4>
@@ -3023,7 +3080,13 @@
     </div>
 
     <div class="curvy-node curvy-right" data-color="teal">
-      <div class="curvy-dot"></div>
+      <div class="curvy-marker">
+        <svg class="curvy-marker-svg" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 8.52 12 20 12 20s12-11.48 12-20c0-6.627-5.373-12-12-12z"/>
+          <circle cx="12" cy="11" r="4.2"/>
+        </svg>
+        <span class="curvy-marker-pulse"></span>
+      </div>
       <div class="curvy-content">
         <p class="curvy-index">02</p>
         <h4 class="curvy-role">Independent Trip Designer</h4>
@@ -3032,7 +3095,13 @@
     </div>
 
     <div class="curvy-node curvy-left" data-color="yellow">
-      <div class="curvy-dot"></div>
+      <div class="curvy-marker">
+        <svg class="curvy-marker-svg" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 8.52 12 20 12 20s12-11.48 12-20c0-6.627-5.373-12-12-12z"/>
+          <circle cx="12" cy="11" r="4.2"/>
+        </svg>
+        <span class="curvy-marker-pulse"></span>
+      </div>
       <div class="curvy-content">
         <p class="curvy-index">03</p>
         <h4 class="curvy-role">Leader @ Global Events Company</h4>
@@ -3041,7 +3110,13 @@
     </div>
 
     <div class="curvy-node curvy-right" data-color="pink">
-      <div class="curvy-dot"></div>
+      <div class="curvy-marker">
+        <svg class="curvy-marker-svg" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 8.52 12 20 12 20s12-11.48 12-20c0-6.627-5.373-12-12-12z"/>
+          <circle cx="12" cy="11" r="4.2"/>
+        </svg>
+        <span class="curvy-marker-pulse"></span>
+      </div>
       <div class="curvy-content">
         <p class="curvy-index">04</p>
         <h4 class="curvy-role">Executive @ Global Tour Operator</h4>
@@ -3050,7 +3125,13 @@
     </div>
 
     <div class="curvy-node curvy-left" data-color="teal">
-      <div class="curvy-dot"></div>
+      <div class="curvy-marker">
+        <svg class="curvy-marker-svg" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 8.52 12 20 12 20s12-11.48 12-20c0-6.627-5.373-12-12-12z"/>
+          <circle cx="12" cy="11" r="4.2"/>
+        </svg>
+        <span class="curvy-marker-pulse"></span>
+      </div>
       <div class="curvy-content">
         <p class="curvy-index">05</p>
         <h4 class="curvy-role">Fractional Exec Across Tech Companies</h4>
@@ -3082,6 +3163,7 @@
   <div class="deco deco-blur" style="width: 260px; height: 260px; background: var(--accent-yellow); bottom: 18%; left: -70px; opacity: 0.1;" data-parallax="0.04"></div>
   <section id="who-we-work">
     <h2 class="section-title">Who We Work With</h2>
+    <p class="section-desc">If you got a problem, yo we'll solve it.</p>
     <div class="icp-v2" id="icp-v2">
       <div class="icp-titles" role="tablist">
         <button class="icp-title" role="tab" data-icp="0">Travel Advisors</button>
@@ -3434,7 +3516,7 @@ mobileToggle?.addEventListener('click', () => {
   if (!container || !svg) return;
 
   const nodes = container.querySelectorAll('.curvy-node');
-  const dots = container.querySelectorAll('.curvy-dot');
+  const markers = container.querySelectorAll('.curvy-marker');
   if (nodes.length === 0) return;
 
   function buildPath() {
@@ -3442,13 +3524,13 @@ mobileToggle?.addEventListener('click', () => {
     const w = container.offsetWidth;
     const cx = w / 2;
 
-    // Collect dot center positions relative to container
+    // Collect marker TIP positions (bottom-center of each pin) relative to container
     const points = [];
-    dots.forEach(dot => {
-      const dr = dot.getBoundingClientRect();
+    markers.forEach(m => {
+      const dr = m.getBoundingClientRect();
       points.push({
         x: dr.left - rect.left + dr.width / 2,
-        y: dr.top - rect.top + dr.height / 2
+        y: dr.top - rect.top + dr.height
       });
     });
 
