@@ -170,6 +170,12 @@
     border-bottom-color: rgba(255,255,255,0.08);
   }
 
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+  }
+
   .logo {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
@@ -179,6 +185,18 @@
     text-decoration: none;
     text-transform: lowercase;
     transition: color 0.3s, text-shadow 0.3s;
+  }
+
+  .nav-tagline {
+    display: inline-block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    line-height: 1.35;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.65);
+    letter-spacing: 0.02em;
+    border-left: 1px solid rgba(255, 255, 255, 0.22);
+    padding-left: 1.1rem;
   }
 
   .logo:hover {
@@ -2180,6 +2198,7 @@
 
   @media (max-width: 820px) {
     .mobile-toggle { display: flex; }
+    .nav-tagline { display: none; }
 
     .nav-links {
       position: fixed;
@@ -2330,7 +2349,10 @@
 
 <!-- Navigation -->
 <nav>
-  <a href="#" class="logo">afuera</a>
+  <div class="nav-brand">
+    <a href="#" class="logo">afuera</a>
+    <span class="nav-tagline">AI consulting &amp; implementation<br>for travel and tourism</span>
+  </div>
   <button class="mobile-toggle" aria-label="Menu" aria-expanded="false">
     <span></span><span></span><span></span>
   </button>
@@ -2353,7 +2375,7 @@
     <div class="hero-content">
       <p class="hero-label">AI Transformation for Travel & Tourism</p>
       <h1>Think outside <em>the docs.</em></h1>
-      <p class="hero-sub">The office is buried in spreadsheets. The field is still printing paper. We build the AI systems that connect both — for tour operators, experience hosts, travel advisors, and luxury trip designers to run smoother adventures with less stress.</p>
+      <p class="hero-sub">Your office is buried in spreadsheets. Your guides are still printing paper. We build custom AI workflows and tools that close that gap — purpose-built for tour operators, experience hosts, and travel advisors who are done doing things the hard way.</p>
       <div class="hero-ctas">
         <a href="#contact" class="btn-primary">Book a Call</a>
       </div>
@@ -2463,7 +2485,6 @@
   <section id="how">
     <p class="section-label">How Engagements Work</p>
     <h2 class="section-title">Start with a conversation. Build from there.</h2>
-    <p class="section-desc">Clear enough that you could take the playbook anywhere. Specific enough that the obvious next move is hiring us to execute it.</p>
     <div class="funnel-wrap">
     <div class="funnel-steps">
       <div class="funnel-step">
@@ -2489,13 +2510,10 @@
     </div>
   </div>
   <div style="text-align: center; margin-top: 3.5rem;">
-    <a href="#contact" class="btn-primary" style="display: inline-flex; align-items: center; gap: 0.75rem;">
+    <a href="#about" class="btn-primary" style="display: inline-flex; align-items: center; gap: 0.75rem;">
       <img src="ali-headshot.png" alt="Ali" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; object-position: center top; border: 2px solid rgba(255,255,255,0.3);">
       Book a Discovery Call with Ali
     </a>
-    <div style="margin-top: 1.25rem;">
-      <a href="#about" style="font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); text-decoration: none; border-bottom: 1px solid rgba(0,0,0,0.15); padding-bottom: 0.15rem; transition: color 0.3s, border-color 0.3s;">Meet Ali — she takes every call</a>
-    </div>
   </div>
   </section>
 </div>
@@ -2527,81 +2545,8 @@
   </section>
 </div>
 
-<!-- Who We Work With Section (warm) -->
-<div class="section-light section-blend section-who" style="--blend-from: rgba(35, 31, 46, 0.9); background: radial-gradient(ellipse at 30% 20%, rgba(244, 166, 181, 0.12) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(255, 209, 102, 0.08) 0%, transparent 50%), radial-gradient(ellipse at center, #FBF9F7 0%, #F4EFEB 100%);">
-  <div class="deco deco-blur" style="width: 380px; height: 380px; background: var(--accent-pink); top: 10%; right: -120px; opacity: 0.12;" data-parallax="0.03"></div>
-  <div class="deco deco-blur" style="width: 260px; height: 260px; background: var(--accent-yellow); bottom: 18%; left: -70px; opacity: 0.1;" data-parallax="0.04"></div>
-  <section id="who-we-work">
-    <div class="section-label">Who We Work With</div>
-    <h2 class="section-title">Who We Work With</h2>
-    <p class="section-desc">We've been in your shoes — as guides, operators, and executives. On a free discovery call, we'll tell you exactly what we'd build first if we were you.</p>
-    <div class="icp-grid">
-    <div class="icp-card">
-      <h3>Travel Advisors</h3>
-      <p class="icp-tag">Custom & group travel</p>
-      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Custom ops built for your business in Claude</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Instant itinerary design from your vendor database</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Automated supplier confirmations</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Client profiles that remember everything</li>
-      </ul>
-    </div>
-    <div class="icp-card">
-      <h3>Independent Trip Leaders</h3>
-      <p class="icp-tag">Guides & small operators</p>
-      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">No more paper lists — Claude in your pocket on trip</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Guest dietary, medical, and preference info on demand</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Expense tracking and trip accounting in real time</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Incident logging that doesn't vanish after the trip</li>
-      </ul>
-    </div>
-    <div class="icp-card">
-      <h3>Global Tour Operators</h3>
-      <p class="icp-tag">Multi-destination & at scale</p>
-      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Custom guide-facing apps for your operation</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">All trip info in one system — not 14 tabs</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Real-time coordination across field teams</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Operational data that survives staff turnover</li>
-      </ul>
-    </div>
-    <div class="icp-card">
-      <h3>Experience Companies</h3>
-      <p class="icp-tag">Activities, events & workshops</p>
-      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Staff scheduling and coordination systems</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Guest communication that isn't manual email</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Equipment and venue logistics in one place</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Marketing systems that run without a bottleneck</li>
-      </ul>
-    </div>
-    <div class="icp-card">
-      <h3>DMCs & Receptive Operators</h3>
-      <p class="icp-tag">B2B & destination management</p>
-      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Vendor and supplier management at scale</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Proposal and itinerary generation from your catalog</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Multi-partner coordination without the email chains</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Reporting dashboards for ops and finance</li>
-      </ul>
-    </div>
-    <div class="icp-card">
-      <h3>Custom Trip Designers</h3>
-      <p class="icp-tag">High-touch & bespoke</p>
-      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Bespoke proposal generation from past trips</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Guest profiles as detailed as the product</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Vendor confirmations and on-trip coordination</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Systems as polished as the experience you sell</li>
-      </ul>
-    </div>
-  </div>
-</section>
-</div>
-
 <!-- About Section -->
-<div class="section-deep-teal section-blend" style="--blend-from: rgba(244, 239, 235, 0.8);">
+<div class="section-deep-teal section-blend" style="--blend-from: rgba(35, 31, 46, 0.9);">
   <section id="about">
   <p class="section-label">About</p>
   <h2 class="section-title">Meet Ali — Your AI Sherpa</h2>
@@ -2694,11 +2639,84 @@
 </section>
 </div>
 
+<!-- Who We Work With Section (warm) -->
+<div class="section-light section-blend section-who" style="--blend-from: rgba(28, 42, 48, 0.9); background: radial-gradient(ellipse at 30% 20%, rgba(244, 166, 181, 0.12) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(255, 209, 102, 0.08) 0%, transparent 50%), radial-gradient(ellipse at center, #FBF9F7 0%, #F4EFEB 100%);">
+  <div class="deco deco-blur" style="width: 380px; height: 380px; background: var(--accent-pink); top: 10%; right: -120px; opacity: 0.12;" data-parallax="0.03"></div>
+  <div class="deco deco-blur" style="width: 260px; height: 260px; background: var(--accent-yellow); bottom: 18%; left: -70px; opacity: 0.1;" data-parallax="0.04"></div>
+  <section id="who-we-work">
+    <div class="section-label">Who We Work With</div>
+    <h2 class="section-title">Who We Work With</h2>
+    <p class="section-desc">We've been in your shoes — as guides, operators, and executives. On a free discovery call, we'll tell you exactly what we'd build first if we were you.</p>
+    <div class="icp-grid">
+    <div class="icp-card">
+      <h3>Travel Advisors</h3>
+      <p class="icp-tag">Custom & group travel</p>
+      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Custom ops built for your business in Claude</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Instant itinerary design from your vendor database</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Automated supplier confirmations</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Client profiles that remember everything</li>
+      </ul>
+    </div>
+    <div class="icp-card">
+      <h3>Independent Trip Leaders</h3>
+      <p class="icp-tag">Guides & small operators</p>
+      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">No more paper lists — Claude in your pocket on trip</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Guest dietary, medical, and preference info on demand</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Expense tracking and trip accounting in real time</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Incident logging that doesn't vanish after the trip</li>
+      </ul>
+    </div>
+    <div class="icp-card">
+      <h3>Global Tour Operators</h3>
+      <p class="icp-tag">Multi-destination & at scale</p>
+      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Custom guide-facing apps for your operation</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">All trip info in one system — not 14 tabs</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Real-time coordination across field teams</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Operational data that survives staff turnover</li>
+      </ul>
+    </div>
+    <div class="icp-card">
+      <h3>Experience Companies</h3>
+      <p class="icp-tag">Activities, events & workshops</p>
+      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Staff scheduling and coordination systems</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Guest communication that isn't manual email</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Equipment and venue logistics in one place</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Marketing systems that run without a bottleneck</li>
+      </ul>
+    </div>
+    <div class="icp-card">
+      <h3>DMCs & Receptive Operators</h3>
+      <p class="icp-tag">B2B & destination management</p>
+      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Vendor and supplier management at scale</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Proposal and itinerary generation from your catalog</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Multi-partner coordination without the email chains</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Reporting dashboards for ops and finance</li>
+      </ul>
+    </div>
+    <div class="icp-card">
+      <h3>Custom Trip Designers</h3>
+      <p class="icp-tag">High-touch & bespoke</p>
+      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Bespoke proposal generation from past trips</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Guest profiles as detailed as the product</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Vendor confirmations and on-trip coordination</li>
+        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Systems as polished as the experience you sell</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</div>
+
 <!-- Blog Section (dark) -->
-<div class="section-secondary section-blend" style="--blend-from: rgba(28, 42, 48, 0.9);">
+<div class="section-secondary section-blend" style="--blend-from: rgba(244, 239, 235, 0.8);">
   <section id="blog">
   <p class="section-label">From the Blog</p>
-  <h2 class="section-title">Our industry has its...<em>quirks.</em> Get AI insight built for people in travel and tourism.</h2>
+  <h2 class="section-title">AI insight for people in travel and tourism.</h2>
   <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2rem;">
     <div class="track-card">
       <p class="track-number">Latest</p>
