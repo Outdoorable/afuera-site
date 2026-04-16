@@ -392,10 +392,10 @@
     font-family: 'DM Sans', sans-serif;
     font-weight: 400;
     color: var(--accent-pink);
-    background: linear-gradient(90deg, var(--accent-pink) 0%, #F7BFC8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  }
+  .hero h1 em .hero-word {
+    color: var(--accent-pink);
+    -webkit-text-fill-color: var(--accent-pink);
   }
 
   .hero-sub {
@@ -825,6 +825,35 @@
     box-shadow: 0 4px 24px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
   }
 
+  /* Subtle background patterns on the four Problem cards
+     (lighter than the blog card patterns — quieter texture only) */
+  #problem .problem-card:not(.callout-card):nth-of-type(1) {
+    background-color: #FAF5E5;
+    background-image:
+      repeating-linear-gradient(0deg,
+        transparent 0, transparent 23px,
+        rgba(218, 144, 49, 0.10) 23px, rgba(218, 144, 49, 0.10) 24px),
+      repeating-linear-gradient(90deg,
+        transparent 0, transparent 23px,
+        rgba(218, 144, 49, 0.10) 23px, rgba(218, 144, 49, 0.10) 24px);
+  }
+  #problem .problem-card:not(.callout-card):nth-of-type(2) {
+    background-color: #F2F8F4;
+    background-image: repeating-linear-gradient(45deg,
+      transparent 0, transparent 12px,
+      rgba(46, 196, 182, 0.10) 12px, rgba(46, 196, 182, 0.10) 13px);
+  }
+  #problem .problem-card:not(.callout-card):nth-of-type(3) {
+    background-color: #FBF3F4;
+    background-image: radial-gradient(circle, rgba(244, 166, 181, 0.18) 1.4px, transparent 1.6px);
+    background-size: 18px 18px;
+  }
+  #problem .problem-card:not(.callout-card):nth-of-type(4) {
+    background-color: #FCF7E6;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><g fill='%23FFD166' opacity='0.45'><rect x='14' y='8' width='4' height='16'/><rect x='8' y='14' width='16' height='4'/></g></svg>");
+    background-size: 32px 32px;
+  }
+
   .section-light .problem-card:hover,
   .section-secondary .problem-card:hover {
     box-shadow: 0 18px 48px rgba(0,0,0,0.08), 0 0 32px rgba(255, 122, 89, 0.08);
@@ -890,6 +919,21 @@
     color: var(--accent-orange);
     margin-top: -0.75rem;
     margin-bottom: 1.5rem;
+  }
+
+  .audit-suffix {
+    display: inline-block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.62em;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-orange);
+    vertical-align: 0.18em;
+    margin-left: 0.25em;
+    padding: 0.25em 0.6em;
+    border: 1px solid currentColor;
+    border-radius: 4px;
   }
 
   .section-eggplant .track-price,
@@ -1262,6 +1306,8 @@
     opacity: 1;
     pointer-events: auto;
     transform: translateY(0);
+    position: relative;
+    inset: auto;
   }
 
   /* Per-panel ombre gradient + accent color */
@@ -1381,11 +1427,15 @@
       left: -32px;
     }
     .icp-panels {
-      min-height: 340px;
+      min-height: 0;
     }
     .icp-panel {
       inset: 0;
       padding: 2rem;
+    }
+    .icp-panel.active {
+      position: relative;
+      inset: auto;
     }
   }
 
@@ -2712,10 +2762,10 @@
     .hero {
       padding: 7rem 1.5rem 3rem;
       display: grid;
-      grid-template-columns: 38% 1fr;
+      grid-template-columns: 1fr 38%;
       grid-template-rows: auto auto auto;
       grid-template-areas:
-        "graphic h1"
+        "h1      graphic"
         "sub     sub"
         "cta     cta";
       column-gap: 0.9rem;
@@ -2739,10 +2789,10 @@
 
     .hero h1 {
       grid-area: h1;
-      text-align: right;
-      font-size: clamp(2.5rem, 11vw, 4.5rem);
-      line-height: 0.95;
-      letter-spacing: -0.035em;
+      text-align: left;
+      font-size: clamp(3.75rem, 16vw, 6rem);
+      line-height: 0.92;
+      letter-spacing: -0.04em;
       max-width: 100%;
       margin: 0;
       animation: none !important;
@@ -2792,9 +2842,9 @@
     @keyframes heroWordDropBounce {
       0%   { transform: translateY(40%) scale(0.95); opacity: 0; }
       45%  { transform: translateY(0)   scale(1);    opacity: 1; }
-      60%  { transform: translateY(0)   scale(1.08); }
-      75%  { transform: translateY(0)   scale(1); }
-      100% { transform: translateY(0)   scale(1); }
+      60%  { transform: translateY(0)   scale(1.08); opacity: 1; }
+      75%  { transform: translateY(0)   scale(1);    opacity: 1; }
+      100% { transform: translateY(0)   scale(1);    opacity: 1; }
     }
 
     section { padding: 4rem 2rem; }
@@ -3142,7 +3192,7 @@
     <div class="track-card">
       <img src="robot-fix.png" alt="Robot fix — office operations audit" class="audit-image">
       <p class="track-price">$3K · 1 week</p>
-      <h3>Office Operations</h3>
+      <h3>Office Operations <span class="audit-suffix">AI Audit</span></h3>
       <p>The back-office systems that keep the business running — itinerary development, vendor management, customer service, marketing, and the million spreadsheets in between.</p>
       <ul class="track-items">
         <li>Itinerary development</li>
@@ -3158,7 +3208,7 @@
     <div class="track-card">
       <img src="guide-glow.png" alt="Guide glow — field operations audit" class="audit-image">
       <p class="track-price">$3K · 1 week</p>
-      <h3>Field Operations</h3>
+      <h3>Field Operations <span class="audit-suffix">AI Audit</span></h3>
       <p>Everything that happens once the trip is actually running — guide coordination, guest-facing logistics, real-time changes, and the data that disappears when the trip ends.</p>
       <ul class="track-items">
         <li>Guide coordination & intel</li>
@@ -3173,7 +3223,7 @@
     <div class="track-card track-card--both">
       <img src="total-connection.png" alt="Total connection — office + field audit" class="audit-image audit-image--wide">
       <p class="track-price">$6K · 2 weeks</p>
-      <h3>Office + Field</h3>
+      <h3>Office + Field <span class="audit-suffix">AI Audit</span></h3>
       <p>The full picture. We audit both your office operations and field execution, then deliver a single integrated playbook covering where the gaps are, what to build, and in what order.</p>
       <a href="#contact" style="display: inline-block; margin-top: 1.5rem; font-weight: 600; color: var(--text-light); text-decoration: none; font-size: 0.9rem;">Start with a free Discovery Call →</a>
     </div>
