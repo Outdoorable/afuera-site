@@ -1945,6 +1945,120 @@
     border: none;
   }
 
+  /* ── BLOG CARDS v2 (patterned, colored) ── */
+  .blog-grid-v2 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.75rem;
+    margin-top: 2.5rem;
+  }
+
+  .blog-card-v2 {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 2.25rem !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  }
+
+  .blog-card-v2::before { content: none; }
+
+  .blog-card-v2 > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Mustard yellow with wide grid */
+  .blog-card--mustard {
+    background-color: #EFD87A;
+    background-image:
+      repeating-linear-gradient(0deg,
+        transparent 0, transparent 29px,
+        rgba(166, 124, 24, 0.28) 29px, rgba(166, 124, 24, 0.28) 30px),
+      repeating-linear-gradient(90deg,
+        transparent 0, transparent 29px,
+        rgba(166, 124, 24, 0.28) 29px, rgba(166, 124, 24, 0.28) 30px);
+  }
+  .blog-card--mustard .track-number { color: #7A5A18; }
+  .blog-card--mustard h3 { color: #1F1F1F; }
+  .blog-card--mustard p { color: rgba(31, 31, 31, 0.78); }
+  .blog-card--mustard .blog-card-link { color: #7A5A18; border-color: #7A5A18; }
+
+  /* Light coral/red with yellow crosses */
+  .blog-card--coral {
+    background-color: #F2A59E;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><g fill='%23FFD166' opacity='0.75'><rect x='18' y='10' width='4' height='20'/><rect x='10' y='18' width='20' height='4'/></g></svg>");
+    background-size: 40px 40px;
+  }
+  .blog-card--coral .track-number { color: #8C2E22; }
+  .blog-card--coral h3 { color: #2B1008; }
+  .blog-card--coral p { color: rgba(43, 16, 8, 0.78); }
+  .blog-card--coral .blog-card-link { color: #8C2E22; border-color: #8C2E22; }
+
+  /* Forest green with fine grid */
+  .blog-card--forest {
+    background-color: #2E4A1A;
+    background-image:
+      repeating-linear-gradient(0deg,
+        transparent 0, transparent 19px,
+        rgba(245, 243, 238, 0.14) 19px, rgba(245, 243, 238, 0.14) 20px),
+      repeating-linear-gradient(90deg,
+        transparent 0, transparent 19px,
+        rgba(245, 243, 238, 0.14) 19px, rgba(245, 243, 238, 0.14) 20px);
+  }
+  .blog-card--forest .track-number { color: #C7D9A0; }
+  .blog-card--forest h3 { color: #F5F3EE !important; }
+  .blog-card--forest p { color: rgba(245, 243, 238, 0.78) !important; }
+  .blog-card--forest .blog-card-link { color: #F5F3EE; border-color: rgba(245, 243, 238, 0.6); }
+
+  /* Shared link style */
+  .blog-card-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding-bottom: 0.15rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    border-bottom: 1px solid;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .blog-card-link:hover { transform: translateX(4px); }
+
+  .blog-card-v2 .track-number {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .blog-card-v2 h3 {
+    font-size: 1.4rem !important;
+    line-height: 1.15 !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .blog-card-v2 p {
+    font-size: 0.92rem !important;
+    line-height: 1.55 !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  /* Don't apply the gradient border pseudo that track-card uses */
+  .blog-card-v2:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  @media (max-width: 820px) {
+    .blog-grid-v2 { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    .blog-grid-v2 { grid-template-columns: 1fr; }
+  }
+
   /* ── TUTORIAL (on dark, form styling) ── */
   .tutorial-wrap {
     max-width: 700px;
@@ -2971,24 +3085,24 @@
   <section id="blog">
   <p class="section-label">From the Blog</p>
   <h2 class="section-title">AI insight for people in travel and tourism.</h2>
-  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2rem;">
-    <div class="track-card">
+  <div class="blog-grid-v2">
+    <div class="track-card blog-card-v2 blog-card--mustard">
       <p class="track-number">Latest</p>
       <h3>Why Your Guides Are Still Running Trips on Paper</h3>
       <p>The software companies spent the last decade on: how do we get people to book? Nobody asked: how do we execute what we sold?</p>
-      <a href="#" style="font-weight: 600; color: var(--text-primary); text-decoration: none; font-size: 0.9rem;">Read more →</a>
+      <a href="#" class="blog-card-link">Read more →</a>
     </div>
-    <div class="track-card">
+    <div class="track-card blog-card-v2 blog-card--coral">
       <p class="track-number">Featured</p>
       <h3>The Printed Spreadsheet</h3>
       <p>A guide folds a printed spreadsheet into his pocket. Dietary restrictions, hotel confirmations, driver numbers. That was the system. Here's what happened next.</p>
-      <a href="#" style="font-weight: 600; color: var(--text-primary); text-decoration: none; font-size: 0.9rem;">Read more →</a>
+      <a href="#" class="blog-card-link">Read more →</a>
     </div>
-    <div class="track-card">
+    <div class="track-card blog-card-v2 blog-card--forest">
       <p class="track-number">Coming Soon</p>
       <h3>AI Audit vs. AI Pilot: Why Most Travel Companies Start in the Wrong Place</h3>
       <p>You don't need a pilot project. You need to understand your own workflows before you touch a single tool.</p>
-      <a href="#" style="font-weight: 600; color: var(--text-light-secondary); text-decoration: none; font-size: 0.9rem;">Coming soon</a>
+      <a href="#" class="blog-card-link">Coming soon</a>
     </div>
   </div>
 </section>
