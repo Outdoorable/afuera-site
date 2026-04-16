@@ -1107,6 +1107,211 @@
     gap: 2rem;
   }
 
+  /* ── ICP ACTIVE-LIST (new Jasper-style layout) ── */
+  .icp-v2 {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 4rem;
+    align-items: stretch;
+    margin-top: 3rem;
+  }
+
+  .icp-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    justify-content: center;
+  }
+
+  .icp-title {
+    position: relative;
+    background: transparent;
+    border: none;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--text-primary);
+    opacity: 0.32;
+    padding: 0.9rem 0;
+    cursor: pointer;
+    text-align: right;
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .icp-title:hover { opacity: 0.65; }
+
+  .icp-title:focus-visible {
+    outline: 2px solid var(--accent-orange);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  .icp-title.active {
+    opacity: 1;
+    transform: translateX(-6px);
+  }
+
+  .icp-title.active::after {
+    content: '';
+    position: absolute;
+    right: -2.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 2px;
+    background: var(--accent-orange);
+    animation: icpMark 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes icpMark {
+    from { width: 0; opacity: 0; }
+    to   { width: 32px; opacity: 1; }
+  }
+
+  /* Auto-rotation progress bar */
+  .icp-title.active .icp-progress {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    width: 0%;
+    background: rgba(255, 122, 89, 0.3);
+    animation: icpProgress 4.5s linear forwards;
+  }
+
+  @keyframes icpProgress {
+    to { width: 100%; }
+  }
+
+  .icp-panels {
+    position: relative;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 2.75rem 2.75rem 2.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05),
+                0 2px 8px rgba(0, 0, 0, 0.03);
+    min-height: 360px;
+    display: flex;
+    align-items: center;
+  }
+
+  .icp-panels::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 2.75rem;
+    bottom: 2.75rem;
+    width: 3px;
+    background: var(--accent-orange);
+    border-radius: 0 2px 2px 0;
+    opacity: 0.85;
+  }
+
+  .icp-panel {
+    position: absolute;
+    inset: 2.75rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(16px);
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .icp-panel.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    position: relative;
+    inset: auto;
+    width: 100%;
+  }
+
+  .icp-panel .icp-tag {
+    display: inline-block;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent-orange);
+    margin-bottom: 1.25rem;
+    opacity: 1;
+  }
+
+  .icp-panel .icp-panel-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.65rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+  }
+
+  .icp-panel ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .icp-panel li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .icp-panel li:last-child { border-bottom: none; }
+
+  .icp-panel li::before {
+    content: '';
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-orange);
+    margin-top: 0.55rem;
+    opacity: 0.6;
+  }
+
+  /* Mobile: collapse to stacked dropdowns-style */
+  @media (max-width: 820px) {
+    .icp-v2 {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+    .icp-titles {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.25rem;
+      justify-content: flex-start;
+    }
+    .icp-title {
+      text-align: left;
+      font-size: 1rem;
+      padding: 0.5rem 0;
+    }
+    .icp-title.active { transform: none; }
+    .icp-title.active::after { display: none; }
+    .icp-panels {
+      padding: 2rem;
+      min-height: 320px;
+    }
+    .icp-panel { inset: 2rem; }
+    .icp-panel.active { inset: auto; }
+  }
+
   .icp-card {
     --accent: var(--accent-orange);
     --accent-rgb: 255, 122, 89;
@@ -2665,68 +2870,78 @@
   <section id="who-we-work">
     <div class="section-label">Who We Work With</div>
     <h2 class="section-title">Who We Work With</h2>
-    <div class="icp-grid">
-    <div class="icp-card">
-      <h3>Travel Advisors</h3>
-      <p class="icp-tag">Custom & group travel</p>
-      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Custom ops built for your business in Claude</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Instant itinerary design from your vendor database</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Automated supplier confirmations</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Client profiles that remember everything</li>
-      </ul>
+    <div class="icp-v2" id="icp-v2">
+      <div class="icp-titles" role="tablist">
+        <button class="icp-title" role="tab" data-icp="0">Travel Advisors</button>
+        <button class="icp-title" role="tab" data-icp="1">Independent Trip Leaders</button>
+        <button class="icp-title" role="tab" data-icp="2">Global Tour Operators</button>
+        <button class="icp-title" role="tab" data-icp="3">Experience Companies</button>
+        <button class="icp-title" role="tab" data-icp="4">DMCs & Receptive Operators</button>
+        <button class="icp-title" role="tab" data-icp="5">Custom Trip Designers</button>
+      </div>
+      <div class="icp-panels">
+        <div class="icp-panel" role="tabpanel" data-icp="0">
+          <p class="icp-tag">Custom &amp; group travel</p>
+          <h3 class="icp-panel-title">Travel Advisors</h3>
+          <ul>
+            <li>Custom ops built for your business in Claude</li>
+            <li>Instant itinerary design from your vendor database</li>
+            <li>Automated supplier confirmations</li>
+            <li>Client profiles that remember everything</li>
+          </ul>
+        </div>
+        <div class="icp-panel" role="tabpanel" data-icp="1">
+          <p class="icp-tag">Guides &amp; small operators</p>
+          <h3 class="icp-panel-title">Independent Trip Leaders</h3>
+          <ul>
+            <li>No more paper lists — Claude in your pocket on trip</li>
+            <li>Guest dietary, medical, and preference info on demand</li>
+            <li>Expense tracking and trip accounting in real time</li>
+            <li>Incident logging that doesn't vanish after the trip</li>
+          </ul>
+        </div>
+        <div class="icp-panel" role="tabpanel" data-icp="2">
+          <p class="icp-tag">Multi-destination &amp; at scale</p>
+          <h3 class="icp-panel-title">Global Tour Operators</h3>
+          <ul>
+            <li>Custom guide-facing apps for your operation</li>
+            <li>All trip info in one system — not 14 tabs</li>
+            <li>Real-time coordination across field teams</li>
+            <li>Operational data that survives staff turnover</li>
+          </ul>
+        </div>
+        <div class="icp-panel" role="tabpanel" data-icp="3">
+          <p class="icp-tag">Activities, events &amp; workshops</p>
+          <h3 class="icp-panel-title">Experience Companies</h3>
+          <ul>
+            <li>Staff scheduling and coordination systems</li>
+            <li>Guest communication that isn't manual email</li>
+            <li>Equipment and venue logistics in one place</li>
+            <li>Marketing systems that run without a bottleneck</li>
+          </ul>
+        </div>
+        <div class="icp-panel" role="tabpanel" data-icp="4">
+          <p class="icp-tag">B2B &amp; destination management</p>
+          <h3 class="icp-panel-title">DMCs &amp; Receptive Operators</h3>
+          <ul>
+            <li>Vendor and supplier management at scale</li>
+            <li>Proposal and itinerary generation from your catalog</li>
+            <li>Multi-partner coordination without the email chains</li>
+            <li>Reporting dashboards for ops and finance</li>
+          </ul>
+        </div>
+        <div class="icp-panel" role="tabpanel" data-icp="5">
+          <p class="icp-tag">High-touch &amp; bespoke</p>
+          <h3 class="icp-panel-title">Custom Trip Designers</h3>
+          <ul>
+            <li>Bespoke proposal generation from past trips</li>
+            <li>Guest profiles as detailed as the product</li>
+            <li>Vendor confirmations and on-trip coordination</li>
+            <li>Systems as polished as the experience you sell</li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <div class="icp-card">
-      <h3>Independent Trip Leaders</h3>
-      <p class="icp-tag">Guides & small operators</p>
-      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">No more paper lists — Claude in your pocket on trip</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Guest dietary, medical, and preference info on demand</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Expense tracking and trip accounting in real time</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Incident logging that doesn't vanish after the trip</li>
-      </ul>
-    </div>
-    <div class="icp-card">
-      <h3>Global Tour Operators</h3>
-      <p class="icp-tag">Multi-destination & at scale</p>
-      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Custom guide-facing apps for your operation</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">All trip info in one system — not 14 tabs</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Real-time coordination across field teams</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Operational data that survives staff turnover</li>
-      </ul>
-    </div>
-    <div class="icp-card">
-      <h3>Experience Companies</h3>
-      <p class="icp-tag">Activities, events & workshops</p>
-      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Staff scheduling and coordination systems</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Guest communication that isn't manual email</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Equipment and venue logistics in one place</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Marketing systems that run without a bottleneck</li>
-      </ul>
-    </div>
-    <div class="icp-card">
-      <h3>DMCs & Receptive Operators</h3>
-      <p class="icp-tag">B2B & destination management</p>
-      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Vendor and supplier management at scale</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Proposal and itinerary generation from your catalog</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Multi-partner coordination without the email chains</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Reporting dashboards for ops and finance</li>
-      </ul>
-    </div>
-    <div class="icp-card">
-      <h3>Custom Trip Designers</h3>
-      <p class="icp-tag">High-touch & bespoke</p>
-      <ul style="list-style: none; padding: 0; margin: 0.75rem 0 0 0;">
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Bespoke proposal generation from past trips</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Guest profiles as detailed as the product</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); color: var(--text-secondary);">Vendor confirmations and on-trip coordination</li>
-        <li style="font-size: 0.9rem; font-size: 0.9rem; padding: 0.3rem 0; color: var(--text-secondary);">Systems as polished as the experience you sell</li>
-      </ul>
-    </div>
-  </div>
 </section>
 </div>
 
@@ -3115,6 +3330,74 @@ mobileToggle?.addEventListener('click', () => {
 
   // Run once on load
   setTimeout(onTimelineScroll, 200);
+})();
+
+// Who We Work With — active-list (Jasper-style)
+(function initICP() {
+  const container = document.getElementById('icp-v2');
+  if (!container) return;
+  const titles = container.querySelectorAll('.icp-title');
+  const panels = container.querySelectorAll('.icp-panel');
+  if (!titles.length) return;
+
+  const ROTATE_MS = 4500;
+  let activeIdx = Math.floor(titles.length / 2); // start near middle
+  let intervalId = null;
+  let isPaused = false;
+  let inView = false;
+
+  function activate(idx) {
+    titles.forEach((t, i) => t.classList.toggle('active', i === idx));
+    panels.forEach((p, i) => p.classList.toggle('active', i === idx));
+    // Re-trigger the progress-bar animation on the new active title
+    const active = titles[idx];
+    if (active) {
+      // Remove any existing progress element
+      const existing = active.querySelector('.icp-progress');
+      if (existing) existing.remove();
+      const prog = document.createElement('span');
+      prog.className = 'icp-progress';
+      active.appendChild(prog);
+    }
+    activeIdx = idx;
+  }
+
+  function tick() {
+    if (!isPaused && inView) {
+      activate((activeIdx + 1) % titles.length);
+    }
+  }
+
+  function startRotation() {
+    if (intervalId) return;
+    intervalId = setInterval(tick, ROTATE_MS);
+  }
+  function stopRotation() {
+    if (intervalId) { clearInterval(intervalId); intervalId = null; }
+  }
+
+  titles.forEach((title, i) => {
+    const go = () => { isPaused = true; activate(i); };
+    title.addEventListener('mouseenter', go);
+    title.addEventListener('focus', go);
+    title.addEventListener('click', go);
+  });
+
+  container.addEventListener('mouseleave', () => {
+    isPaused = false;
+  });
+
+  // Start / pause based on visibility
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      inView = e.isIntersecting;
+      if (inView) startRotation(); else stopRotation();
+    });
+  }, { threshold: 0.2 });
+  io.observe(container);
+
+  // Initial state
+  activate(activeIdx);
 })();
 
 // Form submission (optional — only if form exists)
