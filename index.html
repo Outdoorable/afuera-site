@@ -845,13 +845,17 @@
     background-size: 100px 42px;
   }
 
-  /* Card 3 — "Between the two": blue with two waves crashing in at the center */
+  /* Card 3 — "Between the two": blue with water flowing in from
+     top-right and bottom-left corners, only extending ~20% inward.
+     The center where text sits stays clear. */
   #problem .problem-card:not(.callout-card):nth-of-type(3) {
     background-color: #CFE0EC;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='240' viewBox='0 0 400 240' preserveAspectRatio='xMidYMid slice'><g stroke='%23115C7A' stroke-width='2' fill='none' opacity='0.28' stroke-linecap='round'><path d='M-30,80 Q60,40 200,120'/><path d='M-30,120 Q70,90 200,140'/><path d='M-30,160 Q60,200 200,140'/><path d='M-30,40 Q80,20 200,100'/><path d='M430,80 Q340,40 200,120'/><path d='M430,120 Q330,90 200,140'/><path d='M430,160 Q340,200 200,140'/><path d='M430,40 Q320,20 200,100'/></g><g fill='%23115C7A' opacity='0.32'><circle cx='200' cy='120' r='4'/></g></svg>");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g stroke='%23115C7A' stroke-width='2' fill='none' opacity='0.28' stroke-linecap='round'><path d='M100,8 Q78,18 70,30 T55,55'/><path d='M100,22 Q76,30 65,45 T48,70'/><path d='M100,38 Q72,48 60,60'/><path d='M86,0 Q66,18 55,38'/><path d='M70,0 Q54,15 45,30'/></g></svg>"),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g stroke='%23115C7A' stroke-width='2' fill='none' opacity='0.28' stroke-linecap='round'><path d='M0,92 Q22,82 30,70 T45,45'/><path d='M0,78 Q24,70 35,55 T52,30'/><path d='M0,62 Q28,52 40,40'/><path d='M14,100 Q34,82 45,62'/><path d='M30,100 Q46,85 55,70'/></g></svg>");
+    background-position: top right, bottom left;
+    background-repeat: no-repeat, no-repeat;
+    background-size: 38% auto, 38% auto;
   }
 
   /* Card 4 — "When someone leaves": yellow with tiny paper-plane silhouettes */
