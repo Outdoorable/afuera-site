@@ -1751,8 +1751,8 @@
   }
 
   @media (max-width: 820px) {
-    /* Hide the big collage headshot-frame on mobile */
-    .about-grid > div:last-child { display: none; }
+    /* Hide the big collage headshot-frame on mobile (override inline display:flex) */
+    .about-grid > div:last-child { display: none !important; }
 
     /* Show the small headshot beside the h2 */
     .about-heading {
@@ -3180,7 +3180,7 @@
       </div>
       <div class="funnel-step">
         <p class="step-name">Custom Software</p>
-        <p class="step-price">Custom-quoted</p>
+        <p class="step-price">From $3K · custom-quoted</p>
         <p class="step-desc">Bespoke AI-powered tools built for your field or office by senior engineers. For operators who need something purpose-built, not configured off the shelf.</p>
       </div>
     </div>
