@@ -1336,31 +1336,38 @@
     opacity: 0.7;
   }
 
-  /* Mobile: collapse to stacked dropdowns-style */
+  /* Mobile: vertical stack of titles above the panel */
   @media (max-width: 820px) {
     .icp-v2 {
       grid-template-columns: 1fr;
-      gap: 1.25rem;
+      gap: 2rem;
     }
     .icp-titles {
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: 0.5rem 1.25rem;
+      flex-direction: column;
+      gap: 0.1rem;
       justify-content: flex-start;
+      align-items: flex-start;
     }
     .icp-title {
       text-align: left;
-      font-size: 1rem;
-      padding: 0.5rem 0;
+      font-size: 1.25rem;
+      padding: 0.45rem 0;
+      padding-left: 0;
     }
-    .icp-title.active { transform: none; }
-    .icp-title.active::after { display: none; }
+    .icp-title.active {
+      transform: translateX(8px);
+    }
+    .icp-title.active::after {
+      right: auto;
+      left: -32px;
+    }
     .icp-panels {
-      padding: 2rem;
-      min-height: 320px;
+      min-height: 340px;
     }
-    .icp-panel { inset: 2rem; }
-    .icp-panel.active { inset: auto; }
+    .icp-panel {
+      inset: 0;
+      padding: 2rem;
+    }
   }
 
   .icp-card {
@@ -2656,8 +2663,13 @@
   @media (max-width: 900px) {
     nav { padding: 1rem 1.5rem; }
 
-    .hero { padding: 6rem 2rem 3rem; flex-direction: column; }
-    .hero-graphic { flex: none; max-width: 320px; width: 100%; }
+    .hero {
+      padding: 7rem 2rem 4rem;
+      flex-direction: column-reverse;  /* graphic on top on mobile */
+      gap: 2.5rem;
+      text-align: left;
+    }
+    .hero-graphic { flex: none; max-width: 340px; width: 100%; margin: 0 auto; }
 
     section { padding: 4rem 2rem; }
 
@@ -2711,17 +2723,32 @@
 
   @media (max-width: 820px) {
     .mobile-toggle { display: flex; }
-    .nav-tagline { display: none; }
+
+    /* Stack tagline below logo so the value prop stays visible on mobile */
+    .nav-brand {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.2rem;
+    }
+    .nav-tagline {
+      border-left: none;
+      padding-left: 0;
+      font-size: 0.62rem;
+      line-height: 1.25;
+      letter-spacing: 0.04em;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    .nav-tagline br { display: inline; }
 
     .nav-links {
       position: fixed;
-      top: 62px;
+      top: 78px;
       left: 0;
       right: 0;
       flex-direction: column;
       gap: 0;
       padding: 1.5rem 2rem 2rem;
-      background: rgba(30, 26, 40, 0.96);
+      background: rgba(30, 26, 40, 0.97);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       border-bottom: 1px solid rgba(255,255,255,0.08);
@@ -2739,16 +2766,42 @@
     }
 
     .nav-links li {
-      padding: 0.85rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0.25rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
-
     .nav-links li:last-child {
       border-bottom: none;
       padding-top: 1.2rem;
     }
 
-    .nav-links a { font-size: 1rem; }
+    .nav-links a {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      padding: 0.6rem 0;
+    }
+    .nav-links a::before {
+      content: '';
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent-orange);
+      flex-shrink: 0;
+      box-shadow: 0 0 10px currentColor;
+    }
+    .nav-links li:nth-child(1) a::before { background: var(--accent-orange); color: var(--accent-orange); }
+    .nav-links li:nth-child(2) a::before { background: var(--accent-teal);   color: var(--accent-teal); }
+    .nav-links li:nth-child(3) a::before { background: var(--accent-yellow); color: var(--accent-yellow); }
+    .nav-links li:nth-child(4) a::before { background: var(--accent-pink);   color: var(--accent-pink); }
+    .nav-links li:nth-child(5) a::before { background: var(--accent-teal);   color: var(--accent-teal); }
+    .nav-links li:last-child a::before { display: none; }
+
+    .nav-links a:hover,
+    .nav-links a:active { color: var(--accent-orange); }
 
     .nav-cta { display: inline-block; }
   }
@@ -2759,8 +2812,12 @@
 
     .logo { font-size: 1.4rem; }
 
-    .hero { padding: 5rem 1.5rem 2rem; flex-direction: column; }
-    .hero-graphic { max-width: 260px; }
+    .hero {
+      padding: 7rem 1.5rem 3rem;
+      flex-direction: column-reverse;
+      gap: 2rem;
+    }
+    .hero-graphic { max-width: 280px; }
 
     .hero h1 { font-size: clamp(2rem, 6vw, 4rem); }
 
@@ -3620,29 +3677,31 @@ mobileToggle?.addEventListener('click', () => {
     });
   });
 
-  // Scroll-driven path draw + node reveal
+  // Per-node reveal via IntersectionObserver — natural timing based on
+  // each node's viewport position rather than a global scroll-progress
+  // threshold (which made the last node wait until you scrolled nearly
+  // to the bottom).
+  const nodeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        nodeObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3, rootMargin: '0px 0px -12% 0px' });
+  nodes.forEach(n => nodeObserver.observe(n));
+
+  // Scroll-driven path draw only
   let ticking2 = false;
   function onTimelineScroll() {
     if (!pathData) return;
     const rect = container.getBoundingClientRect();
     const wh = window.innerHeight;
-    // progress: 0 when container top enters viewport bottom, 1 when container bottom reaches viewport center
     const start = rect.top - wh;
     const end = rect.bottom - wh * 0.4;
     const progress = Math.max(0, Math.min(1, (0 - start) / (end - start)));
-
-    // Draw path
     const offset = pathData.pathLen * (1 - progress);
     pathData.drawnPath.style.strokeDashoffset = offset;
-
-    // Reveal nodes based on progress thresholds
-    const step = 1 / nodes.length;
-    nodes.forEach((node, i) => {
-      const threshold = i * step + step * 0.3;
-      if (progress >= threshold) {
-        node.classList.add('visible');
-      }
-    });
   }
 
   window.addEventListener('scroll', () => {
