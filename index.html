@@ -390,12 +390,13 @@
   .hero h1 em {
     font-style: italic;
     font-family: 'DM Sans', sans-serif;
-    font-weight: 400;
+    font-weight: 700;
     color: var(--accent-pink);
   }
   .hero h1 em .hero-word {
     color: var(--accent-pink);
     -webkit-text-fill-color: var(--accent-pink);
+    font-weight: 700;
   }
 
   .hero-sub {
@@ -2757,42 +2758,31 @@
   @media (max-width: 900px) {
     nav { padding: 1rem 1.5rem; }
 
-    /* Mobile hero: graphic LEFT, big right-aligned headline RIGHT,
-       sub-copy + CTAs centered beneath both. */
+    /* Mobile hero: dead-simple vertical stack. No grid, no overlap,
+       no clever positioning — just a big bold headline at the top,
+       the graphic below, then sub + CTA. The headline is full-width
+       so words flow naturally and never get clipped. */
     .hero {
       padding: 7rem 1.5rem 3rem;
-      display: grid;
-      grid-template-columns: 1fr 38%;
-      grid-template-rows: auto auto auto;
-      grid-template-areas:
-        "h1      graphic"
-        "sub     sub"
-        "cta     cta";
-      column-gap: 0.9rem;
-      row-gap: 1.75rem;
-      align-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1.75rem;
       min-height: auto;
     }
 
-    /* Flatten hero-content's children into the grid so they can occupy areas */
-    .hero-content { display: contents; }
-
-    .hero-graphic {
-      grid-area: graphic;
-      position: static;
-      width: 100%;
-      max-width: none;
-      margin: 0;
-      flex: none;
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
     }
-    .hero-graphic img { border-radius: 12px; }
 
     .hero h1 {
-      grid-area: h1;
+      order: -1; /* h1 above graphic visually */
       text-align: left;
-      font-size: clamp(3.75rem, 16vw, 6rem);
-      line-height: 0.92;
-      letter-spacing: -0.04em;
+      font-size: clamp(3.5rem, 15vw, 5.5rem);
+      line-height: 0.95;
+      letter-spacing: -0.035em;
       max-width: 100%;
       margin: 0;
       animation: none !important;
@@ -2800,51 +2790,36 @@
       transform: none !important;
     }
 
-    /* On mobile, drop the gradient text-fill on em — when combined with
-       inline-block child spans it stops painting the spans' text. Use a
-       flat pink color instead. */
+    /* The italic "the docs." stays on a single line as a unit */
     .hero h1 em {
-      background: none !important;
-      -webkit-background-clip: border-box !important;
-              background-clip: border-box !important;
-      -webkit-text-fill-color: var(--accent-pink) !important;
+      display: inline-block;
       color: var(--accent-pink);
-      display: inline;
+      white-space: nowrap;
+    }
+    .hero h1 .hero-word {
+      display: inline; /* IMPORTANT: inline so words can break naturally */
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+
+    .hero-graphic {
+      position: static;
+      max-width: 300px;
+      width: 100%;
+      margin: 0;
+      flex: none;
+      align-self: flex-start;
     }
 
     .hero-sub {
-      grid-area: sub;
-      text-align: center;
-      margin: 0 auto;
-      max-width: 460px;
+      text-align: left;
+      margin: 0;
+      max-width: 100%;
     }
 
     .hero-ctas {
-      grid-area: cta;
-      justify-content: center;
-    }
-
-    /* Word-drop animation: stagger with subtle bounce on the italic finale */
-    .hero h1 .hero-word {
-      transform: translateY(40%);
-      opacity: 0;
-      animation: heroWordDrop 0.85s cubic-bezier(0.2, 0.9, 0.32, 1.15) forwards;
-      animation-delay: calc(var(--i, 1) * 0.13s + 0.2s);
-    }
-    .hero h1 em .hero-word:last-child {
-      animation-duration: 1.4s;
-      animation-name: heroWordDropBounce;
-    }
-    @keyframes heroWordDrop {
-      0%   { transform: translateY(40%); opacity: 0; }
-      100% { transform: translateY(0);   opacity: 1; }
-    }
-    @keyframes heroWordDropBounce {
-      0%   { transform: translateY(40%) scale(0.95); opacity: 0; }
-      45%  { transform: translateY(0)   scale(1);    opacity: 1; }
-      60%  { transform: translateY(0)   scale(1.08); opacity: 1; }
-      75%  { transform: translateY(0)   scale(1);    opacity: 1; }
-      100% { transform: translateY(0)   scale(1);    opacity: 1; }
+      justify-content: flex-start;
     }
 
     section { padding: 4rem 2rem; }
