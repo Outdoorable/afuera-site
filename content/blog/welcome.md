@@ -1,5 +1,6 @@
 ---
 title: "Welcome to the Afuera blog"
+seoTitle: "Afuera — new blog on AI for tour operators and travel advisors"
 slug: "welcome"
 date: 2026-04-16
 summary: "A quick note on what this blog is for — honest, practical writing on AI for travel and tourism, from someone who's actually done the job."
@@ -9,8 +10,8 @@ icps:
   - trip designer
 tags:
   - introduction
-  - ai
-  - travel
+  - announcement
+cluster: "Industry POV"
 author: "Ali Murphy"
 cover: "hero-graphic.png"
 faq:

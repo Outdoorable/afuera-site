@@ -49,27 +49,42 @@ The blog is a tiny static generator. Zero runtime framework — every post becom
 
 That's it. To preview locally first: `npm run build && open blog/<slug>/index.html`.
 
-### Frontmatter schema
+### Frontmatter schema (per blog strategy §04 + §06)
 
 ```yaml
 ---
-title: "How to stop losing your guides to paper lists"
-slug: "guides-to-paper"              # defaults to filename
-date: 2026-04-17                      # required; used for sort + sitemap lastmod
-summary: "A 2-minute TL;DR..."        # required; becomes TL;DR box + meta desc + og:description
-icps:                                 # optional; drives filter chips on /blog/
+title: "The printed spreadsheet"                  # REQUIRED — voice title, display H1, social shares, card titles
+seoTitle: "Why tour guides still run trips on paper in 2026"  # optional — <title>, og:title, schema headline. Falls back to title.
+slug: "printed-spreadsheet"           # optional — defaults to filename
+date: 2026-04-17                      # REQUIRED — sort order, sitemap lastmod, datePublished in schema
+updated: 2026-04-20                   # optional — bumps dateModified in schema + shows "Updated …" inline
+summary: "A 2-minute TL;DR…"          # REQUIRED — TL;DR box on post, meta description, og:description, Answer Capsule preview
+icps:                                 # optional — drives the filter chips on /blog/
   - tour operator
   - guide
-tags:                                 # optional; article:tag meta + keywords
+tags:                                 # optional — rendered as tag pills on cards + post; article:tag meta + schema keywords
   - field ops
   - ai
-author: "Ali Murphy"                  # optional
-cover: "guide-glow.png"               # optional; og:image (default: hero-graphic.png)
-faq:                                  # optional; renders FAQ section + JSON-LD FAQPage
-  - question: "..."
-    answer: "..."
+cluster: "Field Operations"           # optional — one of the 5 topic clusters; renders as eyebrow + in schema articleSection
+author: "Ali Murphy"                  # optional — defaults to "Ali Murphy"
+cover: "guide-glow.png"               # optional — og:image; defaults to /hero-graphic.png
+faq:                                  # optional — renders FAQ section at bottom + JSON-LD FAQPage schema
+  - question: "…"
+    answer: "…"
 ---
+
+## Your markdown body
+
+H2s auto-populate the TOC (if there are 2+ H2s).
 ```
+
+**Cluster field** — per strategy §06, every post belongs to one of five clusters. These drive the eyebrow label on each post and will later drive related-post surfacing:
+
+1. Field Operations
+2. Office Operations
+3. Marketing and Sales
+4. AI Strategy
+5. Industry POV
 
 ### What each post page emits automatically
 
@@ -86,9 +101,39 @@ faq:                                  # optional; renders FAQ section + JSON-LD 
 ### AEO/SEO primitives (auto-generated on every build)
 
 - `/sitemap.xml` — home + /blog + every post, with dates from frontmatter
-- `/robots.txt` — explicitly allows GPTBot, ClaudeBot, PerplexityBot, Google-Extended, CCBot
+- `/robots.txt` — explicitly allows GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-SearchBot, PerplexityBot, Google-Extended, CCBot
 - `/llms.txt` — emerging AI-crawler manifest (site summary + key pages + recent posts)
+- JSON-LD per post: `Article` (with `Person` author, `sameAs` to LinkedIn), `BreadcrumbList`, and `FAQPage` (when frontmatter has `faq:`)
 - `Organization` JSON-LD is injected into the landing page `<head>` on every build
+
+### Writing conventions (per blog strategy — read the doc!)
+
+A full blog strategy exists in the repo owner's possession (not committed — see `Afuera_Blog_Strategy.md` provided by user). When helping draft or edit blog posts, key rules:
+
+**Voice rules (green list)** — open with a person/trip/moment not a definition; real numbers and names; take a position; translate jargon; cite humans; end on people not tech.
+
+**Voice anti-patterns (red list, hard bans)**:
+- **No em dashes** — use short dash, comma, period, parens, or ellipsis
+- No "Not X, but Y" rhythms
+- No staccato fragments as sentences
+- No generic transitions ("Here's the kicker", "The thing is")
+- No passive voice, adverbs ("really", "very"), or hedging ("somewhat", "perhaps")
+- No AI evangelism, no buzzwords ("leverage", "unlock", "seamless", "transform")
+- The word "fluff" is banned
+
+**Structure** (per §05 of the strategy):
+1. Hook (person/trip/moment, 80–150 words)
+2. Answer Capsule (40–80 words; front-loaded so LLMs can extract it)
+3. The Case (300–800 words; story, specifics, numbers)
+4. The System (500–1,200 words; H2s that are questions, depth under each)
+5. Human Payoff (100–200 words; what this does for a person)
+6. What to Do Next (50–100 words; one CTA)
+7. FAQ (3–6 Qs, 40–60 words each — goes in `faq:` frontmatter)
+8. Sources (5–15 annotated outbound links)
+
+**Outbound links**: every post should have at least 5 links to named authoritative sources (McKinsey, Arival, Skift, USTOA, specific practitioners). This is a top AEO signal per Claude/Perplexity research.
+
+**Internal links**: at least 2 to other Afuera posts, 1 to the cluster pillar, 1 to a post in a different cluster. First internal link within the first 200 words.
 
 ## Editing → deploying
 

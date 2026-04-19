@@ -9,6 +9,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { marked } from 'marked';
+
+// GFM (tables, strikethrough, autolinks) is default in marked v12, but
+// set it explicitly so this doesn't regress on a minor version bump.
+marked.use({ gfm: true, breaks: false });
 import { siteHead, siteBodyOpen, siteBodyClose, SITE_URL, SITE_NAME, SITE_DESC } from './templates.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
@@ -17,6 +21,18 @@ const OUT_BLOG_DIR = path.join(ROOT, 'blog');
 
 const esc = s => String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const slugify = s => String(s).toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+
+// Author identity — used for Person JSON-LD and the visible byline.
+// sameAs links are what LLMs use to verify authorship across the open web.
+const AUTHOR = {
+  name: 'Ali Murphy',
+  photo: '/ali-headshot.png',
+  url: `${'https://www.afuerai.com'}/#about`,
+  bio: 'Former active travel guide and tour operator executive. Building AI systems for travel and tourism.',
+  sameAs: [
+    'https://www.linkedin.com/in/alimariemurphy',
+  ],
+};
 
 // Walk /content/blog and collect all posts
 function readPosts() {
@@ -27,15 +43,22 @@ function readPosts() {
     const parsed = matter(src);
     const fm = parsed.data;
     const slug = fm.slug || f.replace(/\.(md|mdx)$/, '');
+    const published = fm.date ? new Date(fm.date).toISOString().slice(0, 10) : null;
+    const updated = fm.updated ? new Date(fm.updated).toISOString().slice(0, 10) : null;
     return {
       file: f,
       slug,
+      // Voice title — display H1, social shares, card titles
       title: fm.title || slug,
-      date: fm.date ? new Date(fm.date).toISOString().slice(0, 10) : null,
+      // SEO/AEO title — <title>, canonical source for the slug, falls back to title
+      seoTitle: fm.seoTitle || fm.title || slug,
+      date: published,
+      updated,
       summary: fm.summary || '',
       icps: fm.icps || [],
       tags: fm.tags || [],
-      author: fm.author || '',
+      cluster: fm.cluster || '',
+      author: fm.author || AUTHOR.name,
       cover: fm.cover || '',
       faq: fm.faq || [],
       body: parsed.content,
@@ -86,14 +109,22 @@ function orgJsonLd() {
 }
 
 function articleJsonLd(post, url) {
+  // Use the SEO title for schema headline — this is what ChatGPT / Claude
+  // will pull into answer boxes. Per strategy §04, voice title is for
+  // display H1; SEO title is for machine-readable fields.
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: post.title,
+    headline: post.seoTitle || post.title,
     description: post.summary,
     datePublished: post.date,
-    dateModified: post.date,
-    author: { '@type': 'Person', name: post.author || 'Ali Murphy' },
+    dateModified: post.updated || post.date,
+    author: {
+      '@type': 'Person',
+      name: post.author || AUTHOR.name,
+      url: AUTHOR.url,
+      sameAs: AUTHOR.sameAs,
+    },
     publisher: {
       '@type': 'Organization',
       name: SITE_NAME,
@@ -102,6 +133,7 @@ function articleJsonLd(post, url) {
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
     image: post.cover ? `${SITE_URL}/${post.cover}` : `${SITE_URL}/hero-graphic.png`,
     keywords: (post.tags || []).join(', '),
+    articleSection: post.cluster || undefined,
   };
 }
 
@@ -142,7 +174,8 @@ function renderPostPage(post) {
   if (post.faq && post.faq.length) jsonLd.push(faqJsonLd(post.faq));
 
   const head = siteHead({
-    title: `${post.title} — ${SITE_NAME}`,
+    // Use SEO title for <title>. Voice title is the display H1.
+    title: `${post.seoTitle || post.title} — ${SITE_NAME}`,
     description: post.summary,
     canonical: url,
     ogImage: post.cover ? `${SITE_URL}/${post.cover}` : undefined,
@@ -171,7 +204,21 @@ function renderPostPage(post) {
     : '';
 
   const tagsRow = (post.tags || []).length
-    ? post.tags.map(t => `<span class="tag-chip">${esc(t)}</span>`).join('')
+    ? `<div class="post-tags">${post.tags.map(t => `<span class="tag-pill">${esc(t)}</span>`).join('')}</div>`
+    : '';
+
+  // Author byline — name, photo, short bio, link to About. Authority signal
+  // per strategy §07. Sits in a bordered block above the TL;DR.
+  const bylineHtml = `<div class="post-byline">
+    <img src="${AUTHOR.photo}" alt="${esc(post.author || AUTHOR.name)}" class="byline-photo" />
+    <div class="byline-text">
+      <a href="${AUTHOR.url}" class="byline-name">${esc(post.author || AUTHOR.name)}</a>
+      <p class="byline-bio">${esc(AUTHOR.bio)}</p>
+    </div>
+  </div>`;
+
+  const updatedLine = post.updated && post.updated !== post.date
+    ? `<span class="post-updated">Updated ${esc(formatDate(post.updated))}</span>`
     : '';
 
   return head + siteBodyOpen('blog-page') + `
@@ -179,12 +226,14 @@ function renderPostPage(post) {
 <article>
   <header class="blog-hero">
     <a href="/blog/" class="back-to-blog">← All posts</a>
+    ${post.cluster ? `<p class="post-cluster">${esc(post.cluster)}</p>` : ''}
     <h1>${esc(post.title)}</h1>
     <div class="post-meta">
       ${post.date ? `<span>${esc(formatDate(post.date))}</span>` : ''}
-      ${post.author ? `<span class="dot">·</span><span>${esc(post.author)}</span>` : ''}
-      ${tagsRow ? `<span style="margin-left: auto; display: inline-flex; gap: 0.5rem;">${tagsRow}</span>` : ''}
+      ${updatedLine ? `<span class="dot">·</span>${updatedLine}` : ''}
     </div>
+    ${tagsRow}
+    ${bylineHtml}
     ${post.summary ? `<div class="tldr">
       <p class="tldr-label">TL;DR</p>
       <p>${esc(post.summary)}</p>
@@ -243,14 +292,21 @@ function renderBlogIndex(posts) {
     : '';
 
   const cardsHtml = posts.length
-    ? posts.map(p => `
-    <a class="post-card" href="/blog/${esc(p.slug)}/" data-icps="${esc((p.icps || []).join('|'))}">
-      <p class="post-card-date">${esc(formatDate(p.date))}</p>
+    ? posts.map((p, i) => {
+        const tonalVariant = ['mustard', 'coral', 'forest'][i % 3];
+        const tags = (p.tags || []).slice(0, 3);
+        return `
+    <a class="post-card post-card--${tonalVariant}" href="/blog/${esc(p.slug)}/" data-icps="${esc((p.icps || []).join('|'))}">
+      <div class="post-card-meta">
+        <span class="post-card-date">${esc(formatDate(p.date))}</span>
+        ${p.cluster ? `<span class="post-card-cluster">${esc(p.cluster)}</span>` : ''}
+      </div>
       <h2>${esc(p.title)}</h2>
       <p>${esc(p.summary)}</p>
+      ${tags.length ? `<div class="post-card-tags">${tags.map(t => `<span class="tag-pill">${esc(t)}</span>`).join('')}</div>` : ''}
       <span class="read-more">Read more →</span>
     </a>
-  `).join('')
+  `;}).join('')
     : `<p class="blog-empty">No posts yet — check back soon.</p>`;
 
   const filterScript = `
@@ -294,10 +350,21 @@ ${filterScript}
 // ─── Artifacts: sitemap, robots, llms.txt ────────────────────────────
 
 function writeRobots() {
+  // Full allowlist per blog strategy §07. Covers OpenAI, Anthropic,
+  // Perplexity, Google AI Overviews, and Common Crawl.
   const body = `User-agent: GPTBot
 Allow: /
 
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
 User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
 Allow: /
 
 User-agent: PerplexityBot
