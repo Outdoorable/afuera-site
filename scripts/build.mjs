@@ -487,6 +487,8 @@ function writeSitemap(posts) {
       priority: '0.7',
       changefreq: 'monthly',
     })),
+    { loc: `${SITE_URL}/privacy/`, priority: '0.3', changefreq: 'yearly' },
+    { loc: `${SITE_URL}/terms/`, priority: '0.3', changefreq: 'yearly' },
   ];
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -498,6 +500,137 @@ ${urls.map(u => `  <url>
 </urlset>
 `;
   fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), xml);
+}
+
+// ─── Static legal pages (privacy + terms) ───────────────────────────
+
+function renderLegalPage({ slug, title, description, bodyHtml, lastUpdated }) {
+  const url = `${SITE_URL}/${slug}/`;
+  const head = siteHead({
+    title: `${title} — ${SITE_NAME}`,
+    description,
+    canonical: url,
+    ogType: 'website',
+    jsonLd: [
+      orgJsonLd(),
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: title,
+        description,
+        url,
+        publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+      },
+    ],
+  });
+
+  return head + siteBodyOpen('blog-page') + `
+
+<article>
+  <header class="blog-hero">
+    <a href="/" class="back-to-blog">← Back to home</a>
+    <h1>${esc(title)}</h1>
+    <p class="blog-hero-sub" style="margin-top: 0.5rem;">Last updated ${esc(lastUpdated)}</p>
+  </header>
+
+  <div class="post-body">
+    ${bodyHtml}
+  </div>
+</article>
+
+` + siteBodyClose();
+}
+
+const PRIVACY_BODY = `
+<p>This policy explains what data Afuera (Outdoorable LLC) collects when you visit <a href="https://www.afuerai.com/">afuerai.com</a>, why we collect it, and what you can do about it. We're a small consulting business and we try to collect the minimum we need to run it.</p>
+
+<h2>What we collect</h2>
+<p><strong>When you book a call.</strong> Our scheduling widget is provided by <a href="https://calendly.com/pages/privacy" rel="noopener">Calendly</a>. When you book, Calendly stores your name, email, and the time you chose, and shares that booking with us by email. We use that information to hold the meeting and to follow up afterward. We do not add you to any marketing list without your consent.</p>
+<p><strong>When you email us.</strong> If you email us, we store the email in our inbox and any personal information you include in it.</p>
+<p><strong>When you visit the site.</strong> Our host, Vercel, receives standard server logs for each page view (IP address, browser, referrer, time). These logs are used for security and traffic-load purposes and are kept for a short period. We do not currently run a third-party web analytics product (such as Google Analytics) on this site. If we add one, this page will be updated first.</p>
+<p><strong>Fonts.</strong> The site loads typography from <a href="https://policies.google.com/privacy" rel="noopener">Google Fonts</a>. Google receives your IP address as part of serving those fonts.</p>
+<p><strong>What we don't collect.</strong> We don't use behavioural advertising cookies. We don't sell or share personal information with data brokers. We don't track you across other sites.</p>
+
+<h2>How we use your information</h2>
+<ul>
+  <li>To respond to inquiries you send us.</li>
+  <li>To run calls you've scheduled with us.</li>
+  <li>To follow up after a meeting with the materials we said we'd send.</li>
+  <li>To improve the site (for example, fixing a page someone reported as broken).</li>
+</ul>
+<p>We don't use your information for automated decision-making or profiling.</p>
+
+<h2>How long we keep it</h2>
+<p>Calendly booking records are retained according to <a href="https://calendly.com/pages/privacy" rel="noopener">Calendly's retention policy</a>. Email correspondence we keep for as long as we might reasonably need it for business and legal purposes (typically a few years). Server logs are rotated on a short cycle by our host.</p>
+
+<h2>Your rights</h2>
+<p>Depending on where you live, you may have the right to access, correct, or delete personal information we hold about you, and to object to or restrict how we use it. If you live in the EU or UK this is covered by the GDPR; if you live in California it's covered by the CCPA. To exercise any of these rights, email <a href="mailto:hello@afuerai.com">hello@afuerai.com</a> and we'll take care of it within a reasonable time.</p>
+
+<h2>Children</h2>
+<p>This site is intended for professional adults in the travel industry. We don't knowingly collect information from anyone under 16. If you believe we have, please contact us and we'll delete it.</p>
+
+<h2>Changes to this policy</h2>
+<p>We'll update this page when our practices change. Material changes will bump the "Last updated" date at the top. If the changes are significant (e.g. we start using a new analytics product) we'll note that on the page.</p>
+
+<h2>Contact</h2>
+<p>Questions about privacy or your data? Email <a href="mailto:hello@afuerai.com">hello@afuerai.com</a>.</p>
+`;
+
+const TERMS_BODY = `
+<p>These are the terms for using <a href="https://www.afuerai.com/">afuerai.com</a>, operated by Afuera (Outdoorable LLC). They're written plainly. If you use the site, you're agreeing to them.</p>
+
+<h2>Using the site</h2>
+<p>You're welcome to read anything here and to share links with attribution. You may not scrape or republish our content at scale without written permission, use the site to distribute malware or harmful code, attempt to interfere with the site's operation, or use any of our content to train a machine-learning model that competes with our services without permission. Crawling by general-purpose AI systems is allowed and is governed by our <code>/robots.txt</code>.</p>
+
+<h2>Bookings and consulting engagements</h2>
+<p>Scheduling a discovery call through the site doesn't create a consulting relationship by itself. Paid engagements are governed by a separate written agreement that we'll share before any work begins. If you haven't signed that agreement, you're not a client.</p>
+
+<h2>Intellectual property</h2>
+<p>The site's content — writing, imagery, design, code — is owned by Afuera (Outdoorable LLC) or used under license, unless otherwise noted. You may quote our writing with attribution and a link back. Short blockquotes and excerpts for editorial or educational purposes are welcome. Wholesale republication is not.</p>
+
+<h2>Third-party links and tools</h2>
+<p>The site links to other websites and embeds third-party tools (such as Calendly for scheduling). We don't control those sites, and their privacy and terms are their own. We're not responsible for what happens on them.</p>
+
+<h2>No warranty</h2>
+<p>Everything on this site is provided "as is." We write honestly and carefully, but the content is general information, not professional advice specific to your operation. If you implement something you read here and it doesn't work in your context, that's a normal part of applying any general advice. Don't make irreversible business decisions based on a blog post — book a call if you want specific guidance.</p>
+
+<h2>Limitation of liability</h2>
+<p>To the maximum extent permitted by law, Afuera (Outdoorable LLC) is not liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the site. If we are held liable for direct damages, that liability is capped at the greater of (a) US$100 or (b) the total amount you paid us in the twelve months before the claim arose.</p>
+
+<h2>Governing law</h2>
+<p>These terms are governed by the laws of the State of Colorado, USA, without regard to conflict-of-laws principles. Any disputes will be resolved in the state or federal courts located in Denver County, Colorado.</p>
+
+<h2>Changes to these terms</h2>
+<p>We may update these terms. If the change is material, we'll bump the "Last updated" date at the top. Continued use of the site after a change means you accept the new terms.</p>
+
+<h2>Contact</h2>
+<p>Questions? Email <a href="mailto:hello@afuerai.com">hello@afuerai.com</a>.</p>
+`;
+
+function writeLegalPages() {
+  const lastUpdated = 'April 16, 2026';
+
+  const privacyHtml = renderLegalPage({
+    slug: 'privacy',
+    title: 'Privacy policy',
+    description: 'What data Afuera collects when you visit afuerai.com, why we collect it, and what you can do about it.',
+    bodyHtml: PRIVACY_BODY,
+    lastUpdated,
+  });
+  const privacyDir = path.join(ROOT, 'privacy');
+  fs.mkdirSync(privacyDir, { recursive: true });
+  fs.writeFileSync(path.join(privacyDir, 'index.html'), privacyHtml);
+
+  const termsHtml = renderLegalPage({
+    slug: 'terms',
+    title: 'Terms of use',
+    description: 'Terms for using afuerai.com, operated by Afuera (Outdoorable LLC).',
+    bodyHtml: TERMS_BODY,
+    lastUpdated,
+  });
+  const termsDir = path.join(ROOT, 'terms');
+  fs.mkdirSync(termsDir, { recursive: true });
+  fs.writeFileSync(path.join(termsDir, 'index.html'), termsHtml);
 }
 
 // ─── Inject Organization JSON-LD + blog preview into the landing page ──
@@ -584,9 +717,11 @@ function build() {
   writeRobots();
   writeLlmsTxt(posts);
   writeSitemap(posts);
+  writeLegalPages();
   updateIndexHtml(posts);
 
   console.log('[afuera] Wrote robots.txt, llms.txt, sitemap.xml.');
+  console.log('[afuera] Wrote /privacy/ and /terms/ pages.');
   console.log('[afuera] Updated index.html: injected Organization JSON-LD + 3 latest posts in homepage preview.');
   console.log('[afuera] Done.');
 }

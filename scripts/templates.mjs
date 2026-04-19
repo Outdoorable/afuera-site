@@ -42,7 +42,7 @@ const BLOG_STYLES = `
   }
 
   .blog-hero {
-    padding: 10rem 3rem 3rem;
+    padding: 10rem 3rem 1.75rem;
     max-width: 880px;
     margin: 0 auto;
   }
@@ -61,7 +61,7 @@ const BLOG_STYLES = `
     line-height: 1.75;
     color: var(--text-secondary);
     max-width: 640px;
-    margin-bottom: 2.5rem;
+    margin-bottom: 0;
   }
 
   /* Post meta row */
@@ -606,7 +606,7 @@ const BLOG_STYLES = `
   /* Community callout at top of the blog hub */
   .blog-community-callout {
     max-width: 1200px;
-    margin: 2rem auto 3rem;
+    margin: 0 auto 2.5rem;
     padding: 1.25rem 1.75rem;
     display: flex;
     align-items: center;
