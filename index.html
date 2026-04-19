@@ -2626,11 +2626,11 @@
     margin-right: auto;
   }
 
-  /* Contact form card */
-  .contact-card {
-    max-width: 520px;
-    margin: 0 auto;
-    padding: 2.75rem;
+  /* Calendly wrapper */
+  .calendly-wrap {
+    max-width: 880px;
+    margin: 2.5rem auto 0;
+    padding: 1rem;
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -2638,37 +2638,32 @@
     border-radius: 20px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04),
                 0 1px 2px rgba(0, 0, 0, 0.02);
-    text-align: left;
+    overflow: hidden;
   }
 
-  .contact-card p {
-    font-size: 0.95rem;
-    color: var(--text-secondary);
-    margin-bottom: 1.5rem;
+  .calendly-inline-widget {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .calendly-fallback {
     text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 1.5rem;
   }
-
-  .contact-card input,
-  .contact-card textarea {
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
-    background: rgba(255, 255, 255, 0.9) !important;
-    color: var(--text-primary) !important;
+  .calendly-fallback a {
+    color: var(--accent-orange);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 1px;
+    transition: color 0.25s;
   }
+  .calendly-fallback a:hover { color: var(--accent-orange-hover); }
 
-  .contact-card input::placeholder,
-  .contact-card textarea::placeholder {
-    color: rgba(0, 0, 0, 0.35) !important;
-  }
-
-  .contact-card input:focus,
-  .contact-card textarea:focus {
-    border-color: var(--accent-orange) !important;
-    box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.1);
-  }
-
-  .contact-card button[type="submit"] {
-    background: var(--accent-orange) !important;
-    color: var(--text-light) !important;
+  @media (max-width: 600px) {
+    .calendly-wrap { padding: 0.5rem; border-radius: 14px; }
+    .calendly-inline-widget { height: 860px !important; }
   }
 
   /* ── FOOTER ── */
@@ -3300,7 +3295,7 @@
     </div>
   </div>
   <div style="text-align: center; margin-top: 3.5rem;">
-    <a href="#about" class="btn-primary" style="display: inline-flex; align-items: center; gap: 0.75rem;">
+    <a href="#contact" class="btn-primary" style="display: inline-flex; align-items: center; gap: 0.75rem;">
       <img src="ali-headshot.png" alt="Ali" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; object-position: center top; border: 2px solid rgba(255,255,255,0.3);">
       Book a Discovery Call with Ali
     </a>
@@ -3660,22 +3655,15 @@
   <div class="final-cta">
     <h2>Start with a conversation.</h2>
     <p>Not a pitch. Not a demo. Let's jam on what's giving you grief and we'll share actionable ideas you can tackle yourself.</p>
-    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3.5rem;">
-      <a href="#" class="btn-primary">Book a Call</a>
-      <a href="#community" style="background: transparent; color: var(--text-primary); padding: 1.1rem 2.5rem; border-radius: 100px; text-decoration: none; font-weight: 700; font-size: 1rem; display: inline-block; border: 1.5px solid rgba(31,31,31,0.2); transition: background 0.2s, border-color 0.2s;">Join the Community</a>
+    <div class="calendly-wrap">
+      <!-- Calendly inline widget begin -->
+      <div class="calendly-inline-widget" data-url="https://calendly.com/ali-marie-murphy" style="min-width:320px;height:700px;"></div>
+      <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+      <!-- Calendly inline widget end -->
     </div>
-    <div class="contact-card">
-      <p>Prefer email? Drop us a note.</p>
-      <form style="display: flex; flex-direction: column; gap: 0.75rem;" onsubmit="event.preventDefault();">
-        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-          <input type="text" placeholder="Name" style="flex: 1; min-width: 140px; padding: 0.85rem 1.25rem; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none;" />
-          <input type="text" placeholder="Company" style="flex: 1; min-width: 140px; padding: 0.85rem 1.25rem; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none;" />
-        </div>
-        <input type="email" placeholder="Email" style="padding: 0.85rem 1.25rem; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none;" />
-        <textarea placeholder="What are you working on?" rows="3" style="padding: 0.85rem 1.25rem; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none; resize: vertical;"></textarea>
-        <button type="submit" style="padding: 0.85rem 2rem; border-radius: 100px; border: none; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.9rem; cursor: pointer; align-self: flex-start; transition: transform 0.2s, box-shadow 0.2s;">Send</button>
-      </form>
-    </div>
+    <p class="calendly-fallback">
+      Prefer email? Reach us at <a href="mailto:hello@afuerai.com">hello@afuerai.com</a>.
+    </p>
   </div>
 </div>
 </div>
