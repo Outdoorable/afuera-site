@@ -34,6 +34,39 @@ const AUTHOR = {
   ],
 };
 
+// ICP code → human-readable label map (strategy abbreviations)
+const ICP_LABELS = {
+  GTO: 'Global Tour Operator',
+  ITL: 'Independent Trip Leader',
+  TA: 'Travel Advisor',
+  TD: 'Trip Designer',
+  EC: 'Experience Company',
+  DMC: 'DMC',
+  LD: 'Luxury Trip Designer',
+};
+
+function normalizeIcps(raw) {
+  if (!raw) return [];
+  return raw.map(v => ICP_LABELS[v] || v);
+}
+
+// Accept both my native schema and the alt schema used by the content
+// pipeline (snake_case + a few renamed fields). Content dropped from
+// either convention just works.
+function pick(fm, ...keys) {
+  for (const k of keys) {
+    if (fm[k] !== undefined && fm[k] !== null) return fm[k];
+  }
+  return undefined;
+}
+
+function normalizeCover(raw) {
+  if (!raw) return '';
+  // Already absolute-ish path (starts with /) — store without leading /
+  // so renderers can prepend / without producing //images...
+  return String(raw).replace(/^\/+/, '');
+}
+
 // Walk /content/blog and collect all posts
 function readPosts() {
   if (!fs.existsSync(CONTENT_DIR)) return [];
@@ -42,27 +75,34 @@ function readPosts() {
     const src = fs.readFileSync(path.join(CONTENT_DIR, f), 'utf8');
     const parsed = matter(src);
     const fm = parsed.data;
-    const slug = fm.slug || f.replace(/\.(md|mdx)$/, '');
-    const published = fm.date ? new Date(fm.date).toISOString().slice(0, 10) : null;
-    const updated = fm.updated ? new Date(fm.updated).toISOString().slice(0, 10) : null;
+    const slug = pick(fm, 'slug') || f.replace(/\.(md|mdx)$/, '');
+    const dateRaw = pick(fm, 'date', 'date_published', 'datePublished');
+    const updatedRaw = pick(fm, 'updated', 'date_modified', 'dateModified');
+    const published = dateRaw ? new Date(dateRaw).toISOString().slice(0, 10) : null;
+    const updated = updatedRaw ? new Date(updatedRaw).toISOString().slice(0, 10) : null;
     return {
       file: f,
       slug,
-      // Voice title — display H1, social shares, card titles
-      title: fm.title || slug,
-      // SEO/AEO title — <title>, canonical source for the slug, falls back to title
-      seoTitle: fm.seoTitle || fm.title || slug,
+      // Voice title — display H1, card title, social share title
+      title: pick(fm, 'title') || slug,
+      // SEO/AEO title — <title>, schema headline, falls back to title
+      seoTitle: pick(fm, 'seoTitle', 'seo_title') || pick(fm, 'title') || slug,
       date: published,
       updated,
-      summary: fm.summary || '',
-      icps: fm.icps || [],
-      tags: fm.tags || [],
-      cluster: fm.cluster || '',
-      // type: "article" (default) or "tool" — drives the top content-type filter
-      type: (fm.type || 'article').toLowerCase(),
-      author: fm.author || AUTHOR.name,
-      cover: fm.cover || '',
-      faq: fm.faq || [],
+      summary: pick(fm, 'summary', 'description') || '',
+      icps: normalizeIcps(pick(fm, 'icps') || []),
+      tags: pick(fm, 'tags') || [],
+      cluster: pick(fm, 'cluster') || '',
+      type: String(pick(fm, 'type') || 'article').toLowerCase(),
+      author: pick(fm, 'author') || AUTHOR.name,
+      cover: normalizeCover(pick(fm, 'cover', 'featured_image', 'featuredImage')),
+      coverAlt: pick(fm, 'featured_image_alt', 'featuredImageAlt', 'coverAlt') || '',
+      faq: pick(fm, 'faq') || [],
+      // Strategy taxonomy fields — surfaced on post but not required
+      role: pick(fm, 'role') || '',
+      angle: pick(fm, 'angle') || '',
+      format: pick(fm, 'format') || '',
+      funnel: pick(fm, 'funnel') || '',
       body: parsed.content,
     };
   }).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
@@ -133,7 +173,7 @@ function articleJsonLd(post, url) {
       logo: { '@type': 'ImageObject', url: `${SITE_URL}/hero-graphic.png` },
     },
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
-    image: post.cover ? `${SITE_URL}/${post.cover}` : `${SITE_URL}/hero-graphic.png`,
+    image: post.cover ? `${SITE_URL}/${post.cover.replace(/^\/+/, '')}` : `${SITE_URL}/hero-graphic.png`,
     keywords: (post.tags || []).join(', '),
     articleSection: post.cluster || undefined,
   };
@@ -166,7 +206,7 @@ function breadcrumbJsonLd(post) {
 // ─── Shared: one post card (Every-style: photo, meta, title, byline) ─
 function renderPostCard(p) {
   const tags = (p.tags || []).slice(0, 3);
-  const coverUrl = p.cover ? `/${p.cover}` : '/hero-graphic.png';
+  const coverUrl = p.cover ? `/${p.cover.replace(/^\/+/, '')}` : '/hero-graphic.png';
   const isTool = p.type === 'tool';
   return `
     <a class="post-card" href="/blog/${esc(p.slug)}/"
@@ -209,17 +249,17 @@ function renderPostPage(post) {
     title: `${post.seoTitle || post.title} — ${SITE_NAME}`,
     description: post.summary,
     canonical: url,
-    ogImage: post.cover ? `${SITE_URL}/${post.cover}` : undefined,
+    ogImage: post.cover ? `${SITE_URL}/${post.cover.replace(/^\/+/, '')}` : undefined,
     ogType: 'article',
     articleMeta: { date: post.date, author: post.author, tags: post.tags },
     jsonLd,
   });
 
   const tocHtml = toc.length >= 2
-    ? `<nav class="post-toc" aria-label="Table of contents">
-    <p class="post-toc-label">Contents</p>
-    <ol>${toc.map(h => `<li><a href="#${h.id}">${esc(h.text)}</a></li>`).join('')}</ol>
-  </nav>`
+    ? `<aside class="post-toc" aria-label="Table of contents">
+      <p class="post-toc-label">In this post</p>
+      <ol>${toc.map(h => `<li><a href="#${h.id}">${esc(h.text)}</a></li>`).join('')}</ol>
+    </aside>`
     : '';
 
   const faqHtml = (post.faq && post.faq.length)
@@ -269,11 +309,13 @@ function renderPostPage(post) {
       <p class="tldr-label">TL;DR</p>
       <p>${esc(post.summary)}</p>
     </div>` : ''}
-    ${tocHtml}
   </header>
 
-  <div class="post-body">
-    ${bodyHtml}
+  <div class="post-layout${toc.length >= 2 ? ' has-toc' : ''}">
+    ${tocHtml}
+    <div class="post-body">
+      ${bodyHtml}
+    </div>
   </div>
 
   ${faqHtml}
@@ -284,6 +326,34 @@ function renderPostPage(post) {
     <a href="/#contact" class="btn-primary">Book a Free Discovery Call</a>
   </aside>
 </article>
+
+${toc.length >= 2 ? `<script>
+(function() {
+  // Highlight the currently-visible H2 in the sticky TOC
+  const tocLinks = document.querySelectorAll('.post-toc a');
+  if (!tocLinks.length) return;
+  const linkById = new Map();
+  tocLinks.forEach(a => {
+    const id = a.getAttribute('href').slice(1);
+    linkById.set(id, a);
+  });
+  const headings = Array.from(linkById.keys())
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+  if (!headings.length) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const link = linkById.get(entry.target.id);
+      if (!link) return;
+      if (entry.isIntersecting) {
+        tocLinks.forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+  headings.forEach(h => io.observe(h));
+})();
+</script>` : ''}
 
 ` + siteBodyClose();
 }
@@ -636,7 +706,7 @@ function writeLegalPages() {
 // ─── Inject Organization JSON-LD + blog preview into the landing page ──
 
 function renderHomeBlogCard(p) {
-  const coverUrl = p.cover ? `/${p.cover}` : '/hero-graphic.png';
+  const coverUrl = p.cover ? `/${p.cover.replace(/^\/+/, '')}` : '/hero-graphic.png';
   return `    <a class="home-blog-card" href="/blog/${esc(p.slug)}/">
       <div class="home-blog-image">
         <img src="${esc(coverUrl)}" alt="" loading="lazy" />
