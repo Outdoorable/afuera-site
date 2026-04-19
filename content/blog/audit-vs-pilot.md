@@ -12,6 +12,7 @@ tags:
   - strategy
 cluster: "AI Strategy"
 author: "Ali Murphy"
+cover: "robot-fix.png"
 faq:
   - question: "How is an AI audit different from a consulting engagement?"
     answer: "An audit produces a 6-month playbook you own — specific systems to build, in what order, with which tools. A consulting engagement typically produces slides."

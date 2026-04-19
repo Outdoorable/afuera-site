@@ -242,6 +242,23 @@
 
   .nav-links a:hover { color: var(--text-light); }
 
+  /* Secondary nav CTA — outlined, routes to community signup */
+  .nav-cta-secondary {
+    padding: 0.55rem 1.2rem !important;
+    border: 1px solid rgba(255,255,255,0.25) !important;
+    border-radius: 100px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.01em !important;
+    color: rgba(255,255,255,0.85) !important;
+    transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease !important;
+  }
+  .nav-cta-secondary:hover {
+    border-color: var(--accent-teal) !important;
+    color: var(--text-light) !important;
+    background: rgba(46, 196, 182, 0.08) !important;
+  }
+
   .nav-cta {
     background: var(--accent-orange) !important;
     color: var(--text-light) !important;
@@ -2305,7 +2322,116 @@
     border: none;
   }
 
-  /* ── BLOG CARDS v2 (patterned, colored) ── */
+  /* Homepage blog preview — Every-style photo cards, injected on build */
+  .home-blog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem 2rem;
+    margin-top: 2.5rem;
+  }
+  .home-blog-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .home-blog-card:hover { transform: translateY(-3px); }
+  .home-blog-card:hover .home-blog-image img { transform: scale(1.03); }
+  .home-blog-card:hover h3 { color: var(--accent-orange); }
+  .home-blog-image {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(255,122,89,0.18), rgba(46,196,182,0.15));
+  }
+  .home-blog-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .home-blog-cluster {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent-orange);
+  }
+  .home-blog-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .home-blog-meta .dot { color: rgba(0,0,0,0.3); }
+  .home-blog-date {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+  }
+  .home-blog-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -0.018em;
+    color: var(--text-primary);
+    margin: 0;
+    transition: color 0.3s ease;
+  }
+  .home-blog-card p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+  .home-blog-byline {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: auto;
+    padding-top: 0.25rem;
+  }
+  .home-blog-byline img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  .home-blog-byline span {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .link-all-posts {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-bottom: 1.5px solid currentColor;
+    padding-bottom: 3px;
+    transition: color 0.3s ease;
+  }
+  .link-all-posts:hover { color: var(--accent-orange); }
+
+  @media (max-width: 820px) {
+    .home-blog-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+  }
+  @media (max-width: 600px) {
+    .home-blog-grid { grid-template-columns: 1fr; gap: 2rem; }
+  }
+
+  /* ── BLOG CARDS v2 (legacy patterned — superseded by .home-blog-card) ── */
   .blog-grid-v2 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -3051,11 +3177,18 @@
     .nav-links li:nth-child(4) a::before { background: var(--accent-pink);   color: var(--accent-pink); }
     .nav-links li:nth-child(5) a::before { background: var(--accent-teal);   color: var(--accent-teal); }
     .nav-links li:last-child a::before { display: none; }
+    .nav-links li:nth-last-child(2) a::before { background: var(--accent-teal); }
 
     .nav-links a:hover,
     .nav-links a:active { color: var(--accent-orange); }
 
-    .nav-cta { display: inline-block; }
+    .nav-cta,
+    .nav-cta-secondary { display: inline-block; border-radius: 100px !important; }
+    .nav-cta-secondary {
+      border-color: rgba(255,255,255,0.25) !important;
+      background: transparent !important;
+      padding: 0.65rem 1.4rem !important;
+    }
   }
 
   @media (max-width: 600px) {
@@ -3180,7 +3313,7 @@
 <!-- Navigation -->
 <nav>
   <div class="nav-brand">
-    <a href="#" class="logo">afuera</a>
+    <a href="/" class="logo" aria-label="Afuera — home">afuera</a>
     <span class="nav-tagline">AI consulting &amp; implementation<br>for travel and tourism</span>
   </div>
   <button class="mobile-toggle" aria-label="Menu" aria-expanded="false">
@@ -3192,6 +3325,7 @@
     <li><a href="#engineering">Custom Software</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="/blog/">Blog</a></li>
+    <li><a href="/#community" class="nav-cta-secondary">Join the Community</a></li>
     <li><a href="#contact" class="nav-cta">Book a Call</a></li>
   </ul>
 </nav>
@@ -3604,24 +3738,62 @@
   <section id="blog">
   <p class="section-label">From the Blog</p>
   <h2 class="section-title">AI insight for people in travel and tourism.</h2>
-  <div class="blog-grid-v2">
-    <div class="track-card blog-card-v2 blog-card--mustard">
-      <p class="track-number">Latest</p>
-      <h3>Why Your Guides Are Still Running Trips on Paper</h3>
-      <p>The software companies spent the last decade on: how do we get people to book? Nobody asked: how do we execute what we sold?</p>
-      <a href="#" class="blog-card-link">Read more →</a>
-    </div>
-    <div class="track-card blog-card-v2 blog-card--coral">
-      <p class="track-number">Featured</p>
-      <h3>How to work with AI when you kinda... <em>Hate AI</em></h3>
-      <p>Answer: you lean into building processes that let you focus on building more human connection, and better supporting the communities you care about.</p>
-      <a href="#" class="blog-card-link">Read more →</a>
-    </div>
-    <div class="track-card blog-card-v2 blog-card--forest">
-      <h3>AI Audit vs. AI Pilot: Why Most Travel Companies Start in the Wrong Place</h3>
-      <p>You don't need a pilot project. You need to understand your own workflows before you touch a single tool.</p>
-      <a href="#" class="blog-card-link">Read more →</a>
-    </div>
+  <!-- blog-preview: injected on build by scripts/build.mjs from content/blog/*.md -->
+  <div class="home-blog-grid">
+    <!-- blog-preview-start -->
+    <a class="home-blog-card" href="/blog/welcome/">
+      <div class="home-blog-image">
+        <img src="/hero-graphic.png" alt="" loading="lazy" />
+      </div>
+      <div class="home-blog-meta">
+        <span class="home-blog-cluster">Industry POV</span>
+        <span class="dot">·</span>
+        <span class="home-blog-date">April 16, 2026</span>
+      </div>
+      <h3>Welcome to the Afuera blog</h3>
+      <p>A quick note on what this blog is for — honest, practical writing on AI for travel and tourism, from someone who&#39;s actually done the job.</p>
+      <div class="home-blog-byline">
+        <img src="/ali-headshot.png" alt="Ali Murphy" />
+        <span>Ali Murphy</span>
+      </div>
+    </a>
+    <a class="home-blog-card" href="/blog/audit-vs-pilot/">
+      <div class="home-blog-image">
+        <img src="/robot-fix.png" alt="" loading="lazy" />
+      </div>
+      <div class="home-blog-meta">
+        <span class="home-blog-cluster">AI Strategy</span>
+        <span class="dot">·</span>
+        <span class="home-blog-date">April 14, 2026</span>
+      </div>
+      <h3>AI Audit vs AI Pilot</h3>
+      <p>A pilot project answers a question. An audit tells you which question is worth asking. Most travel operators skip the second step and waste six months.</p>
+      <div class="home-blog-byline">
+        <img src="/ali-headshot.png" alt="Ali Murphy" />
+        <span>Ali Murphy</span>
+      </div>
+    </a>
+    <a class="home-blog-card" href="/blog/proposal-that-wrote-itself/">
+      <div class="home-blog-image">
+        <img src="/itinerary-transformation.png" alt="" loading="lazy" />
+      </div>
+      <div class="home-blog-meta">
+        <span class="home-blog-cluster">Office Operations</span>
+        <span class="dot">·</span>
+        <span class="home-blog-date">April 11, 2026</span>
+      </div>
+      <h3>The proposal that wrote itself</h3>
+      <p>A four-hour proposal cut to seven minutes. The system behind it, who it works for, and where it falls over.</p>
+      <div class="home-blog-byline">
+        <img src="/ali-headshot.png" alt="Ali Murphy" />
+        <span>Ali Murphy</span>
+      </div>
+    </a>
+    <!-- blog-preview-end -->
+  </div>
+
+  <div style="text-align: center; margin-top: 3rem;">
+    <a href="/blog/" class="link-all-posts">See all posts →</a>
   </div>
 </section>
 </div>

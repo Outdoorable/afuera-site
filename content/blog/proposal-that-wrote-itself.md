@@ -13,6 +13,7 @@ tags:
   - ai
 cluster: "Office Operations"
 author: "Ali Murphy"
+cover: "itinerary-transformation.png"
 faq:
   - question: "Does this work if my proposals are highly visual (maps, photos, layouts)?"
     answer: "Yes, but the text-generation and layout-composition happen in different steps. Claude or GPT handles the writing. A templated doc system (Canva, Notion, Google Docs, or a custom tool) handles layout."

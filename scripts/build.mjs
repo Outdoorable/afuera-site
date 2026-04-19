@@ -161,6 +161,31 @@ function breadcrumbJsonLd(post) {
   };
 }
 
+// ─── Shared: one post card (Every-style: photo, meta, title, byline) ─
+function renderPostCard(p) {
+  const tags = (p.tags || []).slice(0, 3);
+  const coverUrl = p.cover ? `/${p.cover}` : '/hero-graphic.png';
+  return `
+    <a class="post-card" href="/blog/${esc(p.slug)}/" data-icps="${esc((p.icps || []).join('|'))}">
+      <div class="post-card-image">
+        <img src="${esc(coverUrl)}" alt="" loading="lazy" />
+      </div>
+      <div class="post-card-meta">
+        ${p.cluster ? `<span class="post-card-cluster">${esc(p.cluster)}</span>` : ''}
+        ${p.cluster && p.date ? `<span class="dot">·</span>` : ''}
+        ${p.date ? `<span class="post-card-date">${esc(formatDate(p.date))}</span>` : ''}
+      </div>
+      <h2>${esc(p.title)}</h2>
+      <p>${esc(p.summary)}</p>
+      ${tags.length ? `<div class="post-card-tags">${tags.map(t => `<span class="tag-pill">${esc(t)}</span>`).join('')}</div>` : ''}
+      <div class="post-card-byline">
+        <img src="${esc(AUTHOR.photo)}" alt="${esc(p.author || AUTHOR.name)}" />
+        <span class="byline-name-small">${esc(p.author || AUTHOR.name)}</span>
+      </div>
+    </a>
+  `;
+}
+
 // ─── Page renderers ──────────────────────────────────────────────────
 
 function renderPostPage(post) {
@@ -292,22 +317,17 @@ function renderBlogIndex(posts) {
     : '';
 
   const cardsHtml = posts.length
-    ? posts.map((p, i) => {
-        const tonalVariant = ['mustard', 'coral', 'forest'][i % 3];
-        const tags = (p.tags || []).slice(0, 3);
-        return `
-    <a class="post-card post-card--${tonalVariant}" href="/blog/${esc(p.slug)}/" data-icps="${esc((p.icps || []).join('|'))}">
-      <div class="post-card-meta">
-        <span class="post-card-date">${esc(formatDate(p.date))}</span>
-        ${p.cluster ? `<span class="post-card-cluster">${esc(p.cluster)}</span>` : ''}
-      </div>
-      <h2>${esc(p.title)}</h2>
-      <p>${esc(p.summary)}</p>
-      ${tags.length ? `<div class="post-card-tags">${tags.map(t => `<span class="tag-pill">${esc(t)}</span>`).join('')}</div>` : ''}
-      <span class="read-more">Read more →</span>
-    </a>
-  `;}).join('')
+    ? posts.map(p => renderPostCard(p)).join('')
     : `<p class="blog-empty">No posts yet — check back soon.</p>`;
+
+  const communityCallout = `<div class="blog-community-callout">
+    <span class="community-emoji">☕</span>
+    <div class="blog-community-callout-text">
+      <strong>Join the community</strong>
+      <span>Free webinars, resources, and a network of travel folk building with AI.</span>
+    </div>
+    <a href="/#community" class="callout-cta">Join the Community</a>
+  </div>`;
 
   const filterScript = `
 <script>
@@ -335,6 +355,8 @@ function renderBlogIndex(posts) {
   <h1>AI insight for people in travel and tourism.</h1>
   <p class="blog-hero-sub">Playbooks, frameworks, and honest takes on what's working (and what isn't) when tour operators, custom trip designers, and travel advisors bring AI into their operations.</p>
 </header>
+
+${communityCallout}
 
 ${filtersHtml}
 
@@ -435,20 +457,54 @@ ${urls.map(u => `  <url>
   fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), xml);
 }
 
-// ─── Inject Organization JSON-LD into the landing page ───────────────
+// ─── Inject Organization JSON-LD + blog preview into the landing page ──
 
-function injectOrgSchemaIntoIndex() {
+function renderHomeBlogCard(p) {
+  const coverUrl = p.cover ? `/${p.cover}` : '/hero-graphic.png';
+  return `    <a class="home-blog-card" href="/blog/${esc(p.slug)}/">
+      <div class="home-blog-image">
+        <img src="${esc(coverUrl)}" alt="" loading="lazy" />
+      </div>
+      <div class="home-blog-meta">
+        ${p.cluster ? `<span class="home-blog-cluster">${esc(p.cluster)}</span>` : ''}
+        ${p.cluster && p.date ? `<span class="dot">·</span>` : ''}
+        ${p.date ? `<span class="home-blog-date">${esc(formatDate(p.date))}</span>` : ''}
+      </div>
+      <h3>${esc(p.title)}</h3>
+      <p>${esc(p.summary)}</p>
+      <div class="home-blog-byline">
+        <img src="${esc(AUTHOR.photo)}" alt="${esc(p.author || AUTHOR.name)}" />
+        <span>${esc(p.author || AUTHOR.name)}</span>
+      </div>
+    </a>`;
+}
+
+function updateIndexHtml(posts) {
   const indexPath = path.join(ROOT, 'index.html');
   let html = fs.readFileSync(indexPath, 'utf8');
 
-  // Remove any previously injected block
+  // 1. Organization JSON-LD (idempotent — remove prior block then re-insert)
   html = html.replace(/<!-- org-schema -->[\s\S]*?<!-- \/org-schema -->\n?/g, '');
-
   const ld = JSON.stringify(orgJsonLd());
-  const block = `<!-- org-schema -->\n<script type="application/ld+json">${ld}</script>\n<!-- /org-schema -->\n`;
+  const orgBlock = `<!-- org-schema -->\n<script type="application/ld+json">${ld}</script>\n<!-- /org-schema -->\n`;
+  html = html.replace('</head>', orgBlock + '</head>');
 
-  // Insert just before </head>
-  html = html.replace('</head>', block + '</head>');
+  // 2. Homepage blog preview — inject the 3 most recent posts between
+  //    <!-- blog-preview-start --> and <!-- blog-preview-end --> markers.
+  const featured = posts.slice(0, 3);
+  const featuredHtml = featured.length
+    ? featured.map(p => renderHomeBlogCard(p)).join('\n')
+    : `    <p style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary);">No posts yet — check back soon.</p>`;
+
+  const startMarker = '<!-- blog-preview-start -->';
+  const endMarker = '<!-- blog-preview-end -->';
+  const startIdx = html.indexOf(startMarker);
+  const endIdx = html.indexOf(endMarker);
+  if (startIdx !== -1 && endIdx !== -1) {
+    const before = html.slice(0, startIdx + startMarker.length);
+    const after = html.slice(endIdx);
+    html = before + '\n' + featuredHtml + '\n    ' + after;
+  }
 
   fs.writeFileSync(indexPath, html);
 }
@@ -485,10 +541,10 @@ function build() {
   writeRobots();
   writeLlmsTxt(posts);
   writeSitemap(posts);
-  injectOrgSchemaIntoIndex();
+  updateIndexHtml(posts);
 
   console.log('[afuera] Wrote robots.txt, llms.txt, sitemap.xml.');
-  console.log('[afuera] Injected Organization JSON-LD into index.html.');
+  console.log('[afuera] Updated index.html: injected Organization JSON-LD + 3 latest posts in homepage preview.');
   console.log('[afuera] Done.');
 }
 
