@@ -13,18 +13,86 @@ Single-page marketing site for **Afuera** — an AI consultancy for tour & exper
 ## Files
 
 ```
-index.html                      ~ 100KB — the entire site (HTML, CSS, vanilla JS all inline)
-vercel.json                     cache headers for HTML + PNGs
+index.html                      the entire landing page (HTML, CSS, vanilla JS all inline)
+vercel.json                     cache headers + build command + cleanUrls + trailingSlash
+package.json                    Node deps for the blog build (gray-matter, marked)
 hero-graphic.png                hero image (black bg, uses mix-blend-mode: screen)
-ali-headshot.png                used in About + How Engagements Work
+ali-headshot.png                used in About + How Engagements Work + trust bar
 itinerary-transformation.png    used in pain-points callout card
+robot-fix.png / guide-glow.png / total-connection.png   AI Audit card header images
+
+content/blog/*.md               blog post sources (markdown + YAML frontmatter)
+scripts/build.mjs               build script → generates /blog/*.html + sitemap + robots.txt + llms.txt
+scripts/templates.mjs           HTML head/nav/footer shared with index.html
+
+Generated on every `npm run build` (all gitignored — Vercel regenerates on deploy):
+  blog/index.html
+  blog/<slug>/index.html
+  sitemap.xml
+  robots.txt
+  llms.txt
+
 .env.local                      VERCEL_TOKEN (gitignored, never commit)
 .vercel/project.json            Vercel project link (gitignored)
+node_modules/                   gitignored; Vercel installs on each build
 ```
+
+## Blog workflow
+
+The blog is a tiny static generator. Zero runtime framework — every post becomes a pre-rendered HTML file at build time.
+
+### To publish a new post
+
+1. Create `content/blog/<slug>.md` with YAML frontmatter (see schema below)
+2. `git add content/blog/<slug>.md && git commit -m "New post: ..."`
+3. `git push` — Vercel runs `npm run build` → regenerates `blog/`, `sitemap.xml`, `robots.txt`, `llms.txt` → deploys
+
+That's it. To preview locally first: `npm run build && open blog/<slug>/index.html`.
+
+### Frontmatter schema
+
+```yaml
+---
+title: "How to stop losing your guides to paper lists"
+slug: "guides-to-paper"              # defaults to filename
+date: 2026-04-17                      # required; used for sort + sitemap lastmod
+summary: "A 2-minute TL;DR..."        # required; becomes TL;DR box + meta desc + og:description
+icps:                                 # optional; drives filter chips on /blog/
+  - tour operator
+  - guide
+tags:                                 # optional; article:tag meta + keywords
+  - field ops
+  - ai
+author: "Ali Murphy"                  # optional
+cover: "guide-glow.png"               # optional; og:image (default: hero-graphic.png)
+faq:                                  # optional; renders FAQ section + JSON-LD FAQPage
+  - question: "..."
+    answer: "..."
+---
+```
+
+### What each post page emits automatically
+
+- `<title>`, meta description, `<link rel=canonical>`
+- Open Graph (og:type=article, article:published_time, og:image, og:url, ...)
+- Twitter Card (summary_large_image)
+- **JSON-LD**: `Article`, `BreadcrumbList`, and `FAQPage` (if faq: is present)
+- Visible TL;DR callout box at top of post
+- Auto-TOC from H2 headings (2+ H2s required)
+- FAQ section at bottom (from frontmatter)
+- Reuses the main site's nav, footer, CSS — no design drift
+- "Book a Free Discovery Call" CTA block at the end
+
+### AEO/SEO primitives (auto-generated on every build)
+
+- `/sitemap.xml` — home + /blog + every post, with dates from frontmatter
+- `/robots.txt` — explicitly allows GPTBot, ClaudeBot, PerplexityBot, Google-Extended, CCBot
+- `/llms.txt` — emerging AI-crawler manifest (site summary + key pages + recent posts)
+- `Organization` JSON-LD is injected into the landing page `<head>` on every build
 
 ## Editing → deploying
 
-User edits the site by chatting with you. You edit `index.html` (or images) directly in this folder, then deploy:
+User edits the site by chatting with you. You edit `index.html` (or images, or `content/blog/*.md`) directly in this folder, then deploy:
 
 ```bash
 cd ~/Desktop/afuera-site && set -a && source .env.local && set +a && \
@@ -35,6 +103,8 @@ cd ~/Desktop/afuera-site && set -a && source .env.local && set +a && \
 ```
 
 **Both** `git push` and `vercel --prod` are needed today — the GitHub→Vercel webhook isn't wired (the user can fix this in Vercel Settings → Git → reconnect with the GitHub App installed for this repo, but it's not done yet). Until then, push to git for source-of-truth + deploy via CLI for live update.
+
+The `vercel --prod` command will also run `npm run build` on Vercel's side (per the `buildCommand` in `vercel.json`), which regenerates all blog output. You don't need to run `npm run build` locally before pushing — but if you want to preview blog changes locally, run it.
 
 ## Design system
 
