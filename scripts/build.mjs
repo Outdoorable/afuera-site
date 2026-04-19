@@ -58,6 +58,8 @@ function readPosts() {
       icps: fm.icps || [],
       tags: fm.tags || [],
       cluster: fm.cluster || '',
+      // type: "article" (default) or "tool" — drives the top content-type filter
+      type: (fm.type || 'article').toLowerCase(),
       author: fm.author || AUTHOR.name,
       cover: fm.cover || '',
       faq: fm.faq || [],
@@ -165,10 +167,14 @@ function breadcrumbJsonLd(post) {
 function renderPostCard(p) {
   const tags = (p.tags || []).slice(0, 3);
   const coverUrl = p.cover ? `/${p.cover}` : '/hero-graphic.png';
+  const isTool = p.type === 'tool';
   return `
-    <a class="post-card" href="/blog/${esc(p.slug)}/" data-icps="${esc((p.icps || []).join('|'))}">
+    <a class="post-card" href="/blog/${esc(p.slug)}/"
+       data-icps="${esc((p.icps || []).join('|'))}"
+       data-type="${esc(p.type || 'article')}">
       <div class="post-card-image">
         <img src="${esc(coverUrl)}" alt="" loading="lazy" />
+        ${isTool ? `<span class="post-card-type-badge">Free tool</span>` : ''}
       </div>
       <div class="post-card-meta">
         ${p.cluster ? `<span class="post-card-cluster">${esc(p.cluster)}</span>` : ''}
@@ -306,11 +312,23 @@ function renderBlogIndex(posts) {
     ],
   });
 
-  // ICP filter chips — union of all icps values across posts
-  const allIcps = [...new Set(posts.flatMap(p => p.icps))];
+  // ─── Filters ──────────────────────────────────────────────────────
+  // Content-type filter (articles vs. tools) — shown when at least one
+  // non-article post exists; otherwise hidden to keep the UI clean.
+  const hasTools = posts.some(p => p.type === 'tool');
+  const typeFilterHtml = hasTools
+    ? `<div class="blog-type-filters" role="tablist" aria-label="Filter by content type">
+    <button class="type-tab active" data-type="all">All</button>
+    <button class="type-tab" data-type="article">Articles</button>
+    <button class="type-tab" data-type="tool">Free tools</button>
+  </div>`
+    : '';
 
-  const filtersHtml = allIcps.length
+  // ICP filter chips — union of all icps across posts, alphabetized.
+  const allIcps = [...new Set(posts.flatMap(p => p.icps))].sort((a, b) => a.localeCompare(b));
+  const icpFilterHtml = allIcps.length
     ? `<div class="blog-filters" role="tablist" aria-label="Filter by audience">
+    <span class="blog-filters-label">Filter by role:</span>
     <button class="filter-chip active" data-icp="all">All</button>
     ${allIcps.map(icp => `<button class="filter-chip" data-icp="${esc(icp)}">${esc(icp)}</button>`).join('')}
   </div>`
@@ -332,17 +350,40 @@ function renderBlogIndex(posts) {
   const filterScript = `
 <script>
 (function() {
-  const chips = document.querySelectorAll('.filter-chip');
+  const typeTabs = document.querySelectorAll('.type-tab');
+  const icpChips = document.querySelectorAll('.filter-chip');
   const cards = document.querySelectorAll('.post-card');
-  chips.forEach(chip => chip.addEventListener('click', () => {
-    chips.forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    const icp = chip.dataset.icp;
+  const emptyMsg = document.getElementById('blog-empty-filtered');
+
+  let activeType = 'all';
+  let activeIcp = 'all';
+
+  function applyFilters() {
+    let shown = 0;
     cards.forEach(card => {
-      const icps = (card.dataset.icps || '').split('|').filter(Boolean);
-      const show = icp === 'all' || icps.includes(icp);
+      const cardType = card.dataset.type || 'article';
+      const cardIcps = (card.dataset.icps || '').split('|').filter(Boolean);
+      const typeMatch = activeType === 'all' || cardType === activeType;
+      const icpMatch = activeIcp === 'all' || cardIcps.includes(activeIcp);
+      const show = typeMatch && icpMatch;
       card.style.display = show ? '' : 'none';
+      if (show) shown++;
     });
+    if (emptyMsg) emptyMsg.style.display = shown === 0 ? '' : 'none';
+  }
+
+  typeTabs.forEach(tab => tab.addEventListener('click', () => {
+    typeTabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    activeType = tab.dataset.type;
+    applyFilters();
+  }));
+
+  icpChips.forEach(chip => chip.addEventListener('click', () => {
+    icpChips.forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeIcp = chip.dataset.icp;
+    applyFilters();
   }));
 })();
 </script>
@@ -358,11 +399,13 @@ function renderBlogIndex(posts) {
 
 ${communityCallout}
 
-${filtersHtml}
+${typeFilterHtml}
+${icpFilterHtml}
 
 <div class="blog-grid">
   ${cardsHtml}
 </div>
+<p id="blog-empty-filtered" class="blog-empty" style="display:none;">No posts match that filter combination — try another.</p>
 
 ${filterScript}
 

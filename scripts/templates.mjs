@@ -496,23 +496,70 @@ const BLOG_STYLES = `
     color: var(--text-primary);
   }
 
-  /* Filter chips */
+  /* ── Content-type tabs (Articles / Free tools) ── */
+  .blog-type-filters {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 3rem 1rem;
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+  .type-tab {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    padding: 0.9rem 1.75rem 1.25rem;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s ease;
+    margin-bottom: -1px;
+  }
+  .type-tab:hover { color: var(--text-primary); }
+  .type-tab.active {
+    color: var(--text-primary);
+  }
+  .type-tab.active::after {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: -1px;
+    height: 3px;
+    background: var(--accent-orange);
+    border-radius: 2px 2px 0 0;
+  }
+
+  /* ── ICP filter chips ── */
   .blog-filters {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 3rem 2rem;
+    padding: 1.5rem 3rem 2rem;
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0.5rem;
+  }
+  .blog-filters-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-right: 0.5rem;
   }
   .filter-chip {
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 0.5rem 1rem;
-    border: 1px solid rgba(31,31,31,0.15);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: capitalize;
+    padding: 0.45rem 0.95rem;
+    border: 1px solid rgba(31,31,31,0.14);
     border-radius: 100px;
     background: transparent;
     color: var(--text-secondary);
@@ -520,13 +567,32 @@ const BLOG_STYLES = `
     transition: background 0.25s, color 0.25s, border-color 0.25s;
   }
   .filter-chip:hover {
-    color: var(--accent-orange);
-    border-color: var(--accent-orange);
+    color: var(--text-primary);
+    border-color: var(--text-primary);
   }
   .filter-chip.active {
+    background: var(--accent-orange);
+    color: #fff;
+    border-color: var(--accent-orange);
+  }
+
+  /* Free-tool badge, overlaid on the card image */
+  .post-card-image { position: relative; }
+  .post-card-type-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.35rem 0.75rem;
     background: var(--text-primary);
-    color: var(--bg-cream, #FAF7F5);
-    border-color: var(--text-primary);
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 100px;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   }
 
   .blog-empty {
@@ -597,7 +663,10 @@ const BLOG_STYLES = `
   @media (max-width: 820px) {
     .blog-hero { padding: 8rem 1.5rem 2rem; }
     .blog-grid { padding: 1rem 1.5rem 5rem; gap: 2.5rem 1.25rem; }
-    .blog-filters { padding: 0 1.5rem 1.5rem; }
+    .blog-filters { padding: 1rem 1.5rem 1.5rem; }
+    .blog-type-filters { padding: 0 1.5rem 0; }
+    .type-tab { padding: 0.75rem 1rem 1rem; font-size: 0.9rem; }
+    .type-tab.active::after { left: 1rem; right: 1rem; }
     .post-body { padding: 0 1.5rem 4rem; font-size: 1.05rem; }
     .post-faq { padding: 0 1.5rem; }
     .post-cta { margin: 3rem 1.5rem; padding: 2rem 1.5rem; }
