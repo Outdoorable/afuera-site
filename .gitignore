@@ -10,3 +10,9 @@ node_modules/
 /sitemap.xml
 /robots.txt
 /llms.txt
+
+# macOS
+.DS_Store
+
+# Source images folder (outside repo intent)
+Afuera blogs/
