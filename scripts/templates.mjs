@@ -323,6 +323,75 @@ const BLOG_STYLES = `
     margin: 3rem 0;
   }
 
+  /* ── Editorial tables ──
+     Tables in posts are treated as designed objects — rounded card,
+     warm gradient header, alternating row bands, generous padding.
+     Wrapped in .table-wrap for horizontal scroll on narrow screens
+     without breaking layout. */
+  .post-body .table-wrap {
+    margin: 2.5rem 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 14px;
+    box-shadow: 0 2px 24px rgba(0, 0, 0, 0.04),
+                0 1px 2px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: #FFF;
+  }
+  .post-body table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.93rem;
+    line-height: 1.55;
+    margin: 0;
+  }
+  .post-body thead {
+    background: linear-gradient(135deg,
+                  rgba(255, 122, 89, 0.14) 0%,
+                  rgba(255, 209, 102, 0.10) 100%);
+    border-bottom: 2px solid rgba(255, 122, 89, 0.35);
+  }
+  .post-body thead th {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    text-align: left;
+    padding: 1rem 1.5rem;
+    white-space: nowrap;
+  }
+  .post-body tbody td {
+    padding: 1rem 1.5rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    vertical-align: top;
+  }
+  .post-body tbody tr:nth-child(even) {
+    background: #FAF7F3;
+  }
+  .post-body tbody tr:last-child td {
+    border-bottom: none;
+  }
+  /* First column gets slightly stronger weight — anchors the row */
+  .post-body tbody td:first-child {
+    font-weight: 600;
+  }
+  /* If the first column's cell is short (a score range, a label),
+     keep it on one line so the other columns have more room */
+  .post-body tbody td:first-child:not(:has(p, ul, ol)) {
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    .post-body thead th,
+    .post-body tbody td {
+      padding: 0.85rem 1rem;
+      font-size: 0.88rem;
+    }
+  }
+
   /* FAQ section */
   .post-faq {
     max-width: 720px;

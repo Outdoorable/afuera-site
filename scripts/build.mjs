@@ -142,6 +142,11 @@ function renderMarkdown(md) {
     return `<h${depth} id="${id}">${inner}</h${depth}>`;
   });
 
+  // Wrap tables in a scrollable container so they don't blow out the
+  // narrow post column on mobile.
+  html = html.replace(/<table>/g, '<div class="table-wrap"><table>')
+             .replace(/<\/table>/g, '</table></div>');
+
   return { html, toc: headings };
 }
 
