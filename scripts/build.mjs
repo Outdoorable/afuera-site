@@ -489,8 +489,8 @@ ${toc.length >= 2 ? `<script>
 function renderBlogIndex(posts) {
   const url = `${SITE_URL}/blog/`;
   const head = siteHead({
-    title: `Blog — ${SITE_NAME}`,
-    description: `AI insight for people in travel and tourism. Articles on AI workflows for tour operators, custom trip designers, and travel advisors.`,
+    title: `Blog | AI for Tour Operators, Advisors & DMCs | ${SITE_NAME}`,
+    description: `Writing on AI in travel operations by Ali Murphy. Field ops, proposals, vendor management, AI readiness, and the work behind better trips. New posts weekly.`,
     canonical: url,
     ogType: 'website',
     jsonLd: [
