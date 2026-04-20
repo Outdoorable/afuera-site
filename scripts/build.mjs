@@ -40,8 +40,14 @@ const decodeEntities = s => String(s || '')
 const AUTHOR = {
   name: 'Ali Murphy',
   photo: '/ali-headshot.png',
-  url: `${'https://www.afuerai.com'}/#about`,
+  slug: 'ali-murphy',
+  url: `${'https://www.afuerai.com'}/author/ali-murphy/`,
   bio: 'Former active travel guide and tour operator executive. Building AI systems for travel and tourism.',
+  bioLong: `Ali Murphy is the founder of Afuera. She spent a decade in the active travel industry — first as a wilderness guide running multi-day trips, then as an executive at a global tour operator where she led operations, product, and guide training. She now runs Afuera, an AI consulting and implementation firm built specifically for travel and tourism businesses.
+
+Her work sits at the intersection of three things most AI consultants don't understand together: how a trip actually runs on the ground, how a travel operations team actually spends its day, and where AI can create real leverage without breaking the human parts of the guest experience. She writes about AI strategy, field operations, office operations, and the unglamorous operational honesty that separates travel businesses who ship with AI from those who stall in pilots.
+
+Ali is based in Colorado. She works with tour operators, custom trip designers, travel advisors, DMCs, and experience companies across four continents.`,
   sameAs: [
     'https://www.linkedin.com/in/alimariemurphy',
   ],
@@ -154,6 +160,91 @@ function formatDate(iso) {
   if (!iso) return '';
   const d = new Date(iso + 'T00:00:00Z');
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+}
+
+// Human-readable relative date. Used for "Updated X days ago" freshness
+// signals on the post page. Falls back to the absolute date for anything
+// older than a year. Dates in the future (scheduled posts) render absolute.
+function relativeDate(iso) {
+  if (!iso) return '';
+  const then = new Date(iso + 'T00:00:00Z');
+  const now = new Date();
+  const msPerDay = 86400000;
+  const days = Math.floor((now - then) / msPerDay);
+  if (days < 0) return formatDate(iso);       // future dates → absolute
+  if (days === 0) return 'today';
+  if (days === 1) return 'yesterday';
+  if (days < 7) return `${days} days ago`;
+  if (days < 14) return 'last week';
+  if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
+  if (days < 60) return 'last month';
+  if (days < 365) return `${Math.floor(days / 30)} months ago`;
+  return formatDate(iso);
+}
+
+// ─── Voice-rule lint ─────────────────────────────────────────────────
+// Scans post body for brand-voice violations: em dashes, AI-fluff
+// buzzwords, weak hedges, and generic blogger transitions. Logs as
+// warnings. Never fails the build — voice is judgment, not a gate.
+const VOICE_BANNED_WORDS = [
+  'leverage', 'unlock', 'streamline', 'transform', 'revolutionize',
+  'revolutionary', 'seamless', 'cutting-edge', 'cutting edge',
+  'world-class', 'world class', 'best-in-class', 'best in class',
+  'next-generation', 'next generation', 'synergy', 'synergies',
+  'game-changer', 'game changer', 'game-changing',
+  'robust', 'holistic', 'paradigm',
+];
+const VOICE_HEDGES = ['somewhat', 'perhaps', 'potentially', 'arguably', 'seemingly'];
+const VOICE_WEAK_ADVERBS = ['really', 'very', 'quite', 'extremely', 'significantly', 'incredibly'];
+const VOICE_GENERIC_TRANSITIONS = [
+  "here's the kicker", "here's the thing", 'the thing is', 'let me explain',
+  'at the end of the day', 'needless to say', 'it goes without saying',
+];
+
+function lintVoicePost(post) {
+  const warnings = [];
+  // Skip frontmatter-derived fields and the subtitle — lint only body prose.
+  const body = post.body || '';
+  const lines = body.split('\n');
+
+  lines.forEach((line, i) => {
+    const lineNum = i + 1;
+    // Skip fenced code and table rows — false positives (em dash in CLI args, etc.)
+    if (/^\s*```/.test(line) || /^\s*\|/.test(line)) return;
+
+    // Em dashes (en-dash too, for good measure — voice prefers plain dash)
+    if (/—|–/.test(line)) {
+      warnings.push({ line: lineNum, type: 'em-dash', snippet: line.trim().slice(0, 100) });
+    }
+
+    const lower = line.toLowerCase();
+    VOICE_BANNED_WORDS.forEach(w => {
+      const re = new RegExp(`\\b${w.replace(/[-\s]/g, '[-\\s]')}\\b`, 'i');
+      if (re.test(lower)) warnings.push({ line: lineNum, type: `banned:"${w}"`, snippet: line.trim().slice(0, 100) });
+    });
+    VOICE_HEDGES.forEach(w => {
+      if (new RegExp(`\\b${w}\\b`, 'i').test(lower)) {
+        warnings.push({ line: lineNum, type: `hedge:"${w}"`, snippet: line.trim().slice(0, 100) });
+      }
+    });
+    VOICE_WEAK_ADVERBS.forEach(w => {
+      if (new RegExp(`\\b${w}\\b`, 'i').test(lower)) {
+        warnings.push({ line: lineNum, type: `weak-adverb:"${w}"`, snippet: line.trim().slice(0, 100) });
+      }
+    });
+    VOICE_GENERIC_TRANSITIONS.forEach(w => {
+      if (lower.includes(w)) warnings.push({ line: lineNum, type: `transition:"${w}"`, snippet: line.trim().slice(0, 100) });
+    });
+  });
+
+  if (warnings.length) {
+    console.warn(`[voice]   ${post.slug}: ${warnings.length} warning(s)`);
+    warnings.slice(0, 12).forEach(w => {
+      console.warn(`[voice]     L${w.line} ${w.type}  ${w.snippet}`);
+    });
+    if (warnings.length > 12) console.warn(`[voice]     …and ${warnings.length - 12} more`);
+  }
+  return warnings.length;
 }
 
 // ─── JSON-LD builders ────────────────────────────────────────────────
@@ -309,7 +400,13 @@ function renderPostPage(post) {
   </div>`;
 
   const updatedLine = post.updated && post.updated !== post.date
-    ? `<span class="post-updated">Updated ${esc(formatDate(post.updated))}</span>`
+    ? `<span class="post-updated" title="${esc(formatDate(post.updated))}">Updated ${esc(relativeDate(post.updated))}</span>`
+    : '';
+
+  // Hero image on the post page itself — editorial feel, not just card art.
+  // Uses the same WebP as the social/OG image. Rendered 3:2 under the H1+dek.
+  const heroImgHtml = post.cover
+    ? `<div class="post-hero-image"><img src="/${esc(post.cover.replace(/^\/+/, ''))}" alt="${esc(post.coverAlt || post.title)}" /></div>`
     : '';
 
   // Subtitle / dek — render the SEO title as a visible H2 under the H1
@@ -328,6 +425,7 @@ function renderPostPage(post) {
     ${post.cluster ? `<p class="post-cluster">${esc(post.cluster)}</p>` : ''}
     <h1>${esc(post.title)}</h1>
     ${subtitleHtml}
+    ${heroImgHtml}
     <div class="post-meta">
       ${post.date ? `<span>${esc(formatDate(post.date))}</span>` : ''}
       ${updatedLine ? `<span class="dot">·</span>${updatedLine}` : ''}
@@ -511,6 +609,93 @@ ${filterScript}
 ` + siteBodyClose();
 }
 
+// ─── Author page (/author/ali-murphy/) ───────────────────────────────
+// Dedicated E-A-T page for Ali. Hosts the long bio, sameAs links, a
+// ProfilePage + Person JSON-LD, and the list of all posts written by
+// her. Linked from every post byline.
+
+function renderAuthorPage(posts) {
+  const authorPosts = posts.filter(p => (p.author || AUTHOR.name) === AUTHOR.name);
+  const url = `${SITE_URL}/author/${AUTHOR.slug}/`;
+  const personLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: AUTHOR.name,
+    url,
+    image: `${SITE_URL}${AUTHOR.photo}`,
+    description: AUTHOR.bio,
+    sameAs: AUTHOR.sameAs,
+    jobTitle: 'Founder',
+    worksFor: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+  };
+  const profileLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    name: `${AUTHOR.name} — Author at ${SITE_NAME}`,
+    url,
+    mainEntity: personLd,
+  };
+
+  const head = siteHead({
+    title: `${AUTHOR.name} — Author at ${SITE_NAME}`,
+    description: AUTHOR.bio,
+    canonical: url,
+    ogImage: `${SITE_URL}${AUTHOR.photo}`,
+    ogType: 'profile',
+    jsonLd: [profileLd, breadcrumbJsonLd({ slug: `author/${AUTHOR.slug}`, title: AUTHOR.name })],
+  });
+
+  const bioParagraphs = AUTHOR.bioLong.trim().split(/\n\s*\n/)
+    .map(p => `<p>${esc(p.trim())}</p>`).join('\n');
+
+  const sameAsHtml = AUTHOR.sameAs.length
+    ? `<div class="author-links">
+        ${AUTHOR.sameAs.map(href => {
+          const label = /linkedin\.com/i.test(href) ? 'LinkedIn'
+            : /twitter\.com|x\.com/i.test(href) ? 'X / Twitter'
+            : new URL(href).hostname.replace(/^www\./, '');
+          return `<a href="${esc(href)}" rel="me noopener" target="_blank">${esc(label)} ↗</a>`;
+        }).join('')}
+      </div>`
+    : '';
+
+  const postsGrid = authorPosts.length
+    ? `<div class="blog-grid">${authorPosts.map(p => renderPostCard(p)).join('')}</div>`
+    : `<p class="blog-empty">No posts yet.</p>`;
+
+  return head + siteBodyOpen('blog-page') + `
+
+<header class="author-hero">
+  <a href="/blog/" class="back-to-blog">← All posts</a>
+  <div class="author-hero-inner">
+    <img src="${esc(AUTHOR.photo)}" alt="${esc(AUTHOR.name)}" class="author-photo" />
+    <div class="author-hero-text">
+      <p class="section-label">Author</p>
+      <h1>${esc(AUTHOR.name)}</h1>
+      <p class="author-tagline">${esc(AUTHOR.bio)}</p>
+      ${sameAsHtml}
+    </div>
+  </div>
+</header>
+
+<section class="author-bio">
+  ${bioParagraphs}
+</section>
+
+<section class="author-posts">
+  <h2 class="author-posts-title">Posts by ${esc(AUTHOR.name)}</h2>
+  ${postsGrid}
+</section>
+
+` + siteBodyClose();
+}
+
+function writeAuthorPage(posts) {
+  const dir = path.join(ROOT, 'author', AUTHOR.slug);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'index.html'), renderAuthorPage(posts));
+}
+
 // ─── Artifacts: sitemap, robots, llms.txt ────────────────────────────
 
 function writeRobots() {
@@ -582,10 +767,11 @@ function writeSitemap(posts) {
     { loc: `${SITE_URL}/blog/`, priority: '0.9', changefreq: 'daily' },
     ...posts.map(p => ({
       loc: `${SITE_URL}/blog/${p.slug}/`,
-      lastmod: p.date,
+      lastmod: p.updated || p.date,
       priority: '0.7',
       changefreq: 'monthly',
     })),
+    { loc: `${SITE_URL}/author/${AUTHOR.slug}/`, priority: '0.5', changefreq: 'monthly' },
     { loc: `${SITE_URL}/privacy/`, priority: '0.3', changefreq: 'yearly' },
     { loc: `${SITE_URL}/terms/`, priority: '0.3', changefreq: 'yearly' },
   ];
@@ -805,12 +991,24 @@ function build() {
   fs.writeFileSync(path.join(OUT_BLOG_DIR, 'index.html'), renderBlogIndex(posts));
 
   // Write /blog/<slug>/index.html per post
+  let totalVoiceWarnings = 0;
   for (const post of posts) {
     const dir = path.join(OUT_BLOG_DIR, post.slug);
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(path.join(dir, 'index.html'), renderPostPage(post));
     console.log(`[afuera]   /blog/${post.slug}/  "${post.title}"`);
+    totalVoiceWarnings += lintVoicePost(post);
   }
+  if (totalVoiceWarnings) {
+    console.warn(`[voice] ${totalVoiceWarnings} total voice warning(s) across ${posts.length} post(s). Not failing build.`);
+  } else {
+    console.log('[voice] 0 warnings — clean.');
+  }
+
+  // Author page (/author/ali-murphy/)
+  rmrf(path.join(ROOT, 'author'));
+  writeAuthorPage(posts);
+  console.log(`[afuera]   /author/${AUTHOR.slug}/  "${AUTHOR.name}"`);
 
   // Site-wide artifacts
   writeRobots();
