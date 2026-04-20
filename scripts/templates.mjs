@@ -28,7 +28,9 @@ const SITE_FOOTER = extractBetween(indexHtml, '<!-- FOOTER -->', '</footer>') + 
 
 // Extract the <script> block at the end of body (nav scroll, smooth scroll,
 // mobile toggle, etc.) so these behaviors work on blog pages too.
-const SITE_SCRIPT = extractBetween(indexHtml, '<script>', '</script>');
+// Uses the <!-- SITE-SCRIPT --> / <!-- /SITE-SCRIPT --> markers to avoid
+// accidentally grabbing the GA tag or other <script> blocks in <head>.
+const SITE_SCRIPT = extractBetween(indexHtml, '<!-- SITE-SCRIPT -->', '<!-- /SITE-SCRIPT -->');
 
 // ─────────────────────────────────────────────────────────────────────
 // Blog-specific styles — additive, not a rewrite. Keeps the post pages
@@ -912,6 +914,14 @@ export function siteHead({ title, description, canonical, ogImage, ogType = 'web
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KVQGBHKENH"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-KVQGBHKENH');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${esc(title)}</title>
@@ -959,7 +969,7 @@ export function siteBodyClose() {
 ${SITE_FOOTER}
 
 <script>
-${SITE_SCRIPT.replace(/^<script>|<\/script>$/g, '').trim()}
+${SITE_SCRIPT.replace(/<!-- \/?SITE-SCRIPT -->/g, '').replace(/<\/?script>/g, '').trim()}
 </script>
 
 </body>
