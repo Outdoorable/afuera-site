@@ -59,6 +59,7 @@ const ICP_LABELS = {
   ITL: 'Independent Trip Leader',
   TA: 'Travel Advisor',
   TD: 'Trip Designer',
+  CTD: 'Custom Trip Designer',
   EC: 'Experience Company',
   DMC: 'DMC',
   LD: 'Luxury Trip Designer',
