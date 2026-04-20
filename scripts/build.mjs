@@ -22,6 +22,19 @@ const OUT_BLOG_DIR = path.join(ROOT, 'blog');
 const esc = s => String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const slugify = s => String(s).toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
 
+// Decode HTML entities back to real characters. Used for extracting
+// human-readable text from marked's already-encoded HTML output
+// (otherwise esc() would double-encode at render time — e.g.
+// apostrophes showing up as literal "&#39;" in the TOC).
+const decodeEntities = s => String(s || '')
+  .replace(/&#x([0-9a-fA-F]+);/g, (_, n) => String.fromCharCode(parseInt(n, 16)))
+  .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(parseInt(n, 10)))
+  .replace(/&quot;/g, '"')
+  .replace(/&apos;/g, "'")
+  .replace(/&lt;/g, '<')
+  .replace(/&gt;/g, '>')
+  .replace(/&amp;/g, '&'); // must be last so we don't re-process other entities
+
 // Author identity — used for Person JSON-LD and the visible byline.
 // sameAs links are what LLMs use to verify authorship across the open web.
 const AUTHOR = {
@@ -117,7 +130,9 @@ function renderMarkdown(md) {
   let html = marked.parse(md);
 
   html = html.replace(/<h([2-6])>([\s\S]*?)<\/h\1>/g, (_, depth, inner) => {
-    const plain = inner.replace(/<[^>]+>/g, '').trim();
+    // Strip HTML tags and decode entities so `plain` is readable text
+    // (apostrophes, quotes, etc. resolve to their real characters).
+    const plain = decodeEntities(inner.replace(/<[^>]+>/g, '')).trim();
     const baseSlug = slugify(plain);
     let id = baseSlug;
     const n = slugCounts.get(baseSlug) || 0;
