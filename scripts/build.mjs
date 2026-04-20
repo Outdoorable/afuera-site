@@ -307,6 +307,14 @@ function renderPostPage(post) {
     ? `<span class="post-updated">Updated ${esc(formatDate(post.updated))}</span>`
     : '';
 
+  // Subtitle / dek — render the SEO title as a visible H2 under the H1
+  // when it's different from the voice title. Gives every post a proper
+  // editorial dek with zero extra frontmatter. The .post-subtitle class
+  // is explicitly excluded from the TOC scan below.
+  const subtitleHtml = (post.seoTitle && post.seoTitle !== post.title)
+    ? `<h2 class="post-subtitle">${esc(post.seoTitle)}</h2>`
+    : '';
+
   return head + siteBodyOpen('blog-page') + `
 
 <article>
@@ -314,6 +322,7 @@ function renderPostPage(post) {
     <a href="/blog/" class="back-to-blog">← All posts</a>
     ${post.cluster ? `<p class="post-cluster">${esc(post.cluster)}</p>` : ''}
     <h1>${esc(post.title)}</h1>
+    ${subtitleHtml}
     <div class="post-meta">
       ${post.date ? `<span>${esc(formatDate(post.date))}</span>` : ''}
       ${updatedLine ? `<span class="dot">·</span>${updatedLine}` : ''}

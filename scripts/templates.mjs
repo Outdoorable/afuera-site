@@ -54,7 +54,21 @@ const BLOG_STYLES = `
     line-height: 1.05;
     letter-spacing: -0.03em;
     color: var(--text-primary);
-    margin-bottom: 1rem;
+    margin-bottom: 0.85rem;
+  }
+
+  /* Editorial dek — sits under the voice H1, rendered as H2 but styled
+     as a subtitle so it doesn't visually compete. */
+  .post-subtitle {
+    font-family: 'Fraunces', 'Space Grotesk', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(1.15rem, 2vw, 1.5rem);
+    line-height: 1.35;
+    color: var(--text-secondary);
+    letter-spacing: -0.005em;
+    max-width: 720px;
+    margin: 0 0 1.75rem;
   }
   .blog-hero .blog-hero-sub {
     font-size: 1.1rem;
