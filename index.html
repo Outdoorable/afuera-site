@@ -3814,10 +3814,10 @@
   <p class="section-label">Join the Community</p>
   <h2 class="section-title" style="margin-left: auto; margin-right: auto;">Free webinars, resources, and a network of travel folk building with AI.</h2>
   <p class="section-desc" style="margin-left: auto; margin-right: auto;">We run regular sessions on what's working, what's not, and what's next for AI in the experience industry. Join operators, advisors, and trip designers who are figuring this out together.</p>
-  <form style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2rem; max-width: 420px; margin-left: auto; margin-right: auto;" onsubmit="event.preventDefault();">
-    <input type="text" placeholder="Name" style="padding: 1rem 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: var(--text-light); font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none;" />
-    <input type="email" placeholder="Email" style="padding: 1rem 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: var(--text-light); font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none;" />
-    <select style="padding: 1rem 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: #999999; font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; appearance: none; -webkit-appearance: none; background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23999%22 stroke-width=%222%22><polyline points=%226 9 12 15 18 9%22/></svg>'); background-repeat: no-repeat; background-position: right 1.25rem center;">
+  <form id="community-form" action="https://formsubmit.co/ajax/hello@afuerai.com" method="POST" style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2rem; max-width: 420px; margin-left: auto; margin-right: auto;">
+    <input type="text" name="name" placeholder="Name" required style="padding: 1rem 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: var(--text-light); font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none;" />
+    <input type="email" name="email" placeholder="Email" required style="padding: 1rem 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: var(--text-light); font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none;" />
+    <select name="role" required style="padding: 1rem 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: #999999; font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; appearance: none; -webkit-appearance: none; background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23999%22 stroke-width=%222%22><polyline points=%226 9 12 15 18 9%22/></svg>'); background-repeat: no-repeat; background-position: right 1.25rem center;">
       <option value="" disabled selected>What best describes you?</option>
       <option value="travel-advisor">Travel Advisor</option>
       <option value="trip-leader">Independent Trip Leader</option>
@@ -3827,8 +3827,20 @@
       <option value="luxury-designer">Luxury Trip Designer</option>
       <option value="other">Other</option>
     </select>
+    <!-- FormSubmit config: email subject + honeypot spam guard + disable their thank-you page (we handle it) -->
+    <input type="hidden" name="_subject" value="New community signup — Afuera">
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_template" value="table">
     <button type="submit" style="background: var(--accent-orange); color: var(--text-light); padding: 1rem 2rem; border-radius: 100px; border: none; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; margin-top: 0.5rem; transition: transform 0.2s, box-shadow 0.2s;">Join the Community</button>
   </form>
+  <div id="community-thanks" style="display:none; margin-top: 2rem; max-width: 420px; margin-left: auto; margin-right: auto; padding: 1.5rem 1.75rem; border: 1px solid rgba(255, 122, 89, 0.35); border-radius: 14px; background: rgba(255, 122, 89, 0.08); color: var(--text-light);">
+    <p style="margin:0 0 0.35rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.05rem; color: var(--accent-orange);">You're in.</p>
+    <p style="margin:0; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; line-height: 1.5; color: var(--text-light-secondary);">Thanks for joining. We'll be in touch with the next session details.</p>
+  </div>
+  <div id="community-error" style="display:none; margin-top: 2rem; max-width: 420px; margin-left: auto; margin-right: auto; padding: 1rem 1.25rem; border: 1px solid rgba(255,255,255,0.18); border-radius: 14px; color: var(--text-light-secondary); font-family: 'DM Sans', sans-serif; font-size: 0.9rem;">
+    Something went wrong. Please email <a href="mailto:hello@afuerai.com" style="color: var(--accent-orange);">hello@afuerai.com</a> and we'll add you manually.
+  </div>
 </section>
 </div>
 
@@ -3863,6 +3875,38 @@
 
 <!-- SITE-SCRIPT -->
 <script>
+// Community signup — AJAX submit to FormSubmit, show inline thanks,
+// keep the user on-page. No CRM, no redirect, just an email to hello@afuerai.com.
+(function() {
+  const form = document.getElementById('community-form');
+  if (!form) return;
+  const thanks = document.getElementById('community-thanks');
+  const errorMsg = document.getElementById('community-error');
+  const btn = form.querySelector('button[type="submit"]');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const originalLabel = btn.textContent;
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(form),
+      });
+      if (!res.ok) throw new Error('Network error');
+      form.style.display = 'none';
+      if (errorMsg) errorMsg.style.display = 'none';
+      if (thanks) thanks.style.display = 'block';
+      if (window.gtag) gtag('event', 'community_signup', { method: 'form' });
+    } catch (err) {
+      btn.textContent = originalLabel;
+      btn.disabled = false;
+      if (errorMsg) errorMsg.style.display = 'block';
+    }
+  });
+})();
+
 // Cache
 const nav = document.querySelector('nav');
 const hero = document.querySelector('.hero');
