@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
+<title>Iconic × Claude — Expense Workflow Demo</title>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  html, body, #root { margin: 0; padding: 0; }
+  body { background: #F4F1EA; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+
+// ---------- INLINE LUCIDE-STYLE ICONS (SVG) ----------
+const Icon = ({ d, size = 16, strokeWidth = 1.75, color = "currentColor" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24"
+    fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    {d}
+  </svg>
+);
+const Plane = (p) => <Icon {...p} d={<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>} />;
+const Receipt = (p) => <Icon {...p} d={<><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></>} />;
+const FileText = (p) => <Icon {...p} d={<><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></>} />;
+const Wallet = (p) => <Icon {...p} d={<><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></>} />;
+const Clock = (p) => <Icon {...p} d={<><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>} />;
+const FileCheck = (p) => <Icon {...p} d={<><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></>} />;
+const ChevronRight = (p) => <Icon {...p} d={<polyline points="9 18 15 12 9 6"/>} />;
+const Upload = (p) => <Icon {...p} d={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></>} />;
+const Sparkles = (p) => <Icon {...p} d={<><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></>} />;
+const AlertCircle = (p) => <Icon {...p} d={<><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></>} />;
+const Bell = (p) => <Icon {...p} d={<><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></>} />;
+
+// ---------- DEMO DATA ----------
+const TRIP = {
+  client: "Lala Foundation",
+  customerJob: "Lala Foundation : Lala Foundation CDMX Ali Murphy, 2026",
+  location: "Mexico City",
+  dates: "Apr 9–13, 2026",
+  leader: { name: "Ali Murphy", initials: "AM" },
+  coLeader: { name: "Maria Reyes", initials: "MR" },
+  cardLast4: "4287",
+  cashAdvance: 1750,
+};
+
+const STAGES = [
+  { id: "onboarding", label: "Onboarding", icon: Plane, skill: "iconic-onboarding" },
+  { id: "receipts", label: "Receipts", icon: Receipt, skill: "iconic-receipt-processor" },
+  { id: "categorize", label: "Categorize", icon: FileText, skill: "iconic-expense-categorizer" },
+  { id: "cash", label: "Cash", icon: Wallet, skill: "iconic-cash-reconciler" },
+  { id: "hours", label: "Hours", icon: Clock, skill: "iconic-hours-logger" },
+  { id: "submit", label: "Submit", icon: FileCheck, skill: "iconic-report-builder" },
+];
+
+const RECEIPTS = [
+  { file: "IMG_4421.HEIC", merchant: "Contramar", date: "Apr 9", amount: "1,847 MXN", usd: 108.06, category: "E- Restaurant & Other Food", method: "Card", status: "matched" },
+  { file: "IMG_4438.HEIC", merchant: "Ritz Carlton", date: "Apr 10", amount: "645 MXN", usd: 37.94, category: "E- Restaurant & Other Food", method: "Card", status: "matched" },
+  { file: "Receipt_10APR2026.pdf", merchant: "Uber", date: "Apr 10", amount: "$24.18", usd: 24.18, category: "E- FAM/Pre/Post - Mileage", method: "Card", status: "matched" },
+  { file: "IMG_4452.HEIC", merchant: "Mesa Meroma", date: "Apr 10", amount: "3,795 MXN", usd: 220.0, category: "E- Trip Alcohol/Cocktail", method: "Venmo", status: "flag" },
+  { file: "IMG_4467.HEIC", merchant: "Laguna", date: "Apr 11", amount: "2,140 MXN", usd: 124.65, category: "E- Trip Alcohol/Cocktail", method: "Card", status: "matched" },
+];
+
+const CASH_LINES = [
+  { item: "Mezcal venue tip", budget: 100, paidBy: "Ali", method: "Cash USD", usd: 50 },
+  { item: "Tour guide tips", budget: 200, paidBy: "Maria", method: "Cash MXN", usd: 200 },
+  { item: "Lucha drinks", budget: 400, paidBy: "Ali", method: "Venmo", usd: 88 },
+  { item: "Cooking class gratuity", budget: 300, paidBy: "Maria", method: "Cash USD", usd: 300 },
+  { item: "Activity tips", budget: 250, paidBy: "—", method: "—", usd: 0, missing: true },
+];
+
+const HOURS = [
+  { type: "Research", value: "18.5 hrs", dates: "Feb 12 – Apr 4", category: "E- Research (per diem)" },
+  { type: "FAM days", value: "2 days", dates: "Apr 7–8", category: "E- Leader Pay - FAM/Pre/Post" },
+  { type: "Trip days", value: "5 days", dates: "Apr 9–13", category: "E- Leader Pay - Trip" },
+];
+
+const FINAL_REPORTS = [
+  { name: "Credit Card _ Ali Murphy _ 04/13/2026", count: 14, total: 2847.32, type: "Credit Card" },
+  { name: "Reimbursable _ Ali Murphy _ 04/13/2026", count: 6, total: 638.0, type: "Reimbursable" },
+  { name: "Pay Report _ Ali Murphy _ 04/13/2026", count: 3, total: null, type: "Pay" },
+];
+
+const SHEET_TABS = {
+  onboarding: {
+    name: "Trip Setup",
+    headers: ["Field", "Value"],
+    rows: [
+      ["Client", TRIP.client],
+      ["Customer/Job", TRIP.customerJob],
+      ["Trip Dates", TRIP.dates],
+      ["Lead Leader", TRIP.leader.name],
+      ["Co-Leader", TRIP.coLeader.name],
+      ["Cash Advance", `$${TRIP.cashAdvance.toLocaleString()}`],
+      ["Card Last 4", TRIP.cardLast4],
+    ],
+  },
+  receipts: {
+    name: "Receipt Index",
+    headers: ["#", "File", "Date", "Merchant", "USD", "Method", "Status"],
+    rows: RECEIPTS.map((r, i) => [
+      i + 1,
+      r.file.length > 22 ? r.file.slice(0, 19) + "…" : r.file,
+      r.date, r.merchant, `$${r.usd.toFixed(2)}`, r.method,
+      r.status === "flag" ? "⚠ Review" : "✓ Matched",
+    ]),
+  },
+  categorize: {
+    name: "Expense Tracker",
+    headers: ["Date", "Merchant", "USD", "Category", "Report", "Leader"],
+    rows: RECEIPTS.map((r) => [
+      r.date, r.merchant, `$${r.usd.toFixed(2)}`,
+      r.category.replace("E- ", ""),
+      r.method === "Venmo" ? "Reimbursable" : "Credit Card",
+      "Ali",
+    ]),
+  },
+  cash: {
+    name: "Cash Reconciliation",
+    headers: ["Item", "Budget", "Ali Paid", "Maria Paid", "Total", "Status"],
+    rows: CASH_LINES.map((l) => [
+      l.item, `$${l.budget}`,
+      l.paidBy === "Ali" ? `$${l.usd}` : "—",
+      l.paidBy === "Maria" ? `$${l.usd}` : "—",
+      `$${l.usd}`, l.missing ? "⚠ Missing" : "✓",
+    ]),
+  },
+  hours: {
+    name: "Pay Summary",
+    headers: ["Type", "Amount", "Date Range", "Category"],
+    rows: HOURS.map((h) => [h.type, h.value, h.dates, h.category.replace("E- ", "")]),
+  },
+  submit: {
+    name: "Report Status",
+    headers: ["Report", "Type", "# Items", "Total", "Status"],
+    rows: FINAL_REPORTS.map((r) => [
+      r.name.split(" _ ")[0], r.type, r.count,
+      r.total ? `$${r.total.toFixed(2)}` : "—", "Ready",
+    ]),
+  },
+};
+
+const fontSerif = `'Tiempos Headline', 'Canela', Georgia, serif`;
+const fontSans = `'Söhne', 'Inter', -apple-system, system-ui, sans-serif`;
+const fontMono = `'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace`;
+
+function App() {
+  const [stage, setStage] = useState("onboarding");
+  const [showCoLeaderPing, setShowCoLeaderPing] = useState(false);
+  const activeSkill = STAGES.find((s) => s.id === stage)?.skill;
+  const sheet = SHEET_TABS[stage];
+
+  return (
+    <div style={{ fontFamily: fontSans, background: "#F4F1EA", minHeight: "100vh", padding: "32px 24px", color: "#1A1A1A" }}>
+      <div style={{ maxWidth: 1240, margin: "0 auto 32px" }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 16, marginBottom: 8, flexWrap: "wrap" }}>
+          <h1 style={{ fontFamily: fontSerif, fontSize: 38, fontWeight: 400, letterSpacing: "-0.02em", margin: 0 }}>
+            The trip leader's expense desk
+          </h1>
+          <span style={{ fontFamily: fontMono, fontSize: 11, padding: "3px 8px", border: "1px solid #1A1A1A", borderRadius: 2, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+            Iconic × Claude
+          </span>
+        </div>
+        <p style={{ fontFamily: fontSerif, fontStyle: "italic", fontSize: 17, color: "#5A5650", margin: 0, maxWidth: 720 }}>
+          {TRIP.client} · {TRIP.location} · {TRIP.dates} — six skills, one shared sheet, two leaders working in parallel.
+        </p>
+      </div>
+
+      <div style={{ maxWidth: 1240, margin: "0 auto 24px" }}>
+        <div style={{ display: "flex", gap: 4, background: "#EAE5DA", padding: 4, borderRadius: 4, border: "1px solid #D5CFC1" }}>
+          {STAGES.map((s) => {
+            const IconComp = s.icon;
+            const active = s.id === stage;
+            return (
+              <button key={s.id} onClick={() => setStage(s.id)}
+                style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "10px 12px",
+                  background: active ? "#1A1A1A" : "transparent", color: active ? "#F4F1EA" : "#5A5650",
+                  border: "none", borderRadius: 2, fontFamily: fontSans, fontSize: 13, fontWeight: active ? 500 : 400, cursor: "pointer", transition: "all 0.15s" }}>
+                <IconComp size={14} strokeWidth={active ? 2 : 1.5} />
+                {s.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gridTemplateColumns: "minmax(360px, 420px) 1fr", gap: 32, alignItems: "start" }}>
+        <PhoneFrame stage={stage} activeSkill={activeSkill} onPing={() => setShowCoLeaderPing(true)} />
+        <SheetPanel stage={stage} sheet={sheet} activeSkill={activeSkill} />
+      </div>
+
+      {showCoLeaderPing && <CoLeaderPing onDismiss={() => setShowCoLeaderPing(false)} />}
+
+      <div style={{ maxWidth: 1240, margin: "48px auto 0", paddingTop: 24, borderTop: "1px solid #D5CFC1",
+        display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, color: "#8A847A",
+        fontFamily: fontMono, letterSpacing: "0.04em", textTransform: "uppercase", flexWrap: "wrap", gap: 12 }}>
+        <span>Active skill · {activeSkill}</span>
+        <span>Demo · static seeded data</span>
+        <span>Sheet · {sheet.name}</span>
+      </div>
+    </div>
+  );
+}
+
+function PhoneFrame({ stage, activeSkill, onPing }) {
+  return (
+    <div style={{ background: "#1A1A1A", borderRadius: 36, padding: 12, boxShadow: "0 24px 60px -20px rgba(0,0,0,0.35)", position: "sticky", top: 24 }}>
+      <div style={{ background: "#FFFFFF", borderRadius: 28, overflow: "hidden", minHeight: 720, display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 22px 6px", fontSize: 13, fontWeight: 600 }}>
+          <span>9:41</span>
+          <span style={{ display: "flex", gap: 4, alignItems: "center", fontSize: 11 }}>
+            <span>●●●●</span><span style={{ marginLeft: 4 }}>5G</span>
+          </span>
+        </div>
+        <div style={{ padding: "8px 22px 12px", borderBottom: "0.5px solid #E5E1D6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 28, height: 28, borderRadius: 6, background: "#CC785C", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 13, fontWeight: 600, fontFamily: fontSerif }}>C</div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <span style={{ fontSize: 13, fontWeight: 500 }}>Iconic Adventures</span>
+              <span style={{ fontSize: 10, color: "#8A847A" }}>Project · shared</span>
+            </div>
+          </div>
+          <button onClick={onPing} style={{ border: "0.5px solid #D5CFC1", background: "transparent", padding: "4px 8px", borderRadius: 4, fontSize: 10, color: "#5A5650", fontFamily: fontMono, cursor: "pointer" }}>
+            ping co-leader
+          </button>
+        </div>
+        <div style={{ flex: 1, padding: 16, background: "#FAF7F0", overflow: "auto" }}>
+          <SkillBadge skill={activeSkill} />
+          {stage === "onboarding" && <OnboardingScreen />}
+          {stage === "receipts" && <ReceiptsScreen />}
+          {stage === "categorize" && <CategorizeScreen />}
+          {stage === "cash" && <CashScreen />}
+          {stage === "hours" && <HoursScreen />}
+          {stage === "submit" && <SubmitScreen />}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SkillBadge({ skill }) {
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#1A1A1A", color: "#F4F1EA", padding: "4px 8px", borderRadius: 3, fontSize: 10, fontFamily: fontMono, marginBottom: 14, letterSpacing: "0.04em" }}>
+      <Sparkles size={10} strokeWidth={2} />
+      <span>skill · {skill}</span>
+    </div>
+  );
+}
+
+function OnboardingScreen() {
+  return (
+    <>
+      <ChatBubble who="You">Hey, starting prep for the {TRIP.client} CDMX trip. Can you set me up?</ChatBubble>
+      <ChatBubble who="Claude">On it. Let me confirm the basics so I can spin up the shared tracker for you and Maria.</ChatBubble>
+      <div style={{ background: "white", borderRadius: 12, padding: 14, marginTop: 10, border: "0.5px solid #E5E1D6" }}>
+        <div style={{ fontSize: 11, color: "#8A847A", marginBottom: 10, fontFamily: fontMono, letterSpacing: "0.06em", textTransform: "uppercase" }}>trip setup</div>
+        <SetupRow label="Client" value={TRIP.client} />
+        <SetupRow label="Trip code" value="Lala CDMX 2026" mono />
+        <SetupRow label="Dates" value={TRIP.dates} />
+        <SetupRow label="Lead" value={TRIP.leader.name} />
+        <SetupRow label="Co-lead" value={TRIP.coLeader.name} />
+        <SetupRow label="Card · last 4" value={TRIP.cardLast4} mono />
+        <SetupRow label="Cash advance" value={`$${TRIP.cashAdvance.toLocaleString()}`} />
+      </div>
+      <ChatBubble who="Claude" tight>
+        I'll create a Google Sheet called <em>Lala Foundation CDMX 2026 — Tracker</em>, share it with you and Maria, and set up the six tabs we'll use across the trip.
+      </ChatBubble>
+      <PrimaryButton>Create shared tracker</PrimaryButton>
+    </>
+  );
+}
+
+function SetupRow({ label, value, mono }) {
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", fontSize: 12 }}>
+      <span style={{ color: "#8A847A" }}>{label}</span>
+      <span style={{ fontFamily: mono ? fontMono : fontSans, fontWeight: 500 }}>{value}</span>
+    </div>
+  );
+}
+
+function ReceiptsScreen() {
+  return (
+    <>
+      <ChatBubble who="You">Just got back to the hotel. Dumping today's receipts.</ChatBubble>
+      <UploadCard count={5} />
+      <ChatBubble who="Claude" tight>Got 'em. Converting the HEICs, parsing the Uber PDF, matching against your card feed.</ChatBubble>
+      <div style={{ marginTop: 10 }}>
+        {RECEIPTS.slice(0, 4).map((r, i) => <ReceiptRow key={i} r={r} />)}
+      </div>
+      <ChatBubble who="Claude" tight>4 of 5 matched cleanly. <strong>Mesa Meroma</strong> looks like a Venmo charge — confirm?</ChatBubble>
+    </>
+  );
+}
+
+function UploadCard({ count }) {
+  return (
+    <div style={{ border: "1px dashed #C9C2B0", borderRadius: 10, padding: 14, background: "white", marginTop: 4, display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{ width: 36, height: 36, borderRadius: 8, background: "#F4EFE2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Upload size={16} color="#5A5650" />
+      </div>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: 12, fontWeight: 500 }}>{count} files uploaded</div>
+        <div style={{ fontSize: 10, color: "#8A847A", fontFamily: fontMono }}>4 HEIC · 1 PDF</div>
+      </div>
+    </div>
+  );
+}
+
+function ReceiptRow({ r }) {
+  const flagged = r.status === "flag";
+  return (
+    <div style={{ background: "white", borderLeft: flagged ? "2px solid #B8763A" : "2px solid #4A6A4F", borderRadius: 4, padding: "8px 10px", marginBottom: 6, display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12 }}>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <span style={{ fontWeight: 500 }}>{r.merchant}</span>
+        <span style={{ fontSize: 10, color: "#8A847A", fontFamily: fontMono }}>{r.date} · {r.method} · {r.amount}</span>
+      </div>
+      <span style={{ fontFamily: fontMono, fontSize: 12, fontWeight: 500 }}>${r.usd.toFixed(2)}</span>
+    </div>
+  );
+}
+
+function CategorizeScreen() {
+  return (
+    <>
+      <ChatBubble who="You">Categorize everything I've logged so far.</ChatBubble>
+      <ChatBubble who="Claude">Working through {RECEIPTS.length} expenses against the Iconic Expensify policy.</ChatBubble>
+      {RECEIPTS.slice(0, 4).map((r, i) => <CategoryCard key={i} r={r} />)}
+      <div style={{ background: "#FFF8E8", borderLeft: "2px solid #B8763A", padding: 10, borderRadius: 4, marginTop: 8, fontSize: 11, color: "#5A4920", display: "flex", gap: 8, alignItems: "flex-start" }}>
+        <AlertCircle size={13} color="#B8763A" />
+        <span><strong>FAM/per-diem conflict.</strong> You have a $42 per-diem claim and a Contramar lunch on the same day. Pick one.</span>
+      </div>
+    </>
+  );
+}
+
+function CategoryCard({ r }) {
+  return (
+    <div style={{ background: "white", borderRadius: 6, padding: 10, marginBottom: 6, border: "0.5px solid #E5E1D6" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+        <span style={{ fontSize: 12, fontWeight: 500 }}>{r.merchant}</span>
+        <span style={{ fontFamily: fontMono, fontSize: 11 }}>${r.usd.toFixed(2)}</span>
+      </div>
+      <div style={{ marginTop: 4, fontSize: 10, color: "#5A5650", fontFamily: fontMono, display: "flex", gap: 6, flexWrap: "wrap" }}>
+        <span style={{ background: "#F4EFE2", padding: "1px 5px", borderRadius: 2 }}>{r.category.replace("E- ", "")}</span>
+        <span style={{ background: r.method === "Venmo" ? "#F0E4D4" : "#E8EDE0", padding: "1px 5px", borderRadius: 2 }}>{r.method === "Venmo" ? "Reimbursable" : "Credit Card"}</span>
+      </div>
+    </div>
+  );
+}
+
+function CashScreen() {
+  const totalSpent = CASH_LINES.reduce((acc, l) => acc + l.usd, 0);
+  const remaining = TRIP.cashAdvance - totalSpent;
+  return (
+    <>
+      <ChatBubble who="You">How's the cash advance looking?</ChatBubble>
+      <ChatBubble who="Claude" tight>You've spent ${totalSpent} of ${TRIP.cashAdvance}. One missing line.</ChatBubble>
+      <div style={{ background: "white", borderRadius: 10, padding: 12, border: "0.5px solid #E5E1D6" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, paddingBottom: 10, borderBottom: "0.5px solid #E5E1D6" }}>
+          <div>
+            <div style={{ fontSize: 10, color: "#8A847A", fontFamily: fontMono, letterSpacing: "0.06em" }}>ADVANCE</div>
+            <div style={{ fontSize: 18, fontWeight: 500, fontFamily: fontMono }}>${TRIP.cashAdvance}</div>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <div style={{ fontSize: 10, color: "#8A847A", fontFamily: fontMono, letterSpacing: "0.06em" }}>TO RETURN</div>
+            <div style={{ fontSize: 18, fontWeight: 500, fontFamily: fontMono, color: "#4A6A4F" }}>${remaining}</div>
+          </div>
+        </div>
+        {CASH_LINES.map((l, i) => <CashRow key={i} l={l} />)}
+      </div>
+      <ChatBubble who="Claude" tight>Activity tips on Day 3 ($250 budget) hasn't been logged. Was it you or Maria?</ChatBubble>
+    </>
+  );
+}
+
+function CashRow({ l }) {
+  const leaderColor = l.paidBy === "Ali" ? "#B8763A" : l.paidBy === "Maria" ? "#4A6A4F" : "#A39B8A";
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", fontSize: 12, borderBottom: "0.5px solid #F4EFE2" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, flex: 1, minWidth: 0 }}>
+        <div style={{ width: 6, height: 6, borderRadius: 50, background: leaderColor, flexShrink: 0 }} />
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{l.item}</span>
+      </div>
+      <span style={{ fontFamily: fontMono, fontSize: 11, color: l.missing ? "#B8763A" : "#1A1A1A" }}>
+        {l.missing ? "missing" : `$${l.usd}`}
+      </span>
+    </div>
+  );
+}
+
+function HoursScreen() {
+  return (
+    <>
+      <ChatBubble who="You">Log my hours for Lala.</ChatBubble>
+      <ChatBubble who="Claude" tight>Pulled your research log and trip days. Three Time entries to create.</ChatBubble>
+      {HOURS.map((h, i) => <HoursRow key={i} h={h} />)}
+      <ChatBubble who="Claude" tight>Confirm rates with Mo before I push. Research looks high — want me to break it out by week?</ChatBubble>
+      <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
+        <SecondaryButton>Break out</SecondaryButton>
+        <SecondaryButton>Keep lump</SecondaryButton>
+      </div>
+    </>
+  );
+}
+
+function HoursRow({ h }) {
+  return (
+    <div style={{ background: "white", borderRadius: 6, padding: 10, marginBottom: 6, border: "0.5px solid #E5E1D6", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div>
+        <div style={{ fontSize: 12, fontWeight: 500 }}>{h.type}</div>
+        <div style={{ fontSize: 10, color: "#8A847A", fontFamily: fontMono }}>{h.dates}</div>
+      </div>
+      <div style={{ fontSize: 13, fontFamily: fontMono, fontWeight: 500 }}>{h.value}</div>
+    </div>
+  );
+}
+
+function SubmitScreen() {
+  return (
+    <>
+      <ChatBubble who="You">Build my reports.</ChatBubble>
+      <ChatBubble who="Claude" tight>Three reports ready. Customer/Job set on every line. Receipts attached.</ChatBubble>
+      {FINAL_REPORTS.map((r, i) => <ReportCard key={i} r={r} />)}
+      <div style={{ background: "#1A1A1A", color: "#F4F1EA", borderRadius: 8, padding: 12, marginTop: 10 }}>
+        <div style={{ fontSize: 10, fontFamily: fontMono, letterSpacing: "0.08em", color: "#A39B8A", marginBottom: 4 }}>READY TO SUBMIT</div>
+        <div style={{ fontSize: 13 }}>Submitting to Kate & Maureen for approval. You'll see direct deposits in 5–7 days.</div>
+      </div>
+      <PrimaryButton>Submit all three</PrimaryButton>
+    </>
+  );
+}
+
+function ReportCard({ r }) {
+  return (
+    <div style={{ background: "white", borderRadius: 8, padding: 12, marginBottom: 6, border: "0.5px solid #E5E1D6" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
+        <span style={{ fontSize: 11, fontWeight: 500, fontFamily: fontMono }}>{r.type}</span>
+        {r.total !== null && <span style={{ fontSize: 13, fontFamily: fontMono, fontWeight: 500 }}>${r.total.toFixed(2)}</span>}
+      </div>
+      <div style={{ fontSize: 10, color: "#8A847A", fontFamily: fontMono, marginBottom: 6 }}>{r.name}</div>
+      <div style={{ fontSize: 11, color: "#5A5650" }}>{r.count} items · ready</div>
+    </div>
+  );
+}
+
+function ChatBubble({ who, children, tight }) {
+  const isYou = who === "You";
+  return (
+    <div style={{ marginBottom: tight ? 6 : 10 }}>
+      <div style={{ fontSize: 9, color: "#8A847A", fontFamily: fontMono, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 3, textAlign: isYou ? "right" : "left" }}>
+        {who}
+      </div>
+      <div style={{ background: isYou ? "#1A1A1A" : "white", color: isYou ? "#F4F1EA" : "#1A1A1A",
+        padding: "8px 12px", borderRadius: 12,
+        borderTopRightRadius: isYou ? 4 : 12, borderTopLeftRadius: isYou ? 12 : 4,
+        fontSize: 12.5, lineHeight: 1.45, maxWidth: "88%", marginLeft: isYou ? "auto" : 0,
+        border: isYou ? "none" : "0.5px solid #E5E1D6" }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function PrimaryButton({ children }) {
+  return (
+    <button style={{ marginTop: 12, width: "100%", background: "#CC785C", color: "white", border: "none",
+      padding: "11px 14px", borderRadius: 8, fontSize: 13, fontWeight: 500, fontFamily: fontSans, cursor: "pointer",
+      display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+      {children}<ChevronRight size={14} />
+    </button>
+  );
+}
+
+function SecondaryButton({ children }) {
+  return (
+    <button style={{ flex: 1, background: "white", border: "0.5px solid #C9C2B0", padding: "8px 10px", borderRadius: 6, fontSize: 11, color: "#1A1A1A", cursor: "pointer", fontFamily: fontSans }}>
+      {children}
+    </button>
+  );
+}
+
+function SheetPanel({ stage, sheet, activeSkill }) {
+  return (
+    <div style={{ background: "white", borderRadius: 8, border: "1px solid #D5CFC1", overflow: "hidden", boxShadow: "0 8px 32px -8px rgba(0,0,0,0.06)" }}>
+      <div style={{ background: "#F4F1EA", padding: "10px 16px", borderBottom: "1px solid #D5CFC1", display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ display: "flex", gap: 5 }}>
+          <Dot color="#E89186" /><Dot color="#E8C589" /><Dot color="#9CC78F" />
+        </div>
+        <div style={{ flex: 1, background: "white", border: "0.5px solid #D5CFC1", borderRadius: 4, padding: "3px 10px", fontSize: 11, fontFamily: fontMono, color: "#5A5650", display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ color: "#8A847A" }}>docs.google.com/spreadsheets/</span>
+          <span style={{ color: "#1A1A1A" }}>Lala-CDMX-2026-Tracker</span>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", background: "#FAF7F0", borderBottom: "1px solid #D5CFC1", overflow: "auto" }}>
+        {Object.entries(SHEET_TABS).map(([k, v]) => {
+          const active = k === stage;
+          return (
+            <div key={k} style={{ padding: "8px 14px", fontSize: 11, fontFamily: fontSans,
+              color: active ? "#1A1A1A" : "#8A847A", fontWeight: active ? 500 : 400,
+              background: active ? "white" : "transparent",
+              borderRight: "0.5px solid #E5E1D6",
+              borderBottom: active ? "2px solid #CC785C" : "2px solid transparent",
+              whiteSpace: "nowrap" }}>
+              {v.name}
+            </div>
+          );
+        })}
+      </div>
+
+      <div style={{ background: "#FFF8E8", borderBottom: "1px solid #E5DEC4", padding: "6px 16px", fontSize: 11, fontFamily: fontMono, color: "#5A4920", display: "flex", alignItems: "center", gap: 8, letterSpacing: "0.04em" }}>
+        <div style={{ width: 6, height: 6, borderRadius: 50, background: "#4A6A4F", animation: "pulse 1.6s ease-in-out infinite" }} />
+        <span>{activeSkill} is writing to <strong>{sheet.name}</strong> — live updates visible to Maria</span>
+      </div>
+
+      <div style={{ overflow: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, fontFamily: fontSans }}>
+          <thead>
+            <tr style={{ background: "#F4F1EA" }}>
+              <th style={{ width: 32, padding: "8px 10px", textAlign: "left", borderRight: "0.5px solid #D5CFC1", borderBottom: "0.5px solid #D5CFC1", fontSize: 10, color: "#8A847A", fontWeight: 400 }}></th>
+              {sheet.headers.map((h, i) => (
+                <th key={i} style={{ padding: "8px 12px", textAlign: "left", borderRight: "0.5px solid #D5CFC1", borderBottom: "0.5px solid #D5CFC1", fontWeight: 500, fontSize: 11, color: "#1A1A1A", fontFamily: fontMono, letterSpacing: "0.04em", textTransform: "uppercase" }}>
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sheet.rows.map((row, i) => (
+              <tr key={i}>
+                <td style={{ padding: "8px 10px", borderRight: "0.5px solid #E5E1D6", borderBottom: "0.5px solid #E5E1D6", background: "#FAF7F0", color: "#8A847A", fontSize: 10, fontFamily: fontMono }}>
+                  {i + 1}
+                </td>
+                {row.map((cell, j) => {
+                  const cellStr = String(cell);
+                  const isWarn = cellStr.includes("⚠") || cellStr.toLowerCase().includes("missing");
+                  const isOk = cellStr.includes("✓");
+                  const isMoney = cellStr.startsWith("$");
+                  return (
+                    <td key={j} style={{ padding: "8px 12px", borderRight: "0.5px solid #E5E1D6", borderBottom: "0.5px solid #E5E1D6",
+                      fontFamily: isMoney || j === 0 ? fontMono : fontSans,
+                      color: isWarn ? "#B8763A" : isOk ? "#4A6A4F" : "#1A1A1A",
+                      fontSize: 11.5, fontWeight: isMoney ? 500 : 400, whiteSpace: "nowrap" }}>
+                      {cell}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div style={{ background: "#FAF7F0", padding: "10px 16px", borderTop: "1px solid #E5E1D6", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 10, fontFamily: fontMono, color: "#8A847A", letterSpacing: "0.04em" }}>
+        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <Avatar i="AM" color="#B8763A" />
+          <Avatar i="MR" color="#4A6A4F" />
+          <Avatar i="K" color="#5A5650" />
+          <span>3 viewers</span>
+        </div>
+        <span>Last edit · just now</span>
+      </div>
+    </div>
+  );
+}
+
+function Dot({ color }) {
+  return <div style={{ width: 10, height: 10, borderRadius: 50, background: color }} />;
+}
+
+function Avatar({ i, color }) {
+  return (
+    <div style={{ width: 18, height: 18, borderRadius: 50, background: color, color: "white",
+      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 600, fontFamily: fontSans }}>
+      {i}
+    </div>
+  );
+}
+
+function CoLeaderPing({ onDismiss }) {
+  return (
+    <div onClick={onDismiss} style={{ position: "fixed", top: 32, right: 32, background: "#1A1A1A", color: "#F4F1EA",
+      padding: "12px 16px", borderRadius: 8, maxWidth: 320, boxShadow: "0 12px 32px -8px rgba(0,0,0,0.4)", cursor: "pointer", zIndex: 10 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+        <Bell size={12} />
+        <span style={{ fontSize: 10, fontFamily: fontMono, letterSpacing: "0.06em", color: "#A39B8A" }}>MARIA · 2 MIN AGO</span>
+      </div>
+      <div style={{ fontSize: 13, lineHeight: 1.4 }}>Logged $200 cash to the boat captain. Sheet updated.</div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

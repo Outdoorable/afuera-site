@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
+  <title>FAM Companion — Iconic Adventures</title>
+  <style>
+    html, body { margin: 0; padding: 0; }
+    body { font-family: 'Söhne', 'Inter', -apple-system, system-ui, sans-serif; }
+    #root { min-height: 100vh; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+  </style>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="react">
+    const { useState } = React;
+
+    function Icon({ children, size = 16, color = "currentColor", strokeWidth = 1.5, style = {} }) {
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size}
+          viewBox="0 0 24 24" fill="none" stroke={color}
+          strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"
+          style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0, ...style }}>
+          {children}
+        </svg>
+      );
+    }
+    const Plane = (p) => <Icon {...p}><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></Icon>;
+    const FileText = (p) => <Icon {...p}><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></Icon>;
+    const Mail = (p) => <Icon {...p}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></Icon>;
+    const Users = (p) => <Icon {...p}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></Icon>;
+    const Calendar = (p) => <Icon {...p}><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></Icon>;
+    const FileCheck = (p) => <Icon {...p}><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m9 15 2 2 4-4"/></Icon>;
+    const ChevronRight = (p) => <Icon {...p}><path d="m9 18 6-6-6-6"/></Icon>;
+    const Upload = (p) => <Icon {...p}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></Icon>;
+    const Sparkles = (p) => <Icon {...p}><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></Icon>;
+    const AlertCircle = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></Icon>;
+    const Bell = (p) => <Icon {...p}><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></Icon>;
+    const Search = (p) => <Icon {...p}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></Icon>;
+    const CheckCircle2 = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></Icon>;
+    const Clock = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></Icon>;
+
+    const TRIP = {
+      client: "Lala Foundation", location: "Mexico City",
+      famDates: "Apr 7–8, 2026", tripDates: "Apr 9–13, 2026",
+      leader: { name: "Ali Murphy", initials: "AM" },
+      coLeader: { name: "Maria Reyes", initials: "MR" },
+      clientCount: 5, vendorCount: 12, daysToFam: 4,
+    };
+
+    const STAGES = [
+      { id: "setup", label: "Setup", icon: Plane, skill: "fam-onboarding" },
+      { id: "docs", label: "Trip Docs", icon: FileText, skill: "fam-doc-reader" },
+      { id: "email", label: "Email", icon: Mail, skill: "fam-email-scanner" },
+      { id: "vendors", label: "Vendors", icon: Users, skill: "fam-vendor-master" },
+      { id: "plan", label: "Plan", icon: Calendar, skill: "fam-visit-planner" },
+      { id: "briefs", label: "Briefs", icon: FileCheck, skill: "fam-vendor-brief" },
+    ];
+
+    const CLIENTS = [
+      { name: "Maria Lopez", flags: "Vegetarian · shellfish allergy" },
+      { name: "David Chen", flags: "Gluten free" },
+      { name: "Susan Park", flags: "Mobility — no stairs" },
+      { name: "James Wright", flags: "—" },
+      { name: "Elena Cruz", flags: "Alcohol-free" },
+    ];
+
+    const EMAIL_SCAN = [
+      { vendor: "Contramar", contact: "Tomas Diaz", lastTouch: "Apr 22", status: "confirmed", note: "—" },
+      { vendor: "Pujol", contact: "Reservations", lastTouch: "Apr 20", status: "confirmed", note: "—" },
+      { vendor: "Mesa Meroma", contact: "Elena R.", lastTouch: "Apr 24", status: "confirmed", note: "Wine list TBD" },
+      { vendor: "Laguna", contact: "Bar manager", lastTouch: "Apr 19", status: "confirmed", note: "—" },
+      { vendor: "Cooking class", contact: "Chef Marisol", lastTouch: "Apr 23", status: "pending", note: "Sent 3d ago" },
+      { vendor: "Walking tour", contact: "Carlos guide", lastTouch: "Apr 21", status: "confirmed", note: "—" },
+      { vendor: "Anthropology Museum", contact: "Dr. Vega", lastTouch: "Apr 24", status: "pending", note: "Sent 2d ago" },
+      { vendor: "Lucha Libre venue", contact: "Promoter", lastTouch: "Apr 16", status: "stale", note: "9d no reply" },
+      { vendor: "Mezcal tasting", contact: "Host", lastTouch: "Apr 12", status: "stale", note: "13d no reply" },
+      { vendor: "Xochimilco boat", contact: "—", lastTouch: "—", status: "missing", note: "Need contact" },
+      { vendor: "Hotel concierge", contact: "Carmen", lastTouch: "Apr 25", status: "confirmed", note: "—" },
+      { vendor: "Frida Kahlo house", contact: "Skip-line", lastTouch: "Apr 18", status: "confirmed", note: "—" },
+    ];
+
+    const VENDOR_MASTER = [
+      { vendor: "Contramar", type: "Restaurant", day: "FAM 1", time: "Apr 7, 13:00", lead: "Ali", status: "confirmed", last: "8d", flags: "Veg, Shellfish", openQ: "Veg menu?" },
+      { vendor: "Mezcal tasting", type: "Activity", day: "FAM 1", time: "Apr 7, 18:00", lead: "Maria", status: "stale", last: "13d", flags: "Alcohol-free", openQ: "Confirm date" },
+      { vendor: "Walking tour", type: "Activity", day: "FAM 2", time: "Apr 8, 10:00", lead: "Ali", status: "confirmed", last: "9d", flags: "Mobility", openQ: "—" },
+      { vendor: "Lucha Libre venue", type: "Activity", day: "FAM 2", time: "Apr 8, 20:00", lead: "Maria", status: "stale", last: "9d", flags: "—", openQ: "Confirm seats" },
+      { vendor: "Pujol", type: "Restaurant", day: "Trip 1", time: "Apr 9, 20:00", lead: "Ali", status: "confirmed", last: "10d", flags: "Veg, GF", openQ: "—" },
+      { vendor: "Mesa Meroma", type: "Restaurant", day: "Trip 2", time: "Apr 10, 21:00", lead: "Maria", status: "confirmed", last: "6d", flags: "Veg, Shellfish", openQ: "Wine list?" },
+      { vendor: "Laguna", type: "Cocktails", day: "Trip 2", time: "Apr 10, 22:30", lead: "Maria", status: "confirmed", last: "11d", flags: "Alcohol-free", openQ: "—" },
+      { vendor: "Cooking class", type: "Activity", day: "Trip 3", time: "Apr 11, 11:00", lead: "Ali", status: "pending", last: "3d", flags: "Veg, GF", openQ: "GF swap?" },
+      { vendor: "Xochimilco boat", type: "Activity", day: "Trip 3", time: "Apr 11, 14:00", lead: "Maria", status: "missing", last: "—", flags: "Mobility", openQ: "Need contact" },
+      { vendor: "Anthropology Museum", type: "Activity", day: "Trip 4", time: "Apr 12, 10:00", lead: "Ali", status: "pending", last: "2d", flags: "—", openQ: "Private hours?" },
+      { vendor: "Frida Kahlo house", type: "Activity", day: "Trip 4", time: "Apr 12, 14:00", lead: "Maria", status: "confirmed", last: "12d", flags: "Mobility", openQ: "—" },
+      { vendor: "Hotel concierge", type: "Lodging", day: "All", time: "—", lead: "Both", status: "confirmed", last: "5d", flags: "—", openQ: "Late checkout?" },
+    ];
+
+    const VISIT_PLAN = [
+      { day: "FAM 1", time: "10:00", ali: "Anthropology pre-walk", maria: "Walking tour run-through" },
+      { day: "FAM 1", time: "13:00", ali: "Lunch at Contramar", maria: "—" },
+      { day: "FAM 1", time: "13:30", ali: "—", maria: "Hotel concierge meet" },
+      { day: "FAM 1", time: "16:00", ali: "Frida Kahlo coordination", maria: "Mezcal venue site visit" },
+      { day: "FAM 1", time: "18:00", ali: "—", maria: "Mezcal tasting walkthrough" },
+      { day: "FAM 1", time: "20:00", ali: "Pujol pre-tasting", maria: "—" },
+      { day: "FAM 2", time: "09:00", ali: "Cooking class kitchen", maria: "Xochimilco contact" },
+      { day: "FAM 2", time: "11:30", ali: "—", maria: "Lucha Libre walk-through" },
+      { day: "FAM 2", time: "13:00", ali: "Mesa Meroma site visit", maria: "—" },
+      { day: "FAM 2", time: "15:00", ali: "—", maria: "Laguna bar visit" },
+    ];
+
+    const BRIEFS = [
+      { vendor: "Contramar", day: "FAM 1", time: "13:00", lead: "Ali", q: 6, status: "ready" },
+      { vendor: "Mezcal tasting", day: "FAM 1", time: "18:00", lead: "Maria", q: 5, status: "stale-info" },
+      { vendor: "Walking tour", day: "FAM 2", time: "10:00", lead: "Ali", q: 4, status: "ready" },
+      { vendor: "Lucha Libre venue", day: "FAM 2", time: "11:30", lead: "Maria", q: 7, status: "unconfirmed" },
+      { vendor: "Cooking class", day: "FAM 2", time: "09:00", lead: "Ali", q: 6, status: "ready" },
+      { vendor: "Mesa Meroma", day: "FAM 2", time: "13:00", lead: "Ali", q: 5, status: "ready" },
+      { vendor: "Laguna", day: "FAM 2", time: "15:00", lead: "Maria", q: 4, status: "ready" },
+      { vendor: "Anthropology Museum", day: "FAM 1", time: "10:00", lead: "Ali", q: 5, status: "pending" },
+    ];
+
+    const SHEET_TABS = {
+      setup: { name: "Trip Setup", headers: ["Field", "Value"], rows: [
+        ["Client", TRIP.client], ["Location", TRIP.location], ["FAM dates", TRIP.famDates],
+        ["Trip dates", TRIP.tripDates], ["Lead leader", TRIP.leader.name], ["Co-leader", TRIP.coLeader.name],
+        ["# of clients", String(TRIP.clientCount)], ["Vendors in plan", String(TRIP.vendorCount)],
+      ]},
+      docs: { name: "Trip Docs", headers: ["Source", "Extracted", "Status"], rows: [
+        ["Master itinerary", "18 line items", "✓ Parsed"],
+        ["Dietary sheet", "5 clients", "✓ Parsed"],
+        ["Client profiles", "5 profiles", "✓ Parsed"],
+        ["Vendor contact list", "12 vendors", "⚠ 3 missing contacts"],
+        ["Dietary flags found", "1 veg, 1 GF, 1 mobility, 1 alcohol-free", "—"],
+      ]},
+      email: { name: "Email Scan", headers: ["Vendor", "Contact", "Last touch", "Status", "Note"],
+        rows: EMAIL_SCAN.map((e) => [e.vendor, e.contact, e.lastTouch,
+          e.status === "confirmed" ? "✓ Confirmed" : e.status === "pending" ? "Pending reply" : e.status === "stale" ? "⚠ Stale" : "⚠ No thread",
+          e.note]) },
+      vendors: { name: "Vendor Master", headers: ["Vendor", "Type", "Day", "Time", "Lead", "Status", "Last", "Flags", "Open Q"],
+        rows: VENDOR_MASTER.map((v) => [v.vendor, v.type, v.day, v.time, v.lead,
+          v.status === "confirmed" ? "✓ Confirmed" : v.status === "pending" ? "Pending" : v.status === "stale" ? "⚠ Stale" : "⚠ Missing",
+          v.last, v.flags, v.openQ]) },
+      plan: { name: "Visit Plan", headers: ["Day", "Time", "Ali", "Maria"],
+        rows: VISIT_PLAN.map((p) => [p.day, p.time, p.ali, p.maria]) },
+      briefs: { name: "Briefs", headers: ["Vendor", "Day", "Time", "Lead", "Questions", "Status"],
+        rows: BRIEFS.map((b) => [b.vendor, b.day, b.time, b.lead, `${b.q} questions`,
+          b.status === "ready" ? "✓ Generated" : b.status === "stale-info" ? "⚠ Stale info" : b.status === "unconfirmed" ? "⚠ Unconfirmed" : "Pending hours"]) },
+    };
+
+    const fontSerif = `'Tiempos Headline', 'Canela', Georgia, serif`;
+    const fontSans = `'Söhne', 'Inter', -apple-system, system-ui, sans-serif`;
+    const fontMono = `'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace`;
+
+    function FamCompanionWorkflowDemo() {
+      const [stage, setStage] = useState("setup");
+      const [showCoLeaderPing, setShowCoLeaderPing] = useState(false);
+      const activeSkill = STAGES.find((s) => s.id === stage)?.skill;
+      const sheet = SHEET_TABS[stage];
+
+      return (
+        <div style={{ fontFamily: fontSans, background: "#EAEEE3", minHeight: "100vh", padding: "32px 24px", color: "#1A1A1A" }}>
+          <div style={{ maxWidth: 1240, margin: "0 auto 32px" }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 16, marginBottom: 8, flexWrap: "wrap" }}>
+              <h1 style={{ fontFamily: fontSerif, fontSize: 38, fontWeight: 400, letterSpacing: "-0.02em", margin: 0 }}>The trip leader's FAM desk</h1>
+              <span style={{ fontFamily: fontMono, fontSize: 11, padding: "3px 8px", border: "1px solid #1A1A1A", borderRadius: 2, textTransform: "uppercase", letterSpacing: "0.08em" }}>Iconic Adventures</span>
+            </div>
+            <p style={{ fontFamily: fontSerif, fontStyle: "italic", fontSize: 17, color: "#5A5650", margin: 0, maxWidth: 760 }}>
+              {TRIP.client} · {TRIP.location} · FAM {TRIP.famDates} — six skills turn one trip doc + 30 email threads into one master vendor sheet.
+            </p>
+          </div>
+
+          <div style={{ maxWidth: 1240, margin: "0 auto 24px" }}>
+            <div style={{ display: "flex", gap: 4, background: "#EAE5DA", padding: 4, borderRadius: 4, border: "1px solid #D5CFC1" }}>
+              {STAGES.map((s) => {
+                const IconComp = s.icon;
+                const active = s.id === stage;
+                return (
+                  <button key={s.id} onClick={() => setStage(s.id)} style={{
+                    flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "10px 12px",
+                    background: active ? "#1A1A1A" : "transparent", color: active ? "#F4F1EA" : "#5A5650",
+                    border: "none", borderRadius: 2, fontFamily: fontSans, fontSize: 13, fontWeight: active ? 500 : 400,
+                    cursor: "pointer", transition: "all 0.15s", letterSpacing: active ? "0.02em" : "0"
+                  }}>
+                    <IconComp size={14} strokeWidth={active ? 2 : 1.5} />
+                    {s.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gridTemplateColumns: "minmax(360px, 420px) 1fr", gap: 32, alignItems: "start" }}>
+            <PhoneFrame stage={stage} activeSkill={activeSkill} onPing={() => setShowCoLeaderPing(true)} />
+            <SheetPanel stage={stage} sheet={sheet} activeSkill={activeSkill} />
+          </div>
+
+          {showCoLeaderPing && <CoLeaderPing onDismiss={() => setShowCoLeaderPing(false)} />}
+
+          <div style={{ maxWidth: 1240, margin: "48px auto 0", paddingTop: 24, borderTop: "1px solid #D5CFC1",
+            display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, color: "#8A847A",
+            fontFamily: fontMono, letterSpacing: "0.04em", textTransform: "uppercase", flexWrap: "wrap", gap: 12 }}>
+            <span>Active skill · {activeSkill}</span>
+            <span>FAM in {TRIP.daysToFam} days</span>
+            <span>Sheet · {sheet.name}</span>
+          </div>
+        </div>
+      );
+    }
+
+    function PhoneFrame({ stage, activeSkill, onPing }) {
+      return (
+        <div style={{ background: "#1A1A1A", borderRadius: 36, padding: 12, boxShadow: "0 24px 60px -20px rgba(0,0,0,0.35)", position: "sticky", top: 24 }}>
+          <div style={{ background: "#FFFFFF", borderRadius: 28, overflow: "hidden", minHeight: 720, display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 22px 6px", fontSize: 13, fontWeight: 600 }}>
+              <span>9:41</span>
+              <span style={{ display: "flex", gap: 4, alignItems: "center", fontSize: 11 }}><span>●●●●</span><span style={{ marginLeft: 4 }}>5G</span></span>
+            </div>
+            <div style={{ padding: "8px 22px 12px", borderBottom: "0.5px solid #E5E1D6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ width: 28, height: 28, borderRadius: 6, background: "#CC785C", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 13, fontWeight: 600, fontFamily: fontSerif }}>C</div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <span style={{ fontSize: 13, fontWeight: 500 }}>FAM Companion</span>
+                  <span style={{ fontSize: 10, color: "#8A847A" }}>Lala CDMX · shared</span>
+                </div>
+              </div>
+              <button onClick={onPing} style={{ border: "0.5px solid #D5CFC1", background: "transparent", padding: "4px 8px", borderRadius: 4, fontSize: 10, color: "#5A5650", fontFamily: fontMono, cursor: "pointer" }}>ping co-leader</button>
+            </div>
+            <div style={{ flex: 1, padding: 16, background: "#FAF7F0", overflow: "auto" }}>
+              <SkillBadge skill={activeSkill} />
+              {stage === "setup" && <SetupScreen />}
+              {stage === "docs" && <DocsScreen />}
+              {stage === "email" && <EmailScreen />}
+              {stage === "vendors" && <VendorsScreen />}
+              {stage === "plan" && <PlanScreen />}
+              {stage === "briefs" && <BriefsScreen />}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function SkillBadge({ skill }) {
+      return (
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#1A1A1A", color: "#F4F1EA", padding: "4px 8px", borderRadius: 3, fontSize: 10, fontFamily: fontMono, marginBottom: 14, letterSpacing: "0.04em" }}>
+          <Sparkles size={10} strokeWidth={2} />
+          <span>skill · {skill}</span>
+        </div>
+      );
+    }
+
+    function SetupScreen() {
+      return (
+        <>
+          <ChatBubble who="You">Starting prep for the {TRIP.client} CDMX trip. FAM days are next week — set me up?</ChatBubble>
+          <ChatBubble who="Claude">Got it. Let me confirm the basics so I can spin up the shared FAM tracker for you and Maria.</ChatBubble>
+          <div style={{ background: "white", borderRadius: 12, padding: 14, marginTop: 10, border: "0.5px solid #E5E1D6" }}>
+            <div style={{ fontSize: 11, color: "#8A847A", marginBottom: 10, fontFamily: fontMono, letterSpacing: "0.06em", textTransform: "uppercase" }}>trip setup</div>
+            <SetupRow label="Client" value={TRIP.client} />
+            <SetupRow label="Location" value={TRIP.location} />
+            <SetupRow label="FAM dates" value={TRIP.famDates} />
+            <SetupRow label="Trip dates" value={TRIP.tripDates} />
+            <SetupRow label="Lead" value={TRIP.leader.name} />
+            <SetupRow label="Co-lead" value={TRIP.coLeader.name} />
+            <SetupRow label="# clients" value={String(TRIP.clientCount)} mono />
+            <SetupRow label="Vendors" value={String(TRIP.vendorCount)} mono />
+          </div>
+          <ChatBubble who="Claude" tight>I'll create a sheet called <em>Lala Foundation CDMX 2026 — FAM Companion</em>, share it with you and Maria, and set up six tabs we'll fill across phases 1–3.</ChatBubble>
+          <PrimaryButton>Create shared tracker</PrimaryButton>
+        </>
+      );
+    }
+
+    function SetupRow({ label, value, mono }) {
+      return (
+        <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", fontSize: 12 }}>
+          <span style={{ color: "#8A847A" }}>{label}</span>
+          <span style={{ fontFamily: mono ? fontMono : fontSans, fontWeight: 500 }}>{value}</span>
+        </div>
+      );
+    }
+
+    function DocsScreen() {
+      return (
+        <>
+          <ChatBubble who="You">Uploading the trip doc, dietary sheet, and client profiles.</ChatBubble>
+          <UploadCard files={["Lala Foundation CDMX trip doc.docx", "Dietary sheet — Lala 2026.xlsx", "Client profiles.pdf"]} />
+          <ChatBubble who="Claude" tight>Parsed all three. Pulling out itinerary lines, client flags, and vendors.</ChatBubble>
+          <div style={{ marginTop: 8 }}>
+            <SummaryStat label="Itinerary lines" value="18" />
+            <SummaryStat label="Clients" value="5" />
+            <SummaryStat label="Vendors mentioned" value="12" />
+            <SummaryStat label="Missing contacts" value="3" warn />
+          </div>
+          <div style={{ marginTop: 10, fontSize: 11, color: "#5A5650", fontFamily: fontMono, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 6 }}>Clients with flags</div>
+          {CLIENTS.filter((c) => c.flags !== "—").map((c, i) => <ClientRow key={i} c={c} />)}
+          <div style={{ background: "#FFF8E8", borderLeft: "2px solid #B8763A", padding: 10, borderRadius: 4, marginTop: 10, fontSize: 11, color: "#5A4920", display: "flex", gap: 8, alignItems: "flex-start" }}>
+            <AlertCircle size={13} color="#B8763A" style={{ marginTop: 1 }} />
+            <span><strong>3 vendors</strong> in itinerary with no contact: Lucha Libre venue, Mezcal host, Xochimilco boat captain.</span>
+          </div>
+        </>
+      );
+    }
+
+    function UploadCard({ files }) {
+      return (
+        <div style={{ border: "1px dashed #C9C2B0", borderRadius: 10, padding: 14, background: "white", marginTop: 4 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 8, background: "#F4EFE2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Upload size={16} color="#5A5650" />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 12, fontWeight: 500 }}>{files.length} files uploaded</div>
+              <div style={{ fontSize: 10, color: "#8A847A", fontFamily: fontMono }}>1 docx · 1 xlsx · 1 pdf</div>
+            </div>
+          </div>
+          {files.map((f, i) => (
+            <div key={i} style={{ fontSize: 10.5, fontFamily: fontMono, color: "#5A5650", padding: "2px 0", display: "flex", alignItems: "center", gap: 6 }}>
+              <CheckCircle2 size={10} color="#4A6A4F" />
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f}</span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    function SummaryStat({ label, value, warn }) {
+      return (
+        <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 10px", background: "white", marginBottom: 4, border: "0.5px solid #E5E1D6", borderRadius: 4, borderLeft: warn ? "2px solid #B8763A" : "0.5px solid #E5E1D6", fontSize: 12 }}>
+          <span style={{ color: "#5A5650" }}>{label}</span>
+          <span style={{ fontFamily: fontMono, fontWeight: 500, color: warn ? "#B8763A" : "#1A1A1A" }}>{value}</span>
+        </div>
+      );
+    }
+
+    function ClientRow({ c }) {
+      return (
+        <div style={{ background: "white", borderRadius: 4, padding: "6px 10px", marginBottom: 4, border: "0.5px solid #E5E1D6", fontSize: 11.5 }}>
+          <div style={{ fontWeight: 500 }}>{c.name}</div>
+          <div style={{ fontSize: 10, color: "#8A847A", fontFamily: fontMono }}>{c.flags}</div>
+        </div>
+      );
+    }
+
+    function EmailScreen() {
+      const counts = {
+        confirmed: EMAIL_SCAN.filter((e) => e.status === "confirmed").length,
+        pending: EMAIL_SCAN.filter((e) => e.status === "pending").length,
+        stale: EMAIL_SCAN.filter((e) => e.status === "stale").length,
+        missing: EMAIL_SCAN.filter((e) => e.status === "missing").length,
+      };
+      return (
+        <>
+          <ChatBubble who="You">Scan my Gmail for vendor threads.</ChatBubble>
+          <ChatBubble who="Claude" tight>Searching 12 vendors across the Lala thread.</ChatBubble>
+          <div style={{ background: "white", borderRadius: 8, padding: 10, border: "0.5px solid #E5E1D6", fontSize: 11, fontFamily: fontMono, color: "#5A5650", marginBottom: 10 }}>
+            {[
+              { v: "Contramar", n: "3 threads", ok: true },
+              { v: "Pujol", n: "2 threads", ok: true },
+              { v: "Mesa Meroma", n: "5 threads", ok: true },
+              { v: "Lucha Libre", n: "1 thread · stale", warn: true },
+              { v: "Xochimilco", n: "no thread", warn: true },
+            ].map((s, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, padding: "2px 0" }}>
+                <Search size={9} color="#8A847A" />
+                <span style={{ flex: 1 }}>Searching: {s.v}</span>
+                <span style={{ color: s.warn ? "#B8763A" : "#4A6A4F" }}>{s.ok ? "✓" : "⚠"} {s.n}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{ background: "white", borderRadius: 10, padding: 12, border: "0.5px solid #E5E1D6" }}>
+            <div style={{ fontSize: 10, color: "#8A847A", fontFamily: fontMono, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 10 }}>summary</div>
+            <ScanRow label="Confirmed" value={counts.confirmed} color="#4A6A4F" />
+            <ScanRow label="Pending reply" value={counts.pending} color="#5A5650" />
+            <ScanRow label="Stale (>5d)" value={counts.stale} color="#B8763A" />
+            <ScanRow label="No thread found" value={counts.missing} color="#B8763A" />
+          </div>
+          <ChatBubble who="Claude" tight>Lucha Libre and Mezcal host haven't replied in 9 and 13 days. Want me to draft follow-ups?</ChatBubble>
+          <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
+            <SecondaryButton>Draft follow-ups</SecondaryButton>
+            <SecondaryButton>Show threads</SecondaryButton>
+          </div>
+        </>
+      );
+    }
+
+    function ScanRow({ label, value, color }) {
+      return (
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "5px 0", fontSize: 12, borderBottom: "0.5px solid #F4EFE2" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ width: 6, height: 6, borderRadius: 50, background: color }} />
+            <span>{label}</span>
+          </div>
+          <span style={{ fontFamily: fontMono, fontWeight: 500, color }}>{value}</span>
+        </div>
+      );
+    }
+
+    function VendorsScreen() {
+      const blocking = VENDOR_MASTER.filter((v) => v.status === "stale" || v.status === "missing");
+      const pending = VENDOR_MASTER.filter((v) => v.status === "pending");
+      return (
+        <>
+          <ChatBubble who="You">Build the master vendor sheet.</ChatBubble>
+          <ChatBubble who="Claude" tight>Merging trip-doc data with email-scan data — 12 vendors, one row each.</ChatBubble>
+          <div style={{ background: "white", borderRadius: 10, padding: 12, border: "0.5px solid #E5E1D6", marginBottom: 8 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10 }}>
+              <span style={{ fontSize: 10, color: "#8A847A", fontFamily: fontMono, letterSpacing: "0.06em", textTransform: "uppercase" }}>vendor master</span>
+              <span style={{ fontFamily: fontMono, fontSize: 11, color: "#4A6A4F" }}>12 / 12 merged</span>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+              <StatBlock label="Confirmed" value="7" tone="ok" />
+              <StatBlock label="Pending" value="2" tone="neutral" />
+              <StatBlock label="Stale" value="2" tone="warn" />
+              <StatBlock label="No thread" value="1" tone="warn" />
+            </div>
+          </div>
+          <div style={{ background: "#FFF8E8", borderLeft: "2px solid #B8763A", padding: 10, borderRadius: 4, marginBottom: 8, fontSize: 11, color: "#5A4920", display: "flex", gap: 8, alignItems: "flex-start" }}>
+            <AlertCircle size={13} color="#B8763A" style={{ marginTop: 1 }} />
+            <div>
+              <div style={{ fontWeight: 500, marginBottom: 2 }}>Conflict on Mesa Meroma</div>
+              <div>Doc says Apr 10, email confirms Apr 11. Which is right?</div>
+            </div>
+          </div>
+          <div style={{ fontSize: 10.5, color: "#5A5650", fontFamily: fontMono, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 6 }}>Blocking — fix before FAM</div>
+          {blocking.map((v, i) => <BlockingRow key={i} v={v} />)}
+          <div style={{ fontSize: 10.5, color: "#5A5650", fontFamily: fontMono, letterSpacing: "0.06em", textTransform: "uppercase", margin: "10px 0 6px" }}>Non-blocking</div>
+          {pending.map((v, i) => <BlockingRow key={i} v={v} />)}
+          <PrimaryButton>Draft 3 follow-ups</PrimaryButton>
+        </>
+      );
+    }
+
+    function StatBlock({ label, value, tone }) {
+      const colors = {
+        ok: { bg: "#E8EDE0", text: "#4A6A4F" },
+        warn: { bg: "#F4E4D4", text: "#B8763A" },
+        neutral: { bg: "#F4EFE2", text: "#5A5650" },
+      };
+      const c = colors[tone];
+      return (
+        <div style={{ background: c.bg, borderRadius: 4, padding: "8px 10px" }}>
+          <div style={{ fontSize: 18, fontFamily: fontMono, fontWeight: 500, color: c.text }}>{value}</div>
+          <div style={{ fontSize: 10, color: c.text, fontFamily: fontMono, letterSpacing: "0.04em" }}>{label}</div>
+        </div>
+      );
+    }
+
+    function BlockingRow({ v }) {
+      const tone = v.status === "stale" || v.status === "missing" ? "#B8763A" : "#5A5650";
+      return (
+        <div style={{ background: "white", borderLeft: `2px solid ${tone}`, borderRadius: 4, padding: "7px 10px", marginBottom: 5, display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11.5 }}>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ fontWeight: 500 }}>{v.vendor}</div>
+            <div style={{ fontSize: 10, color: "#8A847A", fontFamily: fontMono }}>{v.day} · {v.openQ}</div>
+          </div>
+          <span style={{ fontFamily: fontMono, fontSize: 10, color: tone }}>{v.last}</span>
+        </div>
+      );
+    }
+
+    function PlanScreen() {
+      const aliCount = VISIT_PLAN.filter((p) => p.ali !== "—").length;
+      const mariaCount = VISIT_PLAN.filter((p) => p.maria !== "—").length;
+      return (
+        <>
+          <ChatBubble who="You">Plan the FAM days. Split visits between me and Maria.</ChatBubble>
+          <ChatBubble who="Claude" tight>12 vendors with FAM-day visits, 2 days, 2 leaders. Balancing now.</ChatBubble>
+          <div style={{ background: "white", borderRadius: 10, padding: 12, border: "0.5px solid #E5E1D6", marginBottom: 8 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: 8, borderBottom: "0.5px solid #E5E1D6", marginBottom: 8 }}>
+              <LeaderStat name="Ali" count={aliCount} color="#B8763A" />
+              <LeaderStat name="Maria" count={mariaCount} color="#4A6A4F" />
+            </div>
+            <div style={{ fontSize: 10, color: "#8A847A", fontFamily: fontMono, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 6 }}>fam day 1 — apr 7</div>
+            {VISIT_PLAN.filter((p) => p.day === "FAM 1").slice(0, 4).map((p, i) => <PlanRow key={i} p={p} />)}
+          </div>
+          <div style={{ background: "#FFF8E8", borderLeft: "2px solid #B8763A", padding: 10, borderRadius: 4, fontSize: 11, color: "#5A4920", display: "flex", gap: 8, alignItems: "flex-start" }}>
+            <Clock size={13} color="#B8763A" style={{ marginTop: 1 }} />
+            <span><strong>Tight transit.</strong> Maria's 16:00→18:00 jump Roma → San Ángel is only 30 min. Compress or rebalance?</span>
+          </div>
+          <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
+            <SecondaryButton>Lock plan</SecondaryButton>
+            <SecondaryButton>Rebalance</SecondaryButton>
+          </div>
+        </>
+      );
+    }
+
+    function LeaderStat({ name, count, color }) {
+      return (
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ width: 22, height: 22, borderRadius: 50, background: color, color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 600 }}>{name[0]}</div>
+          <div style={{ fontSize: 11 }}>
+            <div style={{ fontWeight: 500 }}>{name}</div>
+            <div style={{ fontSize: 10, color: "#8A847A", fontFamily: fontMono }}>{count} visits</div>
+          </div>
+        </div>
+      );
+    }
+
+    function PlanRow({ p }) {
+      return (
+        <div style={{ display: "grid", gridTemplateColumns: "44px 1fr 1fr", gap: 6, padding: "5px 0", fontSize: 11, borderBottom: "0.5px solid #F4EFE2" }}>
+          <span style={{ fontFamily: fontMono, color: "#8A847A" }}>{p.time}</span>
+          <span style={{ color: p.ali === "—" ? "#C9C2B0" : "#1A1A1A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.ali}</span>
+          <span style={{ color: p.maria === "—" ? "#C9C2B0" : "#1A1A1A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.maria}</span>
+        </div>
+      );
+    }
+
+    function BriefsScreen() {
+      return (
+        <>
+          <ChatBubble who="You">Brief me on Contramar — first stop tomorrow.</ChatBubble>
+          <ChatBubble who="Claude" tight>Pulling vendor row + client flags + last email exchange.</ChatBubble>
+          <div style={{ background: "white", borderRadius: 10, padding: 14, border: "0.5px solid #E5E1D6", fontSize: 11.5 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6, paddingBottom: 6, borderBottom: "0.5px solid #E5E1D6" }}>
+              <div>
+                <div style={{ fontFamily: fontSerif, fontSize: 15, fontWeight: 500 }}>Contramar</div>
+                <div style={{ fontSize: 10, color: "#8A847A", fontFamily: fontMono }}>FAM Day 1 · Apr 7, 13:00 · Ali</div>
+              </div>
+              <span style={{ background: "#E8EDE0", color: "#4A6A4F", padding: "2px 6px", borderRadius: 2, fontSize: 9, fontFamily: fontMono, letterSpacing: "0.04em" }}>CONFIRMED</span>
+            </div>
+            <BriefSection label="Clients this matters for">
+              <div>· Maria Lopez — veg, shellfish</div>
+              <div>· David Chen — gluten free</div>
+              <div>· Susan Park — mobility (terrace access)</div>
+            </BriefSection>
+            <BriefSection label="Questions to ask on site">
+              <div>1. Vegetarian tasting menu length?</div>
+              <div>2. GF prep — separate area or shared?</div>
+              <div>3. Terrace — stairs or ramp?</div>
+              <div>4. Wine corkage policy?</div>
+              <div>5. Latest the kitchen serves mains?</div>
+              <div>6. Tip — included or separate?</div>
+            </BriefSection>
+            <BriefSection label="Confirm before leaving">
+              <div>☐ Final headcount (6)</div>
+              <div>☐ Arrival time (13:00)</div>
+              <div>☐ Photo of private table</div>
+            </BriefSection>
+          </div>
+          <ChatBubble who="Claude" tight>7 of 8 briefs ready. Lucha Libre brief is light — no confirmation yet, going in cold.</ChatBubble>
+          <PrimaryButton>Print all FAM Day 1</PrimaryButton>
+        </>
+      );
+    }
+
+    function BriefSection({ label, children }) {
+      return (
+        <div style={{ marginTop: 8 }}>
+          <div style={{ fontSize: 9.5, color: "#8A847A", fontFamily: fontMono, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 4 }}>{label}</div>
+          <div style={{ fontSize: 11, lineHeight: 1.5, color: "#1A1A1A" }}>{children}</div>
+        </div>
+      );
+    }
+
+    function ChatBubble({ who, children, tight }) {
+      const isYou = who === "You";
+      return (
+        <div style={{ marginBottom: tight ? 6 : 10 }}>
+          <div style={{ fontSize: 9, color: "#8A847A", fontFamily: fontMono, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 3, textAlign: isYou ? "right" : "left" }}>{who}</div>
+          <div style={{ background: isYou ? "#1A1A1A" : "white", color: isYou ? "#F4F1EA" : "#1A1A1A", padding: "8px 12px", borderRadius: 12, borderTopRightRadius: isYou ? 4 : 12, borderTopLeftRadius: isYou ? 12 : 4, fontSize: 12.5, lineHeight: 1.45, maxWidth: "88%", marginLeft: isYou ? "auto" : 0, border: isYou ? "none" : "0.5px solid #E5E1D6" }}>{children}</div>
+        </div>
+      );
+    }
+
+    function PrimaryButton({ children }) {
+      return (
+        <button style={{ marginTop: 12, width: "100%", background: "#CC785C", color: "white", border: "none", padding: "11px 14px", borderRadius: 8, fontSize: 13, fontWeight: 500, fontFamily: fontSans, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+          {children}
+          <ChevronRight size={14} />
+        </button>
+      );
+    }
+
+    function SecondaryButton({ children }) {
+      return (
+        <button style={{ flex: 1, background: "white", border: "0.5px solid #C9C2B0", padding: "8px 10px", borderRadius: 6, fontSize: 11, color: "#1A1A1A", cursor: "pointer", fontFamily: fontSans }}>{children}</button>
+      );
+    }
+
+    function SheetPanel({ stage, sheet, activeSkill }) {
+      return (
+        <div style={{ background: "white", borderRadius: 8, border: "1px solid #D5CFC1", overflow: "hidden", boxShadow: "0 8px 32px -8px rgba(0,0,0,0.06)" }}>
+          <div style={{ background: "#F4F1EA", padding: "10px 16px", borderBottom: "1px solid #D5CFC1", display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ display: "flex", gap: 5 }}>
+              <Dot color="#E89186" /><Dot color="#E8C589" /><Dot color="#9CC78F" />
+            </div>
+            <div style={{ flex: 1, background: "white", border: "0.5px solid #D5CFC1", borderRadius: 4, padding: "3px 10px", fontSize: 11, fontFamily: fontMono, color: "#5A5650", display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ color: "#8A847A" }}>docs.google.com/spreadsheets/</span>
+              <span style={{ color: "#1A1A1A" }}>Lala-CDMX-2026-FAM-Companion</span>
+            </div>
+          </div>
+          <div style={{ display: "flex", background: "#FAF7F0", borderBottom: "1px solid #D5CFC1", overflow: "auto" }}>
+            {Object.entries(SHEET_TABS).map(([k, v]) => {
+              const active = k === stage;
+              return (
+                <div key={k} style={{ padding: "8px 14px", fontSize: 11, fontFamily: fontSans, color: active ? "#1A1A1A" : "#8A847A", fontWeight: active ? 500 : 400, background: active ? "white" : "transparent", borderRight: "0.5px solid #E5E1D6", borderBottom: active ? "2px solid #CC785C" : "2px solid transparent", whiteSpace: "nowrap" }}>{v.name}</div>
+              );
+            })}
+          </div>
+          <div style={{ background: "#FFF8E8", borderBottom: "1px solid #E5DEC4", padding: "6px 16px", fontSize: 11, fontFamily: fontMono, color: "#5A4920", display: "flex", alignItems: "center", gap: 8, letterSpacing: "0.04em" }}>
+            <div style={{ width: 6, height: 6, borderRadius: 50, background: "#4A6A4F", animation: "pulse 1.6s ease-in-out infinite" }} />
+            <span>{activeSkill} is writing to <strong>{sheet.name}</strong> — live updates visible to Maria</span>
+          </div>
+          <div style={{ overflow: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, fontFamily: fontSans }}>
+              <thead>
+                <tr style={{ background: "#F4F1EA" }}>
+                  <th style={{ width: 32, padding: "8px 10px", textAlign: "left", borderRight: "0.5px solid #D5CFC1", borderBottom: "0.5px solid #D5CFC1", fontSize: 10, color: "#8A847A", fontWeight: 400 }}></th>
+                  {sheet.headers.map((h, i) => (
+                    <th key={i} style={{ padding: "8px 12px", textAlign: "left", borderRight: "0.5px solid #D5CFC1", borderBottom: "0.5px solid #D5CFC1", fontWeight: 500, fontSize: 11, color: "#1A1A1A", fontFamily: fontMono, letterSpacing: "0.04em", textTransform: "uppercase" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {sheet.rows.map((row, i) => (
+                  <tr key={i}>
+                    <td style={{ padding: "8px 10px", borderRight: "0.5px solid #E5E1D6", borderBottom: "0.5px solid #E5E1D6", background: "#FAF7F0", color: "#8A847A", fontSize: 10, fontFamily: fontMono }}>{i + 1}</td>
+                    {row.map((cell, j) => {
+                      const cellStr = String(cell);
+                      const isWarn = cellStr.includes("⚠") || cellStr.toLowerCase().includes("missing") || cellStr.toLowerCase().includes("stale");
+                      const isOk = cellStr.includes("✓");
+                      const isNum = /^\d/.test(cellStr) && j > 0;
+                      return (
+                        <td key={j} style={{ padding: "8px 12px", borderRight: "0.5px solid #E5E1D6", borderBottom: "0.5px solid #E5E1D6", fontFamily: isNum || j === 0 ? fontMono : fontSans, color: isWarn ? "#B8763A" : isOk ? "#4A6A4F" : "#1A1A1A", fontSize: 11.5, fontWeight: j === 0 ? 500 : 400, whiteSpace: "nowrap" }}>{cell}</td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div style={{ background: "#FAF7F0", padding: "10px 16px", borderTop: "1px solid #E5E1D6", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 10, fontFamily: fontMono, color: "#8A847A", letterSpacing: "0.04em" }}>
+            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+              <Avatar i="AM" color="#B8763A" />
+              <Avatar i="MR" color="#4A6A4F" />
+              <Avatar i="K" color="#5A5650" />
+              <span>3 viewers</span>
+            </div>
+            <span>Last edit · just now</span>
+          </div>
+        </div>
+      );
+    }
+
+    function Dot({ color }) {
+      return <div style={{ width: 10, height: 10, borderRadius: 50, background: color }} />;
+    }
+
+    function Avatar({ i, color }) {
+      return <div style={{ width: 18, height: 18, borderRadius: 50, background: color, color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 600, fontFamily: fontSans }}>{i}</div>;
+    }
+
+    function CoLeaderPing({ onDismiss }) {
+      return (
+        <div onClick={onDismiss} style={{ position: "fixed", top: 32, right: 32, background: "#1A1A1A", color: "#F4F1EA", padding: "12px 16px", borderRadius: 8, maxWidth: 320, boxShadow: "0 12px 32px -8px rgba(0,0,0,0.4)", cursor: "pointer", zIndex: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+            <Bell size={12} />
+            <span style={{ fontSize: 10, fontFamily: fontMono, letterSpacing: "0.06em", color: "#A39B8A" }}>MARIA · 3 MIN AGO</span>
+          </div>
+          <div style={{ fontSize: 13, lineHeight: 1.4 }}>Got the Lucha Libre promoter on the phone — confirming for Apr 8, 8pm. Updating the master.</div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<FamCompanionWorkflowDemo />);
+  </script>
+</body>
+</html>

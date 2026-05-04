@@ -702,41 +702,41 @@ function writeAuthorPage(posts) {
 function writeRobots() {
   // Full allowlist per blog strategy §07. Covers OpenAI, Anthropic,
   // Perplexity, Google AI Overviews, and Common Crawl.
-  // /iconic-trip/ is an unlisted private pitch page — disallowed for everyone.
+  // /iconic/ is an unlisted private pitch page — disallowed for everyone.
   const body = `User-agent: GPTBot
-Disallow: /iconic-trip/
+Disallow: /iconic/
 Allow: /
 
 User-agent: OAI-SearchBot
-Disallow: /iconic-trip/
+Disallow: /iconic/
 Allow: /
 
 User-agent: ChatGPT-User
-Disallow: /iconic-trip/
+Disallow: /iconic/
 Allow: /
 
 User-agent: ClaudeBot
-Disallow: /iconic-trip/
+Disallow: /iconic/
 Allow: /
 
 User-agent: Claude-SearchBot
-Disallow: /iconic-trip/
+Disallow: /iconic/
 Allow: /
 
 User-agent: PerplexityBot
-Disallow: /iconic-trip/
+Disallow: /iconic/
 Allow: /
 
 User-agent: Google-Extended
-Disallow: /iconic-trip/
+Disallow: /iconic/
 Allow: /
 
 User-agent: CCBot
-Disallow: /iconic-trip/
+Disallow: /iconic/
 Allow: /
 
 User-agent: *
-Disallow: /iconic-trip/
+Disallow: /iconic/
 Allow: /
 
 Sitemap: ${SITE_URL}/sitemap.xml
