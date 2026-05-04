@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Using Claude for Iconic — A walkthrough</title>
+<meta name="description" content="A walkthrough of what I set up for Atlas 400 with Claude, what came out of it, and a few thoughts on what it could look like at Iconic.">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-light: #FAF7F5;
+    --bg-secondary: #F1ECE9;
+    --bg-eggplant: #2E2A39;
+    --bg-deep-teal: #24333A;
+    --text-primary: #1F1F1F;
+    --text-secondary: #4A4A4A;
+    --text-light: #FFFFFF;
+    --text-light-secondary: rgba(255,255,255,0.7);
+    --accent-orange: #FF7A59;
+    --accent-teal: #2EC4B6;
+    --accent-pink: #F4A6B5;
+    --accent-yellow: #FFD166;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--bg-eggplant);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Account for fixed nav when jumping to a section */
+  [id] { scroll-margin-top: 5rem; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    padding: 1rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    background: rgba(36, 32, 46, 0.65);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    transition: background 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                padding 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(30, 26, 40, 0.92);
+    box-shadow: 0 1px 24px rgba(0,0,0,0.28);
+    padding: 0.7rem 3rem;
+    border-bottom-color: rgba(255,255,255,0.08);
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.6rem;
+    letter-spacing: -0.03em;
+    color: var(--text-light);
+    text-transform: lowercase;
+    line-height: 1;
+    transition: color 0.3s, text-shadow 0.3s;
+  }
+  .nav-brand:hover .logo {
+    color: var(--accent-orange);
+    text-shadow: 0 0 24px rgba(255, 122, 89, 0.45);
+  }
+
+  .nav-tagline {
+    display: inline-block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    line-height: 1.35;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.65);
+    letter-spacing: 0.02em;
+    border-left: 1px solid rgba(255, 255, 255, 0.22);
+    padding-left: 1.1rem;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.25rem;
+    align-items: center;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.78);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    position: relative;
+    transition: color 0.25s;
+  }
+  .nav-links a:hover { color: var(--text-light); }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0;
+    height: 1.5px;
+    background: var(--accent-orange);
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .nav-links a:hover::after { width: 100%; }
+
+  @media (max-width: 900px) {
+    nav { padding: 0.85rem 1.5rem; gap: 1rem; }
+    nav.scrolled { padding: 0.7rem 1.5rem; }
+    .nav-tagline { display: none; }
+    .nav-links { gap: 1.25rem; }
+    .nav-links a { font-size: 0.8rem; }
+    .logo { font-size: 1.4rem; }
+  }
+  @media (max-width: 560px) {
+    .nav-links { gap: 0.85rem; }
+    .nav-links a { font-size: 0.74rem; }
+  }
+
+  /* ── SECTION WRAPPERS ── */
+  .section-eggplant {
+    width: 100%;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 30%, rgba(255, 122, 89, 0.035) 0%, transparent 60%),
+      radial-gradient(ellipse at center, #352F44 0%, #2E2A39 45%, #231F2E 100%);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .section-light {
+    width: 100%;
+    background: radial-gradient(ellipse at center, #FBF9F7 0%, #F4EFEB 100%);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .section-secondary {
+    width: 100%;
+    background: radial-gradient(ellipse at center, #F4EFEB 0%, #EBE4DF 100%);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .section-deep-teal {
+    width: 100%;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 30%, rgba(46, 196, 182, 0.04) 0%, transparent 60%),
+      radial-gradient(ellipse at center, #2B3D44 0%, #24333A 45%, #1C2A30 100%);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* Grain overlay */
+  .section-eggplant::before,
+  .section-deep-teal::before,
+  .section-light::before,
+  .section-secondary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>");
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 0;
+    mix-blend-mode: overlay;
+  }
+  .section-light::before,
+  .section-secondary::before { opacity: 0.025; mix-blend-mode: multiply; }
+
+  section, .hero {
+    position: relative;
+    z-index: 2;
+    padding: 6rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 3rem 6rem;
+    color: var(--text-light);
+  }
+
+  .hero-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+  }
+  .hero-label::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-orange);
+    margin-right: 0.75rem;
+    vertical-align: middle;
+    box-shadow: 0 0 12px rgba(255, 122, 89, 0.8);
+  }
+
+  .hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2.6rem, 6vw, 5.25rem);
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+    max-width: 980px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    color: var(--accent-pink);
+  }
+
+  .hero-sub {
+    font-size: 1.2rem;
+    line-height: 1.7;
+    color: var(--text-light-secondary);
+    max-width: 640px;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-byline {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.55);
+    text-transform: uppercase;
+  }
+  .hero-byline span {
+    color: var(--accent-orange);
+  }
+
+  /* ── SECTION HEADINGS ── */
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .section-label::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    vertical-align: middle;
+  }
+  .section-eggplant .section-label,
+  .section-deep-teal .section-label { color: rgba(255,255,255,0.55); }
+  .section-eggplant .section-label::before,
+  .section-deep-teal .section-label::before { background: var(--accent-yellow); }
+  .section-light .section-label,
+  .section-secondary .section-label { color: var(--text-secondary); }
+  .section-light .section-label::before,
+  .section-secondary .section-label::before { background: var(--accent-orange); }
+
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 2rem;
+    max-width: 820px;
+  }
+  .section-title em {
+    font-style: italic;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+  }
+  .section-eggplant .section-title,
+  .section-deep-teal .section-title { color: var(--text-light); }
+  .section-eggplant .section-title em,
+  .section-deep-teal .section-title em { color: var(--accent-pink); }
+  .section-light .section-title,
+  .section-secondary .section-title { color: var(--text-primary); }
+  .section-light .section-title em,
+  .section-secondary .section-title em { color: var(--accent-orange); }
+
+  .section-deck {
+    font-family: 'DM Sans', sans-serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    line-height: 1.55;
+    margin: -1.25rem 0 0;
+    max-width: 640px;
+  }
+  .section-eggplant .section-deck,
+  .section-deep-teal .section-deck { color: var(--text-light-secondary); }
+  .section-light .section-deck,
+  .section-secondary .section-deck { color: var(--text-secondary); }
+
+  /* ── BODY COPY ── */
+  .body-copy {
+    font-size: 1.08rem;
+    line-height: 1.8;
+    max-width: 720px;
+  }
+  .body-copy p { margin-bottom: 1.5rem; }
+  .body-copy p:last-child { margin-bottom: 0; }
+  .section-eggplant .body-copy,
+  .section-deep-teal .body-copy { color: var(--text-light-secondary); }
+  .section-light .body-copy,
+  .section-secondary .body-copy { color: var(--text-secondary); }
+  .body-copy strong {
+    color: inherit;
+    font-weight: 700;
+  }
+  .section-light .body-copy strong,
+  .section-secondary .body-copy strong { color: var(--text-primary); }
+  .section-eggplant .body-copy strong,
+  .section-deep-teal .body-copy strong { color: var(--text-light); }
+
+  /* ── SKILL CARDS ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+    margin-top: 2.5rem;
+  }
+
+  .skill-card {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: 18px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s;
+    position: relative;
+  }
+
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    padding: 1px;
+    background: linear-gradient(135deg, var(--accent-orange), var(--accent-teal));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+  }
+
+  .skill-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 48px rgba(0,0,0,0.08), 0 0 32px rgba(255, 122, 89, 0.1);
+    border-color: rgba(255, 122, 89, 0.2);
+  }
+  .skill-card:hover::before { opacity: 1; }
+
+  .skill-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-orange);
+    margin-bottom: 0.85rem;
+  }
+  .skill-num::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1.5px;
+    background: var(--accent-orange);
+    vertical-align: middle;
+    margin-right: 0.75rem;
+    position: relative;
+    top: -2px;
+  }
+
+  .skill-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+  }
+
+  .skill-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.85rem 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .skill-head h3 { margin-bottom: 0; }
+
+  .demo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--accent-orange);
+    background: rgba(255, 122, 89, 0.08);
+    border: 1px solid rgba(255, 122, 89, 0.35);
+    text-decoration: none;
+    transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s,
+                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                color 0.3s;
+  }
+  .demo-btn:hover {
+    background: var(--accent-orange);
+    border-color: var(--accent-orange);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+  .demo-btn::after {
+    content: '→';
+    font-size: 0.95em;
+    line-height: 1;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .demo-btn:hover::after { transform: translateX(2px); }
+
+  .skill-block {
+    margin-bottom: 1.5rem;
+  }
+  .skill-block:last-child { margin-bottom: 0; }
+
+  .skill-block-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    color: var(--text-secondary);
+  }
+  .skill-block.did .skill-block-label { color: var(--accent-orange); }
+  .skill-block.could .skill-block-label { color: var(--accent-teal); }
+
+  .skill-block p {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--text-secondary);
+  }
+
+  /* ── AUTONOMOUS CALLOUT ── */
+  .auto-callout {
+    margin-top: 3rem;
+    padding: 2.5rem;
+    border-radius: 18px;
+    background: linear-gradient(135deg,
+                  rgba(255, 209, 102, 0.18) 0%,
+                  rgba(46, 196, 182, 0.12) 100%);
+    border: 1px solid rgba(255, 122, 89, 0.28);
+    box-shadow: 0 4px 24px rgba(255, 122, 89, 0.06);
+  }
+
+  .auto-callout-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-orange);
+    margin-bottom: 1rem;
+  }
+  .auto-callout-label::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1.5px;
+    background: var(--accent-orange);
+    vertical-align: middle;
+    margin-right: 0.75rem;
+    position: relative;
+    top: -2px;
+  }
+
+  .auto-callout h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 1.25rem;
+  }
+
+  .auto-callout p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 1.25rem;
+  }
+
+  .auto-list {
+    list-style: none;
+    margin: 1.5rem 0;
+    padding: 0;
+  }
+  .auto-list li {
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgba(31, 31, 31, 0.08);
+    font-size: 0.98rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+  }
+  .auto-list li:last-child { border-bottom: none; }
+  .auto-list li strong {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .auto-list li em {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--accent-orange);
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── ICONIC SECTION (deep teal) ── */
+  .iconic-list {
+    counter-reset: iconic;
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+    max-width: 780px;
+  }
+  .iconic-list li {
+    counter-increment: iconic;
+    position: relative;
+    padding: 1.5rem 0 1.5rem 4rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--text-light-secondary);
+  }
+  .iconic-list li:last-child { border-bottom: none; }
+  .iconic-list li::before {
+    content: counter(iconic, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 1.4rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--accent-yellow);
+    letter-spacing: 0.04em;
+  }
+  .iconic-list li strong {
+    color: var(--text-light);
+    font-weight: 700;
+  }
+
+  /* ── FLAG CARDS ── */
+  .flag-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.75rem;
+    margin-top: 2.5rem;
+  }
+
+  .flag-card {
+    border-radius: 18px;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .flag-card.flag-1 {
+    background-color: #F2D9D2;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><g stroke='%23C73C2D' stroke-width='1' fill='none' opacity='0.09'><path d='M0,20 H100 M0,40 H100 M0,60 H100 M0,80 H100'/><path d='M20,0 V100 M40,0 V100 M60,0 V100 M80,0 V100'/></g></svg>");
+    background-size: 100px 100px;
+  }
+
+  .flag-card.flag-2 {
+    background-color: #DCE9DA;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='42'><g stroke='%232E4A1A' stroke-width='1.6' fill='none' opacity='0.14' stroke-linecap='round'><path d='M0,8 Q25,-4 50,8 T100,8'/><path d='M0,22 Q25,10 50,22 T100,22'/><path d='M0,36 Q25,24 50,36 T100,36'/></g></svg>");
+    background-repeat: repeat-x;
+    background-position: bottom;
+    background-size: 100px 42px;
+  }
+
+  .flag-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--accent-orange);
+    margin-bottom: 1rem;
+  }
+  .flag-card.flag-2 .flag-num { color: #2E4A1A; }
+
+  .flag-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 1.1rem;
+  }
+
+  .flag-card p {
+    font-size: 0.98rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+  .flag-card p:last-child { margin-bottom: 0; }
+
+  /* ── TOOLS COMPARISON CARDS ── */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    max-width: 820px;
+  }
+
+  .tool-card {
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 2rem 2.25rem;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s,
+                box-shadow 0.4s;
+  }
+  .tool-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(244, 166, 181, 0.35);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.18);
+  }
+
+  .tool-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-light);
+    letter-spacing: -0.015em;
+    margin-bottom: 0.9rem;
+  }
+  .tool-card h3 span {
+    color: var(--accent-pink);
+    font-weight: 400;
+    font-style: italic;
+    font-family: 'DM Sans', sans-serif;
+    margin-left: 0.3rem;
+    font-size: 0.95rem;
+  }
+
+  .tool-card p {
+    font-size: 0.98rem;
+    line-height: 1.7;
+    color: var(--text-light-secondary);
+  }
+
+  .tools-verdict {
+    margin-top: 2.5rem;
+    padding: 2rem 2.25rem;
+    border-radius: 16px;
+    background: linear-gradient(135deg,
+                  rgba(255, 122, 89, 0.14) 0%,
+                  rgba(255, 209, 102, 0.08) 100%);
+    border: 1px solid rgba(255, 122, 89, 0.25);
+  }
+  .tools-verdict p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text-light);
+  }
+  .tools-verdict p strong {
+    color: var(--accent-orange);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 820px) {
+    section, .hero { padding: 5rem 2rem; }
+    .hero { padding-top: 7rem; padding-bottom: 5rem; min-height: auto; }
+    .skill-card { padding: 2rem; }
+    .auto-callout { padding: 2rem; }
+    .flag-grid { grid-template-columns: 1fr; }
+    .iconic-list li { padding-left: 3.25rem; }
+  }
+  @media (max-width: 600px) {
+    section, .hero { padding: 4rem 1.5rem; }
+    .hero { padding-top: 6rem; padding-bottom: 4rem; }
+    .hero h1 { font-size: clamp(2.1rem, 8vw, 3rem); }
+    .hero-sub { font-size: 1.05rem; }
+    .skill-card { padding: 1.75rem; border-radius: 14px; }
+    .skill-card h3 { font-size: 1.35rem; }
+    .auto-callout { padding: 1.75rem; border-radius: 14px; }
+    .flag-card { padding: 1.75rem; border-radius: 14px; }
+    .flag-num { font-size: 2.4rem; }
+    .tool-card { padding: 1.5rem 1.75rem; }
+    .body-copy { font-size: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav id="nav">
+  <a href="#top" class="nav-brand">
+    <span class="logo">afuera</span>
+    <span class="nav-tagline">AI consulting &amp; implementation<br>for travel and tourism</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#setup">The setup</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#iconic">For Iconic</a></li>
+    <li><a href="#flags">Watch outs</a></li>
+    <li><a href="#alternatives">Other tools</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="section-eggplant" id="top">
+  <header class="hero">
+    <div class="hero-label">A walkthrough · April 2026</div>
+    <h1>Using Repeatable AI Workflows for <em>Iconic Trip Ops</em></h1>
+    <p class="hero-sub">What I set up for the recent trip in CDMX to make life easier, and a few thoughts on what it could look like at Iconic at scale to save time, cut costs, and improve customer experience.</p>
+    <div class="hero-byline">Ali Murphy · <span>Afuera</span> · April 2026</div>
+  </header>
+</div>
+
+<!-- ── SECTION 1: WHAT I DID ── -->
+<div class="section-light" id="setup">
+  <section>
+    <div class="section-label">What I did</div>
+    <h2 class="section-title">A personal hub in Claude co-work to manage everything involving research, FAM, during and post trip. <em>With much of it automated.</em></h2>
+    <div class="body-copy">
+      <p>I lead trips for Iconic and live in Mexico City, so for Atlas 400 I started using Claude Cowork on my laptop — connected to my Drive and Gmail — as a kind of personal search engine for the trip. Dropped in every doc Maureen and Amber sent me, every email thread, every vendor contract, and let it index all of it.</p>
+      <p>Once that was set up, I could ask plain questions like <strong>"has Salon de Agave confirmed the new time?"</strong> or <strong>"what did we promise Jacaranda?"</strong> and get an answer pulled from the actual source.</p>
+      <p>From there it became a Hub for managing every aspect of the trip — a system of custom tools and skills, each one built as I needed it. Some quick — a skill that reads tomorrow's itinerary and drafts the daily WhatsApp to guests. Some more elaborate — a full expense tracker I'd love every leader to have.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ── SECTION 2: SKILLS ── -->
+<div class="section-secondary" id="skills">
+  <section>
+    <h2 class="section-title">Seven skills I built to <em>run the trip</em></h2>
+    <p class="section-deck">that can be reusable plugins for any teammate</p>
+
+    <div class="skills-grid">
+
+      <!-- 1 -->
+      <div class="skill-card">
+        <div class="skill-num">Skill 01</div>
+        <div class="skill-head">
+          <h3>FAM Companion</h3>
+          <a href="file:///Users/alimurphy/Downloads/fam-companion-workflow_1.html" class="demo-btn" target="_blank" rel="noopener">See demo</a>
+        </div>
+        <div class="skill-block did">
+          <div class="skill-block-label">What it did for me</div>
+          <p>Aggregated the master trip doc, the dietary and accessibility notes, the client profiles, and every vendor email thread into one shared FAM picture. Built the schedule across what Amber set up, what Lizelle set up, and what I added. Generated per-vendor briefs the night before each visit — talking points, dietary flags relevant to that stop, the exact questions I needed answered before walking in. Replaced the "wait, who's visiting Salon de Agave on Tuesday?" chaos with one shared sheet.</p>
+        </div>
+        <div class="skill-block could">
+          <div class="skill-block-label">What it could do</div>
+          <p>Live coordination during FAM days — who's running late, who needs backup, whose visit is over and what they learned. Automated brief regeneration when something changes (new dietary note from a guest at 9pm → updated brief flagged for the breakfast vendor at 6am). Debrief auto-draft from voice notes captured at each stop, so the post-FAM writeup writes itself.</p>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="skill-card">
+        <div class="skill-num">Skill 02</div>
+        <div class="skill-head">
+          <h3>Expense Tracker</h3>
+          <a href="file:///Users/alimurphy/Downloads/iconic-expense-workflow.html" class="demo-btn" target="_blank" rel="noopener">See demo</a>
+        </div>
+        <div class="skill-block did">
+          <div class="skill-block-label">What it did for me</div>
+          <p>This one got more elaborate than I expected. Pre-trip, it walked me through setup — uploaded Iconic's expense training PDF and the trip-specific spending guidelines, configured my cards, the cash advance amount, my co-leader. During the trip, a photo of any receipt plus a 5-second voice note (<em>"Contramar, FAM lunch for four, my Amex, 200 peso cash tip"</em>) got parsed, currency-converted, mapped to the right Expensify category, and filed in the right report. Cash tips that would have been forgotten got logged. Post-trip, it ran a full audit — flagged FX gaps between POS amount and card settlement (I had a $1.75 gap on the Apr 8 Ritz bill that took me an hour to figure out), found tips I hadn't logged against the spending budget, generated my "Questions for Mo" doc, and exported Expensify-ready reports.</p>
+        </div>
+        <div class="skill-block could">
+          <div class="skill-block-label">What it could do</div>
+          <p>Shared live budget across leaders — Lizelle and I see in real time who paid what and what's left. Automatic dedup on shared tips so the Casa Jacaranda $300 doesn't get claimed twice across leaders. Per-trip margin visibility for finance the moment expenses post.</p>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="skill-card">
+        <div class="skill-num">Skill 03</div>
+        <h3>Daily Snapshot</h3>
+        <div class="skill-block did">
+          <div class="skill-block-label">What it did for me</div>
+          <p>Each morning during Atlas 400, it read the day's itinerary from the trip workbook, pulled CDMX weather, cross-referenced traffic on the routes I'd be using, flagged anything worth shifting (rain moving up, traffic worse than usual on Insurgentes), and drafted the daily WhatsApp message to guests in my voice. I'd review it for 30 seconds and send.</p>
+        </div>
+        <div class="skill-block could">
+          <div class="skill-block-label">What it could do</div>
+          <p>Generate per-guest personalized notes when the group has subgroups — a wine collector and a Spanish-only speaker get different briefs. Push proactive contingency suggestions when weather or traffic crosses a threshold (<em>"rain moved up to 3pm — the Jacaranda courtyard plan needs to flip to indoor, here's the script"</em>).</p>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="skill-card">
+        <div class="skill-num">Skill 04</div>
+        <h3>Arrivals &amp; Departures</h3>
+        <div class="skill-block did">
+          <div class="skill-block-label">What it did for me</div>
+          <p>Watched pax flight numbers from the manifest. When a flight changed — delay, early arrival, gate change — Claude flagged it, drafted an update for Julia at the Ritz to shift check-in timing, prepped a heads-up for the driver, and auto-generated a fresh arrivals PDF with the changes baked in — instantly. It also caught the terminal-grouping issue — that our Apr 9 arrivals were split across three terminals, which meant an extra car we hadn't budgeted.</p>
+        </div>
+        <div class="skill-block could">
+          <div class="skill-block-label">What it could do</div>
+          <p>Auto-rebook ground transport when delays cross set thresholds. Push proactive WhatsApp updates to guests (<em>"we've adjusted your pickup — no action needed on your end"</em>).</p>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="skill-card">
+        <div class="skill-num">Skill 05</div>
+        <h3>Know Your Area (KOA)</h3>
+        <div class="skill-block did">
+          <div class="skill-block-label">What it did for me</div>
+          <p>Each morning, Claude read tomorrow's stops and handed me 3 interesting talking points per venue — pulled from web research, cross-referenced with the trip context. When I walked guests into Mesa Meroma I had three real things to weave in beyond "this place is great."</p>
+        </div>
+        <div class="skill-block could">
+          <div class="skill-block-label">What it could do</div>
+          <p>Personalize per-guest — a pax with a wine collection gets a different KOA at Salon de Agave than one who's into Mexican textile history. Cross-reference Iconic's institutional memory — Pedro at Meroma's signature pairing from a past trip's debrief gets surfaced before the visit.</p>
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="skill-card">
+        <div class="skill-num">Skill 06</div>
+        <h3>Client Info On Demand</h3>
+        <div class="skill-block did">
+          <div class="skill-block-label">What it did for me</div>
+          <p>Mid-trip, mid-conversation, I could ask <em>"remind me of Kate's dietary restrictions"</em> or <em>"what's [pax]'s history with Iconic"</em> and get the full dossier in 5 seconds. Pulled from the master profiles plus past trip notes if they were a returning client.</p>
+        </div>
+        <div class="skill-block could">
+          <div class="skill-block-label">What it could do</div>
+          <p>Surface preferences proactively during vendor coordination (<em>"Kate prefers earlier dinner times — schedule Meroma at 7 not 8"</em>). The institutional memory layer — every leader knowing what any leader noticed across trips.</p>
+        </div>
+      </div>
+
+      <!-- 7 -->
+      <div class="skill-card">
+        <div class="skill-num">Skill 07</div>
+        <h3>Vendor Email Sweep</h3>
+        <div class="skill-block did">
+          <div class="skill-block-label">What it did for me</div>
+          <p>Each night, Claude scanned my inbox for vendor threads, classified them (confirmed, pending reply, gone silent, action-needed), and dropped a morning summary on me — <em>Pedro at Meroma confirmed corkage waiver. Salon de Agave still hasn't responded. Maria from Liderazgo wants to confirm pickup time.</em> I started each day knowing exactly who needed a nudge.</p>
+        </div>
+        <div class="skill-block could">
+          <div class="skill-block-label">What it could do</div>
+          <p>Auto-draft the nudge emails for stale threads in my voice. Parse vendor commitments into the master tracker the moment confirmation lands — no manual data entry.</p>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+</div>
+
+<!-- ── SECTION 3: HOW THIS COULD LOOK ── -->
+<div class="section-deep-teal" id="iconic">
+  <section>
+    <div class="section-label">How this could look for Iconic</div>
+    <h2 class="section-title">One route you might go to <em>scale efficiency</em></h2>
+    <p class="section-deck">Take Iconic from individual optimization and skill sharing to major efficiency gains, better transparency for the office, less coordination tax — and real dollars, too.</p>
+    <ol class="iconic-list">
+      <li><strong>Iconic gets one Claude Enterprise workspace.</strong> Single bill, your admin (probably Amber or ops). Everyone gets a seat — Maureen, Amber, leaders as they're assigned to trips.</li>
+      <li><strong>The skills above bundle into one Iconic Trip Operator plugin.</strong> Your admin pushes it — every leader has them on day one.</li>
+      <li><strong>It connects into your existing stack, not around it.</strong> Files stay in Drive (Trip Workbooks, manifests, vendor docs — all of it). Gmail stays in Gmail. Calendar stays in Calendar. The plugin reads from and writes back to those — nothing new to migrate.</li>
+      <li><strong>Each trip becomes its own shared Project</strong> — Amber, the assigned leaders, finance (read-only). Files in Drive, the Project is the live working layer over them.</li>
+      <li><strong>If you wanted to try it,</strong> the cleanest first move is one trip end-to-end on the system. Pick the next one, run it on this, see what holds up.</li>
+    </ol>
+  </section>
+</div>
+
+<!-- ── SECTION 4: TWO THINGS WORTH FLAGGING ── -->
+<div class="section-light" id="flags">
+  <section>
+    <div class="section-label">Two things worth flagging</div>
+    <h2 class="section-title">Two things I'd <em>think about</em></h2>
+
+    <div class="flag-grid">
+      <div class="flag-card flag-1">
+        <div class="flag-num">01</div>
+        <h3>Adaptability is brutally low on individual accounts.</h3>
+        <p>One person can build great skills, but if everyone has their own personal Claude account, sharing happens manually, updates don't propagate, and adoption stalls in single digits. The team that builds the skills isn't the team that needs them most.</p>
+        <p>With Enterprise, the admin pushes skills to everyone — adoption is opt-out, not opt-in. That's the only thing that gets actual usage past the first month.</p>
+      </div>
+
+      <div class="flag-card flag-2">
+        <div class="flag-num">02</div>
+        <h3>Security on individual accounts means you have no control.</h3>
+        <p>If leaders use personal Claude accounts, Iconic's docs sit on personal laptops in personal tenancies. No audit log Iconic can see, no kill switch when someone stops working with you, no way to revoke access.</p>
+        <p>With Enterprise, Iconic owns the workspace. Audit logs are yours. Seat revocation is instant. Data sits in Iconic's tenancy, not on anyone's personal device. SOC 2, ISO 27001, BAA, zero data retention all available.</p>
+      </div>
+    </div>
+
+    <div class="body-copy" style="margin-top: 2.5rem;">
+      <p>The skills only matter if everyone actually uses them, and your data only matters if you control it. Both need Enterprise — neither is a "we'll figure it out later" thing.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ── SECTION 5: ON OTHER AI TOOLS ── -->
+<div class="section-eggplant" id="alternatives">
+  <section>
+    <div class="section-label">On other AI tools</div>
+    <h2 class="section-title">If you're wondering about <em>Gemini, ChatGPT, or building custom</em></h2>
+
+    <div class="tools-grid">
+      <div class="tool-card">
+        <h3>Gemini <span>· Google</span></h3>
+        <p>Best Drive and Gmail integration of any of them — that's where it shines. Falls short on what I built because it doesn't have a Cowork-equivalent (desktop file editing plus skills as installable, repeatable tools every leader uses). You can do trip Q&amp;A on your Drive in Gemini. You can't easily ship Snapshot, the Expense Tracker, or the FAM Companion as installable tools. (Microsoft Copilot is the equivalent for the M365 stack — same logic if you ever moved there.)</p>
+      </div>
+
+      <div class="tool-card">
+        <h3>ChatGPT Enterprise</h3>
+        <p>GPTs are similar to Claude skills. Mature ecosystem, lots of integrations. The catch: GPTs are web-only — they can't edit local files the way Cowork does. The "snap a receipt, voice-note a tip, file goes into the tracker" workflow doesn't translate cleanly. Possible to rebuild, but it's a different stack.</p>
+      </div>
+
+      <div class="tool-card">
+        <h3>Custom software</h3>
+        <p>Probably the right answer eventually — not yet. Custom build costs are down ~80% since 2022. At Afuera we run builds at that rate — one senior engineer controlling a team of agents that moves 10x faster, with the same diligence. A bespoke Iconic platform — mobile-native, client-facing, owned outright — becomes more viable every quarter. Worth revisiting after 6–12 months on the Claude version when you actually know what's working and what's not.</p>
+      </div>
+    </div>
+
+  </section>
+</div>
+
+<script>
+  (function () {
+    var nav = document.getElementById('nav');
+    if (!nav) return;
+    var ticking = false;
+    function update() {
+      if (window.scrollY > 24) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        window.requestAnimationFrame(update);
+        ticking = true;
+      }
+    }, { passive: true });
+    update();
+  })();
+</script>
+
+</body>
+</html>
