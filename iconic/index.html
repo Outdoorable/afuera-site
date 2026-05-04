@@ -131,74 +131,17 @@
   }
   .nav-links a:hover::after { width: 100%; }
 
-  /* Featured demo buttons in the nav — square pills linking to live demos */
-  .nav-demos {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-    flex-shrink: 0;
-  }
-  .nav-demo-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.5rem 0.85rem;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 122, 89, 0.42);
-    background: rgba(255, 122, 89, 0.1);
-    color: var(--accent-orange);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.3s,
-                color 0.3s,
-                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.3s;
-  }
-  .nav-demo-btn::before {
-    content: '';
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 1px;
-    background: var(--accent-orange);
-    transition: background 0.3s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .nav-demo-btn:hover {
-    background: var(--accent-orange);
-    border-color: var(--accent-orange);
-    color: #fff;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(255, 122, 89, 0.32);
-  }
-  .nav-demo-btn:hover::before {
-    background: #fff;
-    transform: rotate(45deg);
-  }
-
-  @media (max-width: 1100px) {
-    .nav-tagline { display: none; }
-  }
   @media (max-width: 900px) {
-    nav { padding: 0.85rem 1.25rem; gap: 0.85rem; }
-    nav.scrolled { padding: 0.7rem 1.25rem; }
-    .nav-links { gap: 1.1rem; }
+    nav { padding: 0.85rem 1.5rem; gap: 1rem; }
+    nav.scrolled { padding: 0.7rem 1.5rem; }
+    .nav-tagline { display: none; }
+    .nav-links { gap: 1.25rem; }
     .nav-links a { font-size: 0.8rem; }
     .logo { font-size: 1.4rem; }
-    .nav-demo-btn { padding: 0.45rem 0.7rem; font-size: 0.72rem; }
   }
-  @media (max-width: 760px) {
-    .nav-links { display: none; }
-    nav { gap: 0.6rem; }
-  }
-  @media (max-width: 460px) {
-    .nav-demos { gap: 0.4rem; }
-    .nav-demo-btn { padding: 0.4rem 0.6rem; font-size: 0.7rem; gap: 0.35rem; }
-    .nav-demo-btn::before { width: 5px; height: 5px; }
+  @media (max-width: 560px) {
+    .nav-links { gap: 0.85rem; }
+    .nav-links a { font-size: 0.74rem; }
   }
 
   /* ── SECTION WRAPPERS ── */
@@ -263,11 +206,113 @@
   /* ── HERO ── */
   .hero {
     min-height: 88vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4rem;
+    align-items: center;
     padding: 8rem 3rem 6rem;
     color: var(--text-light);
+  }
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  /* Right-aligned demo column inside the hero */
+  .hero-demos {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.65rem;
+    flex-shrink: 0;
+  }
+  .hero-demos-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.55rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+  .hero-demos-label::before {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+  }
+  .hero-demo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.7rem 1.05rem;
+    min-width: 200px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 122, 89, 0.42);
+    background: rgba(255, 122, 89, 0.1);
+    color: var(--accent-orange);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    white-space: nowrap;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s,
+                color 0.3s,
+                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s;
+  }
+  .hero-demo-btn::before {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 1px;
+    background: var(--accent-orange);
+    transition: background 0.3s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .hero-demo-btn::after {
+    content: '→';
+    margin-left: auto;
+    font-size: 1em;
+    line-height: 1;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .hero-demo-btn:hover {
+    background: var(--accent-orange);
+    border-color: var(--accent-orange);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(255, 122, 89, 0.32);
+  }
+  .hero-demo-btn:hover::before {
+    background: #fff;
+    transform: rotate(45deg);
+  }
+  .hero-demo-btn:hover::after { transform: translateX(3px); }
+
+  @media (max-width: 900px) {
+    .hero {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+    .hero-demos { align-items: flex-start; }
+    .hero-demos-label::before { display: none; }
+  }
+  @media (max-width: 560px) {
+    .hero-demo-btn {
+      min-width: 0;
+      width: 100%;
+      font-size: 0.82rem;
+    }
   }
 
   .hero-label {
@@ -827,19 +872,22 @@
     <li><a href="#flags">Watch outs</a></li>
     <li><a href="#alternatives">Other tools</a></li>
   </ul>
-  <div class="nav-demos">
-    <a href="/iconic/fam-companion/" class="nav-demo-btn" target="_blank" rel="noopener" title="FAM Companion — interactive demo">FAM Companion</a>
-    <a href="/iconic/expense-tracker/" class="nav-demo-btn" target="_blank" rel="noopener" title="Expense Tracker — interactive demo">Expense Tracker</a>
-  </div>
 </nav>
 
 <!-- ── HERO ── -->
 <div class="section-eggplant" id="top">
   <header class="hero">
-    <div class="hero-label">A walkthrough · April 2026</div>
-    <h1>Using Repeatable AI Workflows for <em>Iconic Trip Ops</em></h1>
-    <p class="hero-sub">What I set up for the recent trip in CDMX to make life easier, and a few thoughts on what it could look like at Iconic at scale to save time, cut costs, and improve customer experience.</p>
-    <div class="hero-byline">Ali Murphy · <span>Afuera</span> · April 2026</div>
+    <div class="hero-content">
+      <div class="hero-label">A walkthrough · April 2026</div>
+      <h1>Using Repeatable AI Workflows for <em>Iconic Trip Ops</em></h1>
+      <p class="hero-sub">What I set up for the recent trip in CDMX to make life easier, and a few thoughts on what it could look like at Iconic at scale to save time, cut costs, and improve customer experience.</p>
+      <div class="hero-byline">Ali Murphy · <span>Afuera</span> · April 2026</div>
+    </div>
+    <aside class="hero-demos">
+      <div class="hero-demos-label">Skill Demos</div>
+      <a href="/iconic/fam-companion/" class="hero-demo-btn" target="_blank" rel="noopener">FAM Companion Demo</a>
+      <a href="/iconic/expense-tracker/" class="hero-demo-btn" target="_blank" rel="noopener">Expense Tracker Demo</a>
+    </aside>
   </header>
 </div>
 
