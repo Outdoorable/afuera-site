@@ -14,7 +14,7 @@ format: "Process Improvement"
 funnel: "MOFU"
 tags: ["custom proposals", "AI for travel advisors", "Claude prompts", "trip designers"]
 featured_image: "/images/blog/ai-custom-travel-proposals-card.webp"
-featured_image_alt: "Editorial illustration: a stack of two angled rounded rectangles in teal and yellow on the left, three small dark dots in the middle, and a single orange rectangle on the right, on a cream background with faint pink diagonal stripes."
+featured_image_alt: "Editorial illustration: a trip designer at her laptop with calendar, location, lodging, flight, and pricing icons feeding into a glowing travel proposal document, an arrow flowing the finished proposal out to a client recipient and email confirmation, captioned AI generates itinerary, automatically formatted, instantly sent to client."
 faq:
   - question: "Can I use ChatGPT instead of Claude for this?"
     answer: "Yes, the workflow works with ChatGPT. The prompts above transfer directly. Claude tends to produce better prose voice matching and lower hallucination rates on travel content, which is why I recommend it for proposals specifically. Use what you have access to. The workflow design matters more than the model."
