@@ -4,7 +4,7 @@ seo_title: "8 Signs to Replace Google Docs for a Real Tour Operations System"
 slug: "8-signs-replace-google-docs-tour-operations"
 description: "Google Docs is not a tour operations system. It is a document editor holding together workflows it was never designed to support. These are the eight signs your operation has outgrown it, and what a real system actually looks like."
 date_published: "2026-04-21"
-date_modified: "2026-04-21"
+date_modified: "2026-05-04"
 author: "Ali Murphy"
 cluster: "Office Operations"
 role: "AEO-forward"
@@ -14,7 +14,7 @@ format: "Listicle"
 funnel: "MOFU"
 tags: ["tour operator software", "Google Docs", "operations", "AI systems", "workflow", "DMC"]
 featured_image: "/images/blog/8-signs-replace-google-docs-tour-operations-card.webp"
-featured_image_alt: "A guide with a backpack labelled Guide looking up at an itinerary and checklist of structured trip documents floating above a landscape of pagodas and temples at dusk"
+featured_image_alt: "Editorial illustration: a guide with a backpack labelled Guide looking up at an itinerary and checklist of structured trip documents floating above a landscape of pagodas and temples at dusk"
 faq:
   - question: "Can a tour operator actually run on Google Docs?"
     answer: "In the early days, yes. Google Docs is free, familiar, and flexible enough to hold a small operation together. The problem is that it does not scale. It has no real-time budget visibility, no structured data layer, no field-facing access built for low-signal environments, and no way to connect what a guide captures on the ground to what the office sees in the morning."
@@ -107,3 +107,5 @@ It does not have to mean scrapping everything your team knows. The most effectiv
 The operators who get this right do not suddenly have a different operation. They have the same operation running without the daily friction of missing information, stale documents, and knowledge that walks out the door every time a guide goes home.
 
 The guest with the shellfish allergy gets the right meal. Not because someone remembered to call. Because the system made forgetting impossible.
+
+Replacing Google Docs is the foundation. What you build on top of it is the next decision. The [12 tour operator workflows worth automating](/blog/tour-operator-workflows-to-automate-with-ai/) are the answer to "what now," ranked by time-saved and setup cost.

@@ -43,7 +43,7 @@ const AUTHOR = {
   slug: 'ali-murphy',
   url: `${'https://www.afuerai.com'}/author/ali-murphy/`,
   bio: 'Former active travel guide and tour operator executive. Building AI systems for travel and tourism.',
-  bioLong: `Ali Murphy is the founder of Afuera. She spent a decade in the active travel industry — first as a wilderness guide running multi-day trips, then as an executive at a global tour operator where she led operations, product, and guide training. She now runs Afuera, an AI consulting and implementation firm built specifically for travel and tourism businesses.
+  bioLong: `Ali Murphy is the founder of Afuera. She spent a decade in the active travel industry, first as a wilderness guide running multi-day trips, then as an executive at a global tour operator where she led operations, product, and guide training. She now runs Afuera, an AI consulting and implementation firm built specifically for travel and tourism businesses.
 
 Her work sits at the intersection of three things most AI consultants don't understand together: how a trip actually runs on the ground, how a travel operations team actually spends its day, and where AI can create real leverage without breaking the human parts of the guest experience. She writes about AI strategy, field operations, office operations, and the unglamorous operational honesty that separates travel businesses who ship with AI from those who stall in pilots.
 
@@ -117,6 +117,7 @@ function readPosts() {
       author: pick(fm, 'author') || AUTHOR.name,
       cover: normalizeCover(pick(fm, 'cover', 'featured_image', 'featuredImage')),
       coverAlt: pick(fm, 'featured_image_alt', 'featuredImageAlt', 'coverAlt') || '',
+      hideSubtitle: !!pick(fm, 'hide_subtitle', 'hideSubtitle'),
       faq: pick(fm, 'faq') || [],
       // Strategy taxonomy fields — surfaced on post but not required
       role: pick(fm, 'role') || '',
@@ -210,8 +211,9 @@ function lintVoicePost(post) {
 
   lines.forEach((line, i) => {
     const lineNum = i + 1;
-    // Skip fenced code and table rows — false positives (em dash in CLI args, etc.)
-    if (/^\s*```/.test(line) || /^\s*\|/.test(line)) return;
+    // Skip fenced code, markdown table rows, and HTML table rows — false
+    // positives (em dash in CLI args, en dashes in numeric ranges, etc.)
+    if (/^\s*```/.test(line) || /^\s*\|/.test(line) || /<t[dhr]>|<\/?table|<\/?tbody|<\/?thead|<\/?tr/.test(line)) return;
 
     // Em dashes (en-dash too, for good measure — voice prefers plain dash)
     if (/—|–/.test(line)) {
@@ -358,7 +360,7 @@ function renderPostPage(post) {
 
   const head = siteHead({
     // Use SEO title for <title>. Voice title is the display H1.
-    title: `${post.seoTitle || post.title} — ${SITE_NAME}`,
+    title: `${post.seoTitle || post.title} | ${SITE_NAME}`,
     description: post.summary,
     canonical: url,
     ogImage: post.cover ? `${SITE_URL}/${post.cover.replace(/^\/+/, '')}` : undefined,
@@ -414,7 +416,7 @@ function renderPostPage(post) {
   // when it's different from the voice title. Gives every post a proper
   // editorial dek with zero extra frontmatter. The .post-subtitle class
   // is explicitly excluded from the TOC scan below.
-  const subtitleHtml = (post.seoTitle && post.seoTitle !== post.title)
+  const subtitleHtml = (!post.hideSubtitle && post.seoTitle && post.seoTitle !== post.title)
     ? `<h2 class="post-subtitle">${esc(post.seoTitle)}</h2>`
     : '';
 
@@ -433,10 +435,7 @@ function renderPostPage(post) {
     </div>
     ${tagsRow}
     ${bylineHtml}
-    ${post.summary ? `<div class="tldr">
-      <p class="tldr-label">TL;DR</p>
-      <p>${esc(post.summary)}</p>
-    </div>` : ''}
+    ${post.summary ? `<p class="post-lede">${esc(post.summary)}</p>` : ''}
   </header>
 
   <div class="post-layout${toc.length >= 2 ? ' has-toc' : ''}">
@@ -450,7 +449,7 @@ function renderPostPage(post) {
 
   <aside class="post-cta">
     <h3>Want help implementing this?</h3>
-    <p>Book a free 45-minute discovery call. No pitch — we'll dig into what's working, what's broken, and where AI fits.</p>
+    <p>Book a free 45-minute discovery call. No pitch. We'll dig into what's working, what's broken, and where AI fits.</p>
     <a href="/#contact" class="btn-primary">Book a Free Discovery Call</a>
   </aside>
 </article>
@@ -534,7 +533,7 @@ function renderBlogIndex(posts) {
 
   const cardsHtml = posts.length
     ? posts.map(p => renderPostCard(p)).join('')
-    : `<p class="blog-empty">No posts yet — check back soon.</p>`;
+    : `<p class="blog-empty">No posts yet. Check back soon.</p>`;
 
   const communityCallout = `<div class="blog-community-callout">
     <span class="community-emoji">☕</span>
@@ -603,7 +602,7 @@ ${icpFilterHtml}
 <div class="blog-grid">
   ${cardsHtml}
 </div>
-<p id="blog-empty-filtered" class="blog-empty" style="display:none;">No posts match that filter combination — try another.</p>
+<p id="blog-empty-filtered" class="blog-empty" style="display:none;">No posts match that filter combination. Try another.</p>
 
 ${filterScript}
 
@@ -632,13 +631,13 @@ function renderAuthorPage(posts) {
   const profileLd = {
     '@context': 'https://schema.org',
     '@type': 'ProfilePage',
-    name: `${AUTHOR.name} — Author at ${SITE_NAME}`,
+    name: `${AUTHOR.name} | Author at ${SITE_NAME}`,
     url,
     mainEntity: personLd,
   };
 
   const head = siteHead({
-    title: `${AUTHOR.name} — Author at ${SITE_NAME}`,
+    title: `${AUTHOR.name} | Author at ${SITE_NAME}`,
     description: AUTHOR.bio,
     canonical: url,
     ogImage: `${SITE_URL}${AUTHOR.photo}`,
@@ -748,23 +747,26 @@ function writeLlmsTxt(posts) {
   const recent = posts.slice(0, 10);
   const body = `# ${SITE_NAME}
 
-> AI consulting & implementation for travel and tourism. We help tour operators, custom trip designers, and travel advisors redesign their office and field operations with AI — built by practitioners who come from the industry.
+> AI consulting and implementation for travel and tourism. Built by someone who has been in the industry.
 
-## Key pages
-- [Home](${SITE_URL}/): Overview of Afuera's services, process, and who we work with
-- [Blog](${SITE_URL}/blog/): Articles on AI for tour operators and travel businesses
-- [About](${SITE_URL}/#about): Meet Ali Murphy — founder's background
-- [Services](${SITE_URL}/#services): AI Audit & Playbook, Custom Software
-- [Book a call](${SITE_URL}/#contact): Schedule a free 45-minute discovery call
+Afuera helps tour operators, travel advisors, experience companies, DMCs, and custom trip designers modernize their operations with AI. We run audits, build custom AI systems, and train teams.
 
-## Core topics we cover
-- AI for tour operators
-- Reducing no-shows with automation
-- Field operations optimization for experience businesses
-- Office operations automation for small travel operators
-- Itinerary generation and proposal workflows
-- Guide coordination and guest communication systems
-- Custom software builds for travel companies
+## Core pages
+- [Services](${SITE_URL}/#services): What we offer.
+- [How We Work](${SITE_URL}/#how): Discovery, audit, build, custom.
+- [About](${SITE_URL}/#about): Ali Murphy, founder.
+- [Blog](${SITE_URL}/blog/): Writing on AI in travel operations.
+
+## Key topics covered
+- Tour operator workflow automation
+- Field operations and guide intelligence
+- Custom travel proposals with AI
+- Supplier and vendor management
+- AI readiness and audits for travel companies
+- Trip profitability and accounting
+
+## Author
+All content is written by Ali Murphy, former active travel guide, former marketing leader at Context Travel, founder of Afuera.
 
 ## Recent articles
 ${recent.map(p => `- [${p.title}](${SITE_URL}/blog/${p.slug}/): ${p.summary}`).join('\n')}
@@ -803,7 +805,7 @@ ${urls.map(u => `  <url>
 function renderLegalPage({ slug, title, description, bodyHtml, lastUpdated }) {
   const url = `${SITE_URL}/${slug}/`;
   const head = siteHead({
-    title: `${title} — ${SITE_NAME}`,
+    title: `${title} | ${SITE_NAME}`,
     description,
     canonical: url,
     ogType: 'website',
@@ -882,13 +884,13 @@ const TERMS_BODY = `
 <p>Scheduling a discovery call through the site doesn't create a consulting relationship by itself. Paid engagements are governed by a separate written agreement that we'll share before any work begins. If you haven't signed that agreement, you're not a client.</p>
 
 <h2>Intellectual property</h2>
-<p>The site's content — writing, imagery, design, code — is owned by Afuera (Outdoorable LLC) or used under license, unless otherwise noted. You may quote our writing with attribution and a link back. Short blockquotes and excerpts for editorial or educational purposes are welcome. Wholesale republication is not.</p>
+<p>The site's content (writing, imagery, design, code) is owned by Afuera (Outdoorable LLC) or used under license, unless otherwise noted. You may quote our writing with attribution and a link back. Short blockquotes and excerpts for editorial or educational purposes are welcome. Wholesale republication is not.</p>
 
 <h2>Third-party links and tools</h2>
 <p>The site links to other websites and embeds third-party tools (such as Calendly for scheduling). We don't control those sites, and their privacy and terms are their own. We're not responsible for what happens on them.</p>
 
 <h2>No warranty</h2>
-<p>Everything on this site is provided "as is." We write honestly and carefully, but the content is general information, not professional advice specific to your operation. If you implement something you read here and it doesn't work in your context, that's a normal part of applying any general advice. Don't make irreversible business decisions based on a blog post — book a call if you want specific guidance.</p>
+<p>Everything on this site is provided "as is." We write honestly and carefully, but the content is general information, not professional advice specific to your operation. If you implement something you read here and it doesn't work in your context, that's a normal part of applying any general advice. Don't make irreversible business decisions based on a blog post. Book a call if you want specific guidance.</p>
 
 <h2>Limitation of liability</h2>
 <p>To the maximum extent permitted by law, Afuera (Outdoorable LLC) is not liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the site. If we are held liable for direct damages, that liability is capped at the greater of (a) US$100 or (b) the total amount you paid us in the twelve months before the claim arose.</p>
@@ -966,7 +968,7 @@ function updateIndexHtml(posts) {
   const featured = posts.slice(0, 3);
   const featuredHtml = featured.length
     ? featured.map(p => renderHomeBlogCard(p)).join('\n')
-    : `    <p style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary);">No posts yet — check back soon.</p>`;
+    : `    <p style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary);">No posts yet. Check back soon.</p>`;
 
   const startMarker = '<!-- blog-preview-start -->';
   const endMarker = '<!-- blog-preview-end -->';

@@ -1,10 +1,10 @@
 ---
-title: "The Printed Spreadsheet"
-seo_title: "Why Tour Operators Still Run Trips on Paper in 2026"
+title: "Why Tour Guides Still Run Trips on Paper in 2026"
+seo_title: "The Printed Spreadsheet"
 slug: "why-tour-operators-still-run-trips-on-paper"
 description: "A decade ago, tour guides ran trips on folded printouts and paper cue sheets. In 2026, after the rise of ChatGPT, most still do. The paper is the visible tip of a deeper problem: every operational layer of the travel business still runs pre-AI, and operators are losing hours, margin, and guest experience every day."
 date_published: "2026-04-21"
-date_modified: "2026-04-21"
+date_modified: "2026-05-04"
 author: "Ali Murphy"
 cluster: "Field Operations"
 role: "Voice-forward"
@@ -14,7 +14,7 @@ format: "Case Story"
 funnel: "TOFU"
 tags: ["field ops", "tour guides", "trip coordination", "paper systems", "operator operations", "travel AI"]
 featured_image: "/images/blog/why-tour-operators-still-run-trips-on-paper-card.webp"
-featured_image_alt: "A folded printed spreadsheet in a guide's back pocket"
+featured_image_alt: "Editorial illustration: a folded printed spreadsheet in a guide's back pocket, suggesting analog field operations in a digital era"
 faq:
   - question: "Why do tour guides still use paper when there are apps for this?"
     answer: "The apps were built for the office, not the trailhead. They assume good signal, a laptop, and time to navigate menus. A guide at 7:42 AM with a van pulling up and a guest asking about gluten needs something they can glance at in two seconds. Paper still wins that race on most operator tech stacks."
@@ -130,7 +130,7 @@ None of them show up in a guide's back pocket. None of them tell a researcher wh
 
 The reasons are structural. Most of these tools were built to solve booking, payment, and back-office reporting, because that is where the money in travel B2B software has been. The operational layer, what happens between the office and the guest, was addressed by exporting a PDF or generating a guest-facing app that the guide could not edit. Nobody built the hub where the guide, the co-leader, the office, the researcher, and the vendor could all operate in the same shared reality.
 
-That gap is the thing. It requires deep knowledge of how trips actually run. Most of the people building software for this industry have never been on the ground.
+That gap is the thing. It requires deep knowledge of how trips actually run. Most of the people building software for this industry have never been on the ground. For the broader picture of which workflows to tackle first across the operation, see the [12 tour operator workflows worth automating with AI](/blog/tour-operator-workflows-to-automate-with-ai/), ranked by ROI.
 
 ## What changes for the guest
 

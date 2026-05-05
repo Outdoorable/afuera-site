@@ -1,10 +1,10 @@
 ---
-title: "The Trip Designer's Second Brain"
-seo_title: "How Custom Trip Designers Can Use AI as a Knowledge Base for Client History"
+title: "How Custom Trip Designers Use AI for Client Memory and Itinerary Building"
+seo_title: "The Trip Designer's Second Brain"
 slug: "ai-knowledge-base-client-history-trip-designers"
 description: "Most custom trip designers are already using AI to plan itineraries. Almost none are using it to remember what clients told them, catch logistics problems before departure, or deliver proposals that look as good as the trips themselves. Here is how to close that gap."
 date_published: "2026-04-21"
-date_modified: "2026-04-21"
+date_modified: "2026-05-04"
 author: "Ali Murphy"
 cluster: "Office Operations"
 role: "Hybrid"
@@ -14,7 +14,7 @@ format: "Process Improvement"
 funnel: "MOFU"
 tags: ["trip designers", "travel advisors", "client history", "AI itinerary planning", "bespoke travel", "custom travel"]
 featured_image: "/images/blog/ai-knowledge-base-client-history-trip-designers-card.webp"
-featured_image_alt: "A trip designer at her desk reaching toward a glowing itinerary card while a friendly AI robot hovers nearby surrounded by floating destination and expense cards"
+featured_image_alt: "Editorial illustration: a trip designer at her desk reaching toward a glowing itinerary card while a friendly AI robot hovers nearby, surrounded by floating destination and expense cards"
 faq:
   - question: "How do custom trip designers use AI as a client knowledge base?"
     answer: "The most effective approach is a structured client profile document per traveler, loaded into a Claude project. That profile captures past destinations, stated preferences, complaints, guide feedback from previous trips, and any offhand comments captured in the field. When a designer starts planning a new trip, the profile travels with the prompt."
@@ -89,3 +89,5 @@ When client history lives in a structured, AI-readable format, the designer's ex
 The client on the other end notices, even if they cannot name exactly why. The trip feels more considered. The proposal feels more personal. The sales call feels like talking to someone who actually remembers them.
 
 That is the job. AI just makes it possible to do it at scale.
+
+The trip designer's second brain is one of twelve high-ROI workflows for travel operators. The complete ranked list, with setup time and time-saved estimates for each, is in the [12 tour operator workflows worth automating with AI](/blog/tour-operator-workflows-to-automate-with-ai/).

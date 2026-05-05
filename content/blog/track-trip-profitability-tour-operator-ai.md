@@ -4,7 +4,7 @@ seo_title: "How to Track Trip Profitability at a Tour Operator Using AI"
 slug: "track-trip-profitability-tour-operator-ai"
 description: "Most tour operators know their annual margin. Very few know which specific trips made money and which quietly lost it. The post-trip reconciliation that would answer the question almost never gets completed. Here is why it is broken, what it is costing, and how AI closes the loop."
 date_published: "2026-04-27"
-date_modified: "2026-04-27"
+date_modified: "2026-05-04"
 author: "Ali Murphy"
 cluster: "Office Operations"
 role: "Voice-forward"
@@ -14,7 +14,7 @@ format: "Contrarian POV"
 funnel: "MOFU"
 tags: ["trip accounting", "margin", "reconciliation", "office operations", "travel finance", "profitability"]
 featured_image: "/images/blog/track-trip-profitability-tour-operator-ai-card.webp"
-featured_image_alt: "A small robot holding a wand next to a tablet showing a rising bar chart of trip dollar amounts"
+featured_image_alt: "Editorial illustration: a small robot holding a wand next to a tablet showing a rising bar chart of trip dollar amounts"
 faq:
   - question: "What is trip-level accounting?"
     answer: "Trip-level accounting is the practice of closing the full profit and loss statement for each individual trip departure, not just the annual or departmental P&L. It compares actual revenue (what the guests paid, minus commissions and fees) against actual costs (every vendor invoice, guide expense, FX loss, and comped item) for that specific trip. Most tour operators do not do this today."
@@ -140,3 +140,5 @@ Whatever the biggest leak turns out to be, that is where the first piece of AI o
 Then do it again for every trip.
 
 The operators who can tell you which trips make money in 2026 are not smarter than the ones who cannot. They are the ones who closed the loop.
+
+The trip-accounting workflow is one of twelve that compound when you build them in the right order. The full sequence is in the [12 tour operator workflows worth automating with AI](/blog/tour-operator-workflows-to-automate-with-ai/).

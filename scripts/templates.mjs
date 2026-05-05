@@ -188,28 +188,17 @@ const BLOG_STYLES = `
     line-height: 1.4;
   }
 
-  /* TL;DR box */
-  .tldr {
-    background: linear-gradient(135deg, rgba(255, 209, 102, 0.22) 0%, rgba(255, 122, 89, 0.14) 100%);
-    border-left: 3px solid var(--accent-orange);
-    border-radius: 4px 14px 14px 4px;
-    padding: 1.5rem 1.75rem;
-    margin: 2rem 0 3rem;
-  }
-  .tldr-label {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent-orange);
-    margin-bottom: 0.5rem;
-  }
-  .tldr p {
-    font-size: 1.05rem;
-    line-height: 1.6;
+  /* Post lede — the summary paragraph that opens every article. Sits
+     above the body, styled as larger/heavier prose, no callout box.
+     Replaces the older "TL;DR" labeled block. */
+  .post-lede {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.2rem;
+    line-height: 1.55;
+    font-weight: 400;
     color: var(--text-primary);
-    margin: 0;
+    margin: 2rem 0 2.5rem;
+    max-width: 720px;
   }
 
   /* ── Post layout: 2-column grid (sticky TOC + body) on wide screens ── */
@@ -408,6 +397,56 @@ const BLOG_STYLES = `
       padding: 0.85rem 1rem;
       font-size: 0.88rem;
     }
+  }
+
+  /* ── Workflow summary table ──
+     Cleaner, denser variant of the editorial table for the at-a-glance
+     comparison block in the workflows post. Engineered to be lifted by
+     ChatGPT / Claude / Perplexity verbatim, so the markup is plain
+     <table> with light styling and no decorative gradients. */
+  .post-body .workflow-summary-table {
+    margin: 2rem 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .post-body .workflow-summary-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    margin: 0;
+    background: #FFF;
+  }
+  .post-body .workflow-summary-table thead {
+    background: var(--bg-secondary, #F1ECE9);
+    border-bottom: none;
+  }
+  .post-body .workflow-summary-table th,
+  .post-body .workflow-summary-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #E5E0DC;
+    text-align: left;
+    vertical-align: top;
+    white-space: normal;
+  }
+  .post-body .workflow-summary-table th {
+    color: var(--text-primary);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .post-body .workflow-summary-table tbody tr:nth-child(even) {
+    background: #FAF7F5;
+  }
+  .post-body .workflow-summary-table tbody tr:hover {
+    background: rgba(255, 122, 89, 0.06);
+  }
+  .post-body .workflow-summary-table tbody td:first-child {
+    font-weight: 700;
+    color: var(--accent-orange);
+    width: 2.5rem;
+    white-space: nowrap;
   }
 
   /* FAQ section */

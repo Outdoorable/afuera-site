@@ -1,10 +1,10 @@
 ---
-title: "Fora Won't Find You Clients. Here's What Will."
-seo_title: "How New Travel Advisors Can Build a Client Pipeline Without a Big Network"
+title: "How New Travel Advisors Build a Real Client Pipeline (When Fora Won't)"
+seo_title: "Fora Won't Find You Clients. Here's What Will."
 slug: "how-new-travel-advisors-build-client-pipeline"
 description: "Most new independent travel advisors run out of friends and family to book within six months. Here is how to build a real client pipeline using AI-powered outreach, a personal site that gets found, and content that works while you sleep."
 date_published: "2026-04-21"
-date_modified: "2026-04-21"
+date_modified: "2026-05-04"
 author: "Ali Murphy"
 cluster: "Marketing"
 role: "Hybrid"
@@ -14,7 +14,7 @@ format: "Process Improvement"
 funnel: "TOFU"
 tags: ["travel advisor", "Fora", "client acquisition", "AI outreach", "independent travel agent", "marketing"]
 featured_image: "/images/blog/how-new-travel-advisors-build-client-pipeline-card.webp"
-featured_image_alt: "A person with their back to the camera holding their head while social media, email, contact card, and megaphone icons float around them with question marks in the background"
+featured_image_alt: "Editorial illustration: a person with their back to the camera holding their head while social media, email, contact card, and megaphone icons float around them with question marks in the background"
 faq:
   - question: "How do new travel advisors find clients beyond their personal network?"
     answer: "The fastest path beyond personal network is a two-track system: a niche personal website optimized for AI search so travelers find you when they ask ChatGPT or Perplexity for a specialist, and automated personalized cold outreach that keeps your pipeline moving at volume without paid ads or a large following. Both can be built with AI tools in a matter of weeks."
