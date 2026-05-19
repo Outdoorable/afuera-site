@@ -6,6 +6,7 @@ node_modules/
 # `content/blog/` source markdown is still tracked)
 /blog/
 /author/
+/aeo-transformer/
 /privacy/
 /terms/
 /sitemap.xml

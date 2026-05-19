@@ -785,7 +785,7 @@ function writeSitemap(posts) {
       changefreq: 'monthly',
     })),
     { loc: `${SITE_URL}/author/${AUTHOR.slug}/`, priority: '0.5', changefreq: 'monthly' },
-    { loc: `${SITE_URL}/transformer/`, priority: '0.7', changefreq: 'monthly' },
+    { loc: `${SITE_URL}/aeo-transformer/`, priority: '0.7', changefreq: 'monthly' },
     { loc: `${SITE_URL}/privacy/`, priority: '0.3', changefreq: 'yearly' },
     { loc: `${SITE_URL}/terms/`, priority: '0.3', changefreq: 'yearly' },
   ];
@@ -932,6 +932,939 @@ function writeLegalPages() {
   fs.writeFileSync(path.join(termsDir, 'index.html'), termsHtml);
 }
 
+// ─── AEO Transformer page (/aeo-transformer/) ────────────────────────
+// A lead-gen tool: paste a travel page URL, get a structured AEO-optimized
+// version. Uses the site's nav + footer + CSS via siteHead/siteBodyOpen/
+// siteBodyClose, so the chrome stays in sync with the rest of the site.
+// Page-specific styles are injected as a scoped <style> block in the body.
+
+function renderAeoTransformerPage() {
+  const url = `${SITE_URL}/aeo-transformer/`;
+  const head = siteHead({
+    title: `AEO Transformer | Afuera`,
+    description: `Paste any travel blog or destination URL. Get a structured, AEO-optimized version with schema markup, FAQ structure, and the bugs costing you AI search citations. Built for luxury and bespoke tour operators.`,
+    canonical: url,
+    ogType: 'website',
+    jsonLd: [
+      orgJsonLd(),
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: 'AEO Transformer',
+        url,
+        description: 'Paste any travel blog URL. Get a structured, AEO-optimized version with schema markup, FAQ structure, and the bugs costing you AI search citations.',
+        publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+      },
+    ],
+  });
+
+  // Page-specific CSS. The site nav, buttons, section labels, etc. come
+  // from the global stylesheet via siteHead — we only define what's unique
+  // to this page (the hero card, result overlay, step + feature grids).
+  const pageStyles = `<style>
+    body.aeo-page { background: var(--bg-eggplant); }
+
+    /* Hero on dark body background — matches the homepage hero treatment */
+    .aeo-hero {
+      padding: 10rem 2rem 5rem;
+      max-width: 1240px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+    }
+    .aeo-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 30%, rgba(255, 122, 89, 0.10) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 50% 80%, rgba(46, 196, 182, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .aeo-hero > * { position: relative; z-index: 1; }
+
+    .aeo-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-orange);
+      background: rgba(255, 122, 89, 0.12);
+      padding: 0.5rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 1.75rem;
+    }
+    .aeo-eyebrow .pulse-dot {
+      width: 6px; height: 6px;
+      background: var(--accent-orange);
+      border-radius: 50%;
+      animation: aeo-pulse 2s infinite;
+    }
+    @keyframes aeo-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+    .aeo-hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.75rem, 6.5vw, 5rem);
+      font-weight: 700;
+      line-height: 1.02;
+      letter-spacing: -0.035em;
+      color: var(--text-light);
+      margin: 0 0 1.5rem;
+      max-width: 18ch;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .aeo-hero h1 em {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 500;
+      color: var(--accent-orange);
+    }
+    .aeo-hero-sub {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+      line-height: 1.6;
+      color: var(--text-light-secondary);
+      max-width: 680px;
+      margin: 0 auto 2.5rem;
+    }
+
+    /* URL input card — sits on the dark hero */
+    .aeo-transformer-card {
+      max-width: 680px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 16px;
+      padding: 1.5rem;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .aeo-transformer-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-light-secondary);
+      text-align: left;
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+    .aeo-transformer-form { display: flex; gap: 0.5rem; align-items: center; }
+    .aeo-transformer-input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      padding: 1rem 1.15rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.92rem;
+      color: var(--text-light);
+      transition: border-color 0.25s, background 0.25s;
+    }
+    .aeo-transformer-input::placeholder { color: rgba(240, 237, 229, 0.4); }
+    .aeo-transformer-input:focus {
+      outline: none;
+      border-color: var(--accent-orange);
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .aeo-transformer-btn {
+      background: var(--accent-orange);
+      color: #fff;
+      padding: 1rem 1.75rem;
+      border-radius: 100px;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.25s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+    }
+    .aeo-transformer-btn:hover { background: var(--accent-orange-hover, #E66345); transform: translateY(-1px); }
+    .aeo-transformer-btn .arrow { transition: transform 0.25s; }
+    .aeo-transformer-btn:hover .arrow { transform: translateX(3px); }
+
+    /* Light sections (How it works, Features, CTA) */
+    .aeo-section { padding: 6rem 2rem; max-width: 1240px; margin: 0 auto; }
+    .aeo-section-eyebrow {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-orange);
+      margin-bottom: 1rem;
+    }
+    .aeo-section h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.025em;
+      color: var(--text-primary);
+      margin: 0 0 1.5rem;
+      max-width: 22ch;
+    }
+    .aeo-section-lead {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      max-width: 640px;
+      margin: 0 0 4rem;
+    }
+
+    /* How-it-works steps */
+    .aeo-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; }
+    .aeo-step-num {
+      font-family: 'Fraunces', serif;
+      font-size: 4rem;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--accent-orange);
+      line-height: 1;
+      margin-bottom: 1rem;
+      letter-spacing: -0.03em;
+    }
+    .aeo-step h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      line-height: 1.2;
+      margin: 0 0 0.75rem;
+      color: var(--text-primary);
+    }
+    .aeo-step p {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    /* Features grid */
+    .aeo-features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: rgba(31, 31, 31, 0.10);
+      border: 1px solid rgba(31, 31, 31, 0.10);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 3rem;
+    }
+    .aeo-feature { padding: 2rem; background: #FDFCF8; }
+    .aeo-feature-tag {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent-orange);
+      margin-bottom: 0.85rem;
+      display: inline-block;
+      padding: 0.25rem 0.7rem;
+      background: rgba(255, 122, 89, 0.10);
+      border-radius: 100px;
+    }
+    .aeo-feature h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      margin: 0 0 0.6rem;
+      line-height: 1.25;
+      color: var(--text-primary);
+    }
+    .aeo-feature p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    /* CTA */
+    .aeo-cta { padding: 7rem 2rem; text-align: center; }
+    .aeo-cta-inner { max-width: 780px; margin: 0 auto; }
+    .aeo-cta h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.5rem, 5.5vw, 4rem);
+      font-weight: 700;
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      margin: 0 auto 1.5rem;
+      color: var(--text-primary);
+      max-width: 18ch;
+    }
+    .aeo-cta h2 em {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 500;
+      color: var(--accent-orange);
+    }
+    .aeo-cta-sub {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      max-width: 540px;
+      margin: 0 auto 2.5rem;
+    }
+    .aeo-cta-buttons { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .aeo-btn {
+      padding: 1rem 2rem;
+      border-radius: 100px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.25s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+    }
+    .aeo-btn-primary { background: var(--accent-orange); color: #fff; }
+    .aeo-btn-primary:hover { background: var(--accent-orange-hover, #E66345); transform: translateY(-1px); }
+    .aeo-btn-secondary { background: transparent; color: var(--text-primary); border: 1px solid rgba(31, 31, 31, 0.18); }
+    .aeo-btn-secondary:hover { border-color: var(--text-primary); }
+
+    /* Result overlay */
+    .aeo-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(46, 42, 57, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2.5rem 1.25rem;
+      overflow-y: auto;
+    }
+    .aeo-overlay.open { display: flex; animation: aeo-fade 0.3s ease; }
+    @keyframes aeo-fade { from { opacity: 0; } to { opacity: 1; } }
+    .aeo-panel {
+      background: var(--bg-light);
+      max-width: 980px;
+      width: 100%;
+      border-radius: 16px;
+      box-shadow: 0 24px 70px rgba(31, 31, 31, 0.18);
+      position: relative;
+      animation: aeo-slide 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+    @keyframes aeo-slide { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .aeo-close {
+      position: absolute;
+      top: 1.25rem; right: 1.25rem;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: #FDFCF8;
+      border: 1px solid rgba(31, 31, 31, 0.18);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.25s;
+      z-index: 2;
+    }
+    .aeo-close:hover { background: var(--text-primary); color: #fff; border-color: var(--text-primary); }
+
+    .aeo-loading { padding: 5rem 2.5rem; text-align: center; }
+    .aeo-spinner {
+      width: 32px; height: 32px;
+      border: 2px solid rgba(31, 31, 31, 0.18);
+      border-top-color: var(--accent-orange);
+      border-radius: 50%;
+      animation: aeo-spin 1s linear infinite;
+      margin: 0 auto 1.5rem;
+    }
+    @keyframes aeo-spin { to { transform: rotate(360deg); } }
+    .aeo-loading-status {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      min-height: 20px;
+    }
+
+    .aeo-result { display: none; padding: 0; }
+    .aeo-result.show { display: block; }
+    .aeo-result-header { padding: 2.5rem 2.5rem 1.5rem; border-bottom: 1px solid rgba(31, 31, 31, 0.10); }
+    .aeo-result-url {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      word-break: break-all;
+    }
+    .aeo-result-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+    .aeo-result-score {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(15, 122, 63, 0.10);
+      color: #0F7A3F;
+      padding: 0.4rem 0.9rem;
+      border-radius: 100px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-top: 0.85rem;
+    }
+
+    .aeo-tabs { display: flex; border-bottom: 1px solid rgba(31, 31, 31, 0.10); padding: 0 2.5rem; }
+    .aeo-tab {
+      padding: 1.15rem 0;
+      margin-right: 2rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.25s;
+    }
+    .aeo-tab.active { color: var(--text-primary); border-bottom-color: var(--accent-orange); }
+    .aeo-tab:hover { color: var(--text-primary); }
+
+    .aeo-tab-body { padding: 2rem 2.5rem 2.5rem; }
+    .aeo-tab-content { display: none; }
+    .aeo-tab-content.active { display: block; }
+
+    .aeo-findings { display: flex; flex-direction: column; gap: 1rem; }
+    .aeo-finding {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 1rem;
+      padding: 1.15rem;
+      background: #FDFCF8;
+      border: 1px solid rgba(31, 31, 31, 0.08);
+      border-radius: 12px;
+      align-items: flex-start;
+    }
+    .aeo-finding-icon {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .aeo-finding.fix .aeo-finding-icon { background: rgba(184, 101, 30, 0.12); color: #B8651E; }
+    .aeo-finding.add .aeo-finding-icon { background: rgba(15, 122, 63, 0.12); color: #0F7A3F; }
+    .aeo-finding.add .aeo-finding-icon::before { content: '+'; }
+    .aeo-finding.fix .aeo-finding-icon::before { content: '!'; }
+    .aeo-finding-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+      margin-bottom: 0.25rem;
+    }
+    .aeo-finding-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+    .aeo-finding-tag {
+      display: inline-block;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-top: 0.6rem;
+      padding: 0.2rem 0.5rem;
+      background: var(--bg-light);
+      border-radius: 6px;
+      border: 1px solid rgba(31, 31, 31, 0.10);
+    }
+
+    .aeo-schemas { display: flex; flex-direction: column; gap: 0.75rem; }
+    .aeo-schema {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: #FDFCF8;
+      border: 1px solid rgba(31, 31, 31, 0.08);
+      border-radius: 10px;
+      align-items: center;
+    }
+    .aeo-schema-name {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .aeo-schema-meta {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 0.15rem;
+    }
+    .aeo-schema-status {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+      border-radius: 100px;
+      background: rgba(15, 122, 63, 0.12);
+      color: #0F7A3F;
+      font-weight: 600;
+    }
+
+    .aeo-preview-frame {
+      width: 100%;
+      height: 520px;
+      border: 1px solid rgba(31, 31, 31, 0.18);
+      border-radius: 10px;
+      background: #fff;
+      overflow: hidden;
+    }
+    .aeo-preview-frame iframe { width: 100%; height: 100%; border: none; }
+    .aeo-preview-note {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-top: 0.9rem;
+      text-align: center;
+    }
+
+    .aeo-result-footer {
+      padding: 1.5rem 2.5rem;
+      background: #FDFCF8;
+      border-top: 1px solid rgba(31, 31, 31, 0.10);
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      border-radius: 0 0 16px 16px;
+    }
+    .aeo-result-stats {
+      display: flex;
+      gap: 1.5rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+    .aeo-result-stats strong { color: var(--text-primary); font-weight: 600; }
+    .aeo-result-actions { display: flex; gap: 0.6rem; }
+
+    .aeo-queue { padding: 3rem 2.5rem; text-align: center; }
+    .aeo-queue-icon {
+      width: 64px; height: 64px;
+      background: rgba(255, 122, 89, 0.12);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 1.6rem;
+      color: var(--accent-orange);
+    }
+    .aeo-queue h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.85rem;
+      color: var(--text-primary);
+    }
+    .aeo-queue p {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text-secondary);
+      max-width: 480px;
+      margin: 0 auto 1.75rem;
+      line-height: 1.6;
+    }
+    .aeo-queue-form { display: flex; gap: 0.5rem; max-width: 440px; margin: 0 auto; }
+    .aeo-queue-form input {
+      flex: 1;
+      background: #FDFCF8;
+      border: 1px solid rgba(31, 31, 31, 0.18);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+    }
+    .aeo-queue-form input:focus { outline: none; border-color: var(--accent-orange); }
+    .aeo-queue-success {
+      display: none;
+      padding: 1.5rem;
+      background: rgba(15, 122, 63, 0.08);
+      border-radius: 10px;
+      color: #0F7A3F;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      margin-top: 1.5rem;
+    }
+    .aeo-queue-success.show { display: block; }
+
+    @media (max-width: 900px) {
+      .aeo-steps { grid-template-columns: 1fr; gap: 3rem; }
+      .aeo-features-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .aeo-hero { padding: 7rem 1.25rem 3rem; }
+      .aeo-transformer-card { padding: 1rem; }
+      .aeo-transformer-form { flex-direction: column; }
+      .aeo-transformer-btn { width: 100%; justify-content: center; }
+      .aeo-section { padding: 4rem 1.25rem; }
+      .aeo-cta { padding: 4rem 1.25rem; }
+      .aeo-overlay { padding: 0; }
+      .aeo-panel { border-radius: 0; }
+      .aeo-result-header, .aeo-tab-body, .aeo-result-footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .aeo-tabs { padding: 0 1.5rem; }
+      .aeo-tab { margin-right: 1.25rem; font-size: 0.82rem; }
+    }
+  </style>`;
+
+  // Body markup — hero on default dark body, sections below wrapped in
+  // .section-light / .section-secondary so they pick up the homepage's
+  // cream/sandstone radial backgrounds.
+  const body = `
+${pageStyles}
+
+<section class="aeo-hero">
+  <div class="aeo-eyebrow">
+    <span class="pulse-dot"></span>
+    Built for luxury and bespoke tour operators
+  </div>
+  <h1>Your travel content is invisible to <em>AI search.</em> We fix that.</h1>
+  <p class="aeo-hero-sub">Paste any blog or destination page URL. Get a structured version with proper schema markup, FAQ pairs, semantic HTML, and the bugs costing you ChatGPT and Perplexity citations, delivered as a single file your dev can implement.</p>
+
+  <div class="aeo-transformer-card">
+    <label class="aeo-transformer-label" for="aeo-url-input">Your blog or destination URL</label>
+    <form class="aeo-transformer-form" id="aeo-form" onsubmit="return aeoRunTransform(event)">
+      <input type="url" id="aeo-url-input" class="aeo-transformer-input" placeholder="https://yoursite.com/blog/post-title" required>
+      <button type="submit" class="aeo-transformer-btn">Transform <span class="arrow">→</span></button>
+    </form>
+  </div>
+</section>
+
+<div class="section-light">
+  <section class="aeo-section" id="how">
+    <div class="aeo-section-eyebrow">How it works</div>
+    <h2>One URL in. One implementation-ready HTML file out.</h2>
+    <p class="aeo-section-lead">Most travel sites have great content trapped in markup that AI search engines cannot parse. We do not redesign your site. We restructure the underlying HTML so ChatGPT, Perplexity, and Google AI Overview can find and cite you.</p>
+
+    <div class="aeo-steps">
+      <div class="aeo-step">
+        <div class="aeo-step-num">01</div>
+        <h3>Paste your URL</h3>
+        <p>Any blog post, destination page, or itinerary. We analyze your existing content, structure, and metadata.</p>
+      </div>
+      <div class="aeo-step">
+        <div class="aeo-step-num">02</div>
+        <h3>We restructure</h3>
+        <p>Schema markup, FAQ extraction, semantic HTML, proper internal linking, and meta description fixes. All preserving your existing brand and copy.</p>
+      </div>
+      <div class="aeo-step">
+        <div class="aeo-step-num">03</div>
+        <h3>You ship it</h3>
+        <p>Get a single self-contained HTML file. Hand it to your dev, your Webflow agency, or your Shopify partner. Or hire us to implement.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="section-secondary">
+  <section class="aeo-section" id="features">
+    <div class="aeo-section-eyebrow">What gets added</div>
+    <h2>The exact AEO improvements, line by line.</h2>
+    <p class="aeo-section-lead">Schema markup is the language AI search engines speak. Most travel sites are missing 80% of what they should have.</p>
+
+    <div class="aeo-features-grid">
+      <div class="aeo-feature">
+        <span class="aeo-feature-tag">Schema</span>
+        <h3>TouristTrip and Article schema</h3>
+        <p>So ChatGPT understands "this is a 12-day private tour to Sri Lanka," not just "a webpage with text on it."</p>
+      </div>
+      <div class="aeo-feature">
+        <span class="aeo-feature-tag">Schema</span>
+        <h3>FAQPage with extracted Q&amp;As</h3>
+        <p>Every traveler question on your page becomes an independently extractable answer for AI search engines.</p>
+      </div>
+      <div class="aeo-feature">
+        <span class="aeo-feature-tag">Schema</span>
+        <h3>Review and AggregateRating</h3>
+        <p>Your testimonials become structured reviews, eligible for ★★★★★ display in Google search results.</p>
+      </div>
+      <div class="aeo-feature">
+        <span class="aeo-feature-tag">Schema</span>
+        <h3>BreadcrumbList and Place entities</h3>
+        <p>Every destination on your itinerary becomes a named Place. Every breadcrumb properly hierarchical.</p>
+      </div>
+      <div class="aeo-feature">
+        <span class="aeo-feature-tag">Content</span>
+        <h3>Semantic HTML restructuring</h3>
+        <p>We fix itineraries trapped in H6 tags, lists hiding in paragraphs, and content invisible to crawlers.</p>
+      </div>
+      <div class="aeo-feature">
+        <span class="aeo-feature-tag">Content</span>
+        <h3>Question-format headings</h3>
+        <p>Match how people actually search ChatGPT and Perplexity. Headings become natural search queries.</p>
+      </div>
+      <div class="aeo-feature">
+        <span class="aeo-feature-tag">Audit</span>
+        <h3>Meta description fixes</h3>
+        <p>Wrong-page meta descriptions, missing OG tags, broken canonicals. Flagged and corrected.</p>
+      </div>
+      <div class="aeo-feature">
+        <span class="aeo-feature-tag">Audit</span>
+        <h3>Image alt text generation</h3>
+        <p>Empty alt attributes filled with descriptive context. Helps image search, accessibility, and AI parsing.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="section-light">
+  <section class="aeo-cta" id="book">
+    <div class="aeo-cta-inner">
+      <div class="aeo-section-eyebrow">Want this implemented?</div>
+      <h2>We restructure. <em>You ship.</em></h2>
+      <p class="aeo-cta-sub">Most travel operators can implement the transformed HTML themselves or hand it to their existing dev partner. If you would rather have us do it, we offer single-page transforms and full-site audits.</p>
+      <div class="aeo-cta-buttons">
+        <a href="/#contact" class="aeo-btn aeo-btn-primary">Book a free 45-min call →</a>
+        <a href="#" class="aeo-btn aeo-btn-secondary" onclick="document.getElementById('aeo-url-input').focus();return false;">Try the transformer</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Result overlay -->
+<div class="aeo-overlay" id="aeo-overlay">
+  <div class="aeo-panel">
+    <button class="aeo-close" onclick="aeoCloseResult()" aria-label="Close">×</button>
+
+    <div class="aeo-loading" id="aeo-loading">
+      <div class="aeo-spinner"></div>
+      <p class="aeo-loading-status" id="aeo-loading-status">Fetching page content…</p>
+    </div>
+
+    <div class="aeo-result" id="aeo-result">
+      <div class="aeo-result-header">
+        <div class="aeo-result-url" id="aeo-result-url"></div>
+        <div class="aeo-result-title" id="aeo-result-title"></div>
+        <div class="aeo-result-score" id="aeo-result-score"></div>
+      </div>
+      <div class="aeo-tabs">
+        <button class="aeo-tab active" data-tab="findings">Findings</button>
+        <button class="aeo-tab" data-tab="schema">Schema added</button>
+        <button class="aeo-tab" data-tab="preview">Preview</button>
+      </div>
+      <div class="aeo-tab-body">
+        <div class="aeo-tab-content active" data-tab="findings"><div class="aeo-findings" id="aeo-findings"></div></div>
+        <div class="aeo-tab-content" data-tab="schema"><div class="aeo-schemas" id="aeo-schemas"></div></div>
+        <div class="aeo-tab-content" data-tab="preview">
+          <div class="aeo-preview-frame" id="aeo-preview-frame"></div>
+          <p class="aeo-preview-note">Live preview of your restructured page. Same brand, same content, with proper structure underneath.</p>
+        </div>
+      </div>
+      <div class="aeo-result-footer">
+        <div class="aeo-result-stats" id="aeo-result-stats"></div>
+        <div class="aeo-result-actions">
+          <a class="aeo-btn aeo-btn-secondary" href="#" id="aeo-download" download>Download HTML</a>
+          <a class="aeo-btn aeo-btn-primary" href="/#contact">Book a call →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="aeo-result" id="aeo-queue">
+      <div class="aeo-queue">
+        <div class="aeo-queue-icon">⏱</div>
+        <h3>Not in our library yet. Let's get it on the queue.</h3>
+        <p>We have transformed a handful of operators so far. For new URLs, our process takes around 24 hours. Drop your email and we will send the result plus a 5-minute Loom explaining what changed.</p>
+        <form class="aeo-queue-form" id="aeo-queue-form" onsubmit="return aeoSubmitQueue(event)">
+          <input type="email" placeholder="you@yourcompany.com" required id="aeo-queue-email">
+          <button type="submit" class="aeo-btn aeo-btn-primary">Notify me →</button>
+        </form>
+        <div class="aeo-queue-success" id="aeo-queue-success">
+          ✓ Got it. We will be in touch within 24 hours at <strong id="aeo-queue-email-display"></strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Pre-computed results for URLs we have already transformed. Bluestone
+// demo intentionally omitted per editorial decision.
+const AEO_TRANSFORMS = {
+  'gonellie.com/blogs/the-wayfarer/8-things-you-did-not-know-nellie-could-do': {
+    title: '8 Things You Did Not Know a Luxury Travel Planner Could Do',
+    score: '92 / 100 AEO Score · +58 from original',
+    previewUrl: 'https://gonellie.com/blogs/the-wayfarer/8-things-you-did-not-know-nellie-could-do',
+    downloadFile: 'gonellie-aeo-transformed.html',
+    findings: [
+      { type: 'add', title: 'Article schema with proper author attribution', desc: 'Your post had no Article schema, so LLMs could not reliably attribute this content to Nellie as a publisher. Now wrapped with full Article markup including Organization author and dates.', tag: 'Schema · Article' },
+      { type: 'add', title: 'FAQPage schema, your listicle becomes 8 Q&As', desc: 'This post is literally 8 questions in disguise. Each is now an independently extractable answer for ChatGPT search.', tag: 'Schema · FAQPage' },
+      { type: 'add', title: 'Question-format H2s matching real search intent', desc: 'Headings rewritten to match how people actually type questions into ChatGPT and Perplexity.', tag: 'Content · Query matching' },
+      { type: 'fix', title: 'Shopify lazy-loading was blocking image SEO', desc: 'All 9 section images used Shopify default lazy-loading with empty alt attributes and SVG placeholders, which blocks crawlers from indexing your imagery. Now properly described and loaded.', tag: 'Shopify · Image SEO' },
+      { type: 'add', title: 'BreadcrumbList with proper blog hierarchy', desc: 'Home › The Wayfarer › Post. Gives AI search engines a clear understanding of your site structure.', tag: 'Schema · Navigation' },
+      { type: 'add', title: 'TL;DR and speakable selector for voice search', desc: 'Added a structured summary block tagged with SpeakableSpecification. Voice assistants preferentially read this when answering travel queries.', tag: 'Schema · Voice' },
+      { type: 'add', title: 'Key takeaways for snippet generation', desc: '5 concrete takeaways that AI search engines preferentially extract for featured snippets.', tag: 'Content · Snippets' }
+    ],
+    schemas: [
+      { name: 'Article', meta: 'Nellie as publisher · dateModified · keywords' },
+      { name: 'FAQPage', meta: '8 mainEntity Question/Answer pairs' },
+      { name: 'BreadcrumbList', meta: '3-level: Home › The Wayfarer › Post' },
+      { name: 'SpeakableSpecification', meta: 'Targets .tldr-block and .intro-bold' }
+    ],
+    stats: '4 schema types added · 8 FAQ pairs · 7 image alt fixes · 5 takeaways structured'
+  }
+};
+
+const AEO_LOADING_MESSAGES = [
+  'Fetching page content…',
+  'Parsing HTML structure…',
+  'Detecting schema gaps…',
+  'Extracting FAQ candidates…',
+  'Auditing meta tags…',
+  'Generating structured output…'
+];
+
+function aeoRunTransform(e) {
+  e.preventDefault();
+  const url = document.getElementById('aeo-url-input').value.trim();
+  if (!url) return false;
+  aeoOpenResultPanel(url);
+  if (window.gtag) gtag('event', 'aeo_transform_submit', { url });
+  return false;
+}
+
+function aeoOpenResultPanel(url) {
+  const overlay = document.getElementById('aeo-overlay');
+  const loading = document.getElementById('aeo-loading');
+  const result = document.getElementById('aeo-result');
+  const queue = document.getElementById('aeo-queue');
+  const status = document.getElementById('aeo-loading-status');
+  result.classList.remove('show');
+  queue.classList.remove('show');
+  queue.style.display = 'none';
+  loading.style.display = 'block';
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  let i = 0;
+  status.textContent = AEO_LOADING_MESSAGES[0];
+  const interval = setInterval(() => {
+    i++;
+    if (i < AEO_LOADING_MESSAGES.length) status.textContent = AEO_LOADING_MESSAGES[i];
+  }, 400);
+  setTimeout(() => {
+    clearInterval(interval);
+    loading.style.display = 'none';
+    const match = aeoMatchUrl(url);
+    if (match) {
+      aeoRenderResult(url, match);
+      result.classList.add('show');
+    } else {
+      queue.classList.add('show');
+      queue.style.display = 'block';
+    }
+  }, 2400);
+}
+
+function aeoMatchUrl(url) {
+  for (const key in AEO_TRANSFORMS) {
+    if (url.includes(key)) return AEO_TRANSFORMS[key];
+  }
+  return null;
+}
+
+function aeoRenderResult(url, data) {
+  document.getElementById('aeo-result-url').textContent = url;
+  document.getElementById('aeo-result-title').textContent = data.title;
+  document.getElementById('aeo-result-score').textContent = data.score;
+  document.getElementById('aeo-result-stats').innerHTML = data.stats;
+  document.getElementById('aeo-download').href = data.downloadFile;
+  document.getElementById('aeo-download').setAttribute('download', data.downloadFile);
+  document.getElementById('aeo-findings').innerHTML = data.findings.map(f =>
+    '<div class="aeo-finding ' + f.type + '"><div class="aeo-finding-icon"></div><div><div class="aeo-finding-title">' + f.title + '</div><div class="aeo-finding-desc">' + f.desc + '</div><div class="aeo-finding-tag">' + f.tag + '</div></div></div>'
+  ).join('');
+  document.getElementById('aeo-schemas').innerHTML = data.schemas.map(s =>
+    '<div class="aeo-schema"><div><div class="aeo-schema-name">' + s.name + '</div><div class="aeo-schema-meta">' + s.meta + '</div></div><div class="aeo-schema-status">✓ Added</div></div>'
+  ).join('');
+  document.getElementById('aeo-preview-frame').innerHTML = '<iframe src="' + data.downloadFile + '" sandbox="allow-same-origin"></iframe>';
+}
+
+function aeoCloseResult() {
+  document.getElementById('aeo-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  document.getElementById('aeo-queue').style.display = 'none';
+  document.getElementById('aeo-queue-success').classList.remove('show');
+  document.getElementById('aeo-queue-form').style.display = 'flex';
+}
+
+function aeoSubmitQueue(e) {
+  e.preventDefault();
+  const email = document.getElementById('aeo-queue-email').value;
+  document.getElementById('aeo-queue-email-display').textContent = email;
+  document.getElementById('aeo-queue-form').style.display = 'none';
+  document.getElementById('aeo-queue-success').classList.add('show');
+  if (window.gtag) gtag('event', 'aeo_queue_signup', { email });
+  return false;
+}
+
+document.querySelectorAll('.aeo-tab').forEach(btn => {
+  btn.onclick = () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.aeo-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.aeo-tab-content').forEach(c => c.classList.toggle('active', c.dataset.tab === tab));
+  };
+});
+
+document.getElementById('aeo-overlay').onclick = (e) => {
+  if (e.target.id === 'aeo-overlay') aeoCloseResult();
+};
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') aeoCloseResult();
+});
+</script>
+`;
+
+  return head + siteBodyOpen('aeo-page') + body + siteBodyClose();
+}
+
+function writeAeoTransformerPage() {
+  const dir = path.join(ROOT, 'aeo-transformer');
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'index.html'), renderAeoTransformerPage());
+}
+
 // ─── Inject Organization JSON-LD + blog preview into the landing page ──
 
 function renderHomeBlogCard(p) {
@@ -1023,6 +1956,11 @@ function build() {
   rmrf(path.join(ROOT, 'author'));
   writeAuthorPage(posts);
   console.log(`[afuera]   /author/${AUTHOR.slug}/  "${AUTHOR.name}"`);
+
+  // AEO Transformer page (/aeo-transformer/)
+  rmrf(path.join(ROOT, 'aeo-transformer'));
+  writeAeoTransformerPage();
+  console.log(`[afuera]   /aeo-transformer/  "AEO Transformer"`);
 
   // Site-wide artifacts
   writeRobots();
