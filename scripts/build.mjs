@@ -1057,6 +1057,80 @@ function renderAeoTransformerPage() {
       margin-bottom: 0.75rem;
     }
     .aeo-transformer-form { display: flex; gap: 0.5rem; align-items: center; }
+
+    /* Multi-field lead form */
+    .aeo-lead-form { display: flex; flex-direction: column; gap: 1rem; text-align: left; }
+    .aeo-field { display: flex; flex-direction: column; }
+    .aeo-field-full { width: 100%; }
+    .aeo-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .aeo-transformer-btn-full {
+      width: 100%;
+      justify-content: center;
+      margin-top: 0.5rem;
+    }
+    .aeo-form-note {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text-light-secondary);
+      text-align: center;
+      margin: 0.5rem 0 0;
+      line-height: 1.5;
+    }
+
+    /* Thanks + error states (shown after AJAX submit) */
+    .aeo-thanks, .aeo-error { display: none; }
+    .aeo-thanks.show, .aeo-error.show { display: block; }
+    .aeo-thanks {
+      max-width: 580px;
+      margin: 0 auto;
+      padding: 2rem 2.25rem;
+      background: rgba(255, 122, 89, 0.10);
+      border: 1px solid rgba(255, 122, 89, 0.35);
+      border-radius: 16px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .aeo-thanks-icon {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--accent-orange);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 auto 1rem;
+    }
+    .aeo-thanks h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-light);
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.015em;
+    }
+    .aeo-thanks p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text-light-secondary);
+      line-height: 1.55;
+      margin: 0;
+    }
+    .aeo-thanks p strong { color: var(--text-light); }
+    .aeo-error {
+      max-width: 580px;
+      margin: 0 auto;
+      padding: 1rem 1.25rem;
+      background: rgba(184, 101, 30, 0.12);
+      border: 1px solid rgba(184, 101, 30, 0.35);
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text-light);
+      text-align: center;
+    }
+    .aeo-error a { color: var(--accent-orange); }
+
     .aeo-transformer-input {
       flex: 1;
       background: rgba(255, 255, 255, 0.06);
@@ -1540,6 +1614,7 @@ function renderAeoTransformerPage() {
       .aeo-transformer-card { padding: 1rem; }
       .aeo-transformer-form { flex-direction: column; }
       .aeo-transformer-btn { width: 100%; justify-content: center; }
+      .aeo-field-row { grid-template-columns: 1fr; }
       .aeo-section { padding: 4rem 1.25rem; }
       .aeo-cta { padding: 4rem 1.25rem; }
       .aeo-overlay { padding: 0; }
@@ -1565,11 +1640,53 @@ ${pageStyles}
   <p class="aeo-hero-sub">Paste any blog or destination page URL. Get a structured version with proper schema markup, FAQ pairs, semantic HTML, and the bugs costing you ChatGPT and Perplexity citations, delivered as a single file your dev can implement.</p>
 
   <div class="aeo-transformer-card">
-    <label class="aeo-transformer-label" for="aeo-url-input">Your blog or destination URL</label>
-    <form class="aeo-transformer-form" id="aeo-form" onsubmit="return aeoRunTransform(event)">
-      <input type="url" id="aeo-url-input" class="aeo-transformer-input" placeholder="https://yoursite.com/blog/post-title" required>
-      <button type="submit" class="aeo-transformer-btn">Transform <span class="arrow">→</span></button>
+    <form id="aeo-form" class="aeo-lead-form" action="https://formsubmit.co/ajax/hello@afuerai.com" method="POST">
+      <div class="aeo-field aeo-field-full">
+        <label class="aeo-transformer-label" for="aeo-url-input">Page you want transformed</label>
+        <input type="url" id="aeo-url-input" name="page_url" class="aeo-transformer-input" placeholder="https://yoursite.com/blog/post-title" required>
+      </div>
+
+      <div class="aeo-field-row">
+        <div class="aeo-field">
+          <label class="aeo-transformer-label" for="aeo-name">Your name</label>
+          <input type="text" id="aeo-name" name="name" class="aeo-transformer-input" placeholder="Jane Doe" required>
+        </div>
+        <div class="aeo-field">
+          <label class="aeo-transformer-label" for="aeo-email">Your email</label>
+          <input type="email" id="aeo-email" name="email" class="aeo-transformer-input" placeholder="jane@yourcompany.com" required>
+        </div>
+      </div>
+
+      <div class="aeo-field-row">
+        <div class="aeo-field">
+          <label class="aeo-transformer-label" for="aeo-company">Company name</label>
+          <input type="text" id="aeo-company" name="company_name" class="aeo-transformer-input" placeholder="Acme Travel Co." required>
+        </div>
+        <div class="aeo-field">
+          <label class="aeo-transformer-label" for="aeo-website">Company website</label>
+          <input type="url" id="aeo-website" name="company_website" class="aeo-transformer-input" placeholder="https://yourcompany.com" required>
+        </div>
+      </div>
+
+      <!-- FormSubmit config -->
+      <input type="hidden" name="_subject" value="New AEO Transformer request. Afuera.">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
+      <button type="submit" class="aeo-transformer-btn aeo-transformer-btn-full">Request transform <span class="arrow">→</span></button>
+      <p class="aeo-form-note">Free for the first 20 requests. We will send your transformed HTML file plus a short Loom walking through what changed within 24 hours.</p>
     </form>
+  </div>
+
+  <div class="aeo-thanks" id="aeo-thanks">
+    <div class="aeo-thanks-icon">✓</div>
+    <h3>Got it. We are on it.</h3>
+    <p>Your transform is in the queue. You will receive an email at <strong id="aeo-thanks-email"></strong> within 24 hours with the structured HTML file and a 5-minute Loom explaining exactly what changed.</p>
+  </div>
+
+  <div class="aeo-error" id="aeo-error">
+    Something went wrong sending your request. Please email <a href="mailto:hello@afuerai.com">hello@afuerai.com</a> directly and we will get back to you within 24 hours.
   </div>
 </section>
 
@@ -1664,195 +1781,44 @@ ${pageStyles}
   </section>
 </div>
 
-<!-- Result overlay -->
-<div class="aeo-overlay" id="aeo-overlay">
-  <div class="aeo-panel">
-    <button class="aeo-close" onclick="aeoCloseResult()" aria-label="Close">×</button>
-
-    <div class="aeo-loading" id="aeo-loading">
-      <div class="aeo-spinner"></div>
-      <p class="aeo-loading-status" id="aeo-loading-status">Fetching page content…</p>
-    </div>
-
-    <div class="aeo-result" id="aeo-result">
-      <div class="aeo-result-header">
-        <div class="aeo-result-url" id="aeo-result-url"></div>
-        <div class="aeo-result-title" id="aeo-result-title"></div>
-        <div class="aeo-result-score" id="aeo-result-score"></div>
-      </div>
-      <div class="aeo-tabs">
-        <button class="aeo-tab active" data-tab="findings">Findings</button>
-        <button class="aeo-tab" data-tab="schema">Schema added</button>
-        <button class="aeo-tab" data-tab="preview">Preview</button>
-      </div>
-      <div class="aeo-tab-body">
-        <div class="aeo-tab-content active" data-tab="findings"><div class="aeo-findings" id="aeo-findings"></div></div>
-        <div class="aeo-tab-content" data-tab="schema"><div class="aeo-schemas" id="aeo-schemas"></div></div>
-        <div class="aeo-tab-content" data-tab="preview">
-          <div class="aeo-preview-frame" id="aeo-preview-frame"></div>
-          <p class="aeo-preview-note">Live preview of your restructured page. Same brand, same content, with proper structure underneath.</p>
-        </div>
-      </div>
-      <div class="aeo-result-footer">
-        <div class="aeo-result-stats" id="aeo-result-stats"></div>
-        <div class="aeo-result-actions">
-          <a class="aeo-btn aeo-btn-secondary" href="#" id="aeo-download" download>Download HTML</a>
-          <a class="aeo-btn aeo-btn-primary" href="/#contact">Book a call →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="aeo-result" id="aeo-queue">
-      <div class="aeo-queue">
-        <div class="aeo-queue-icon">⏱</div>
-        <h3>Not in our library yet. Let's get it on the queue.</h3>
-        <p>We have transformed a handful of operators so far. For new URLs, our process takes around 24 hours. Drop your email and we will send the result plus a 5-minute Loom explaining what changed.</p>
-        <form class="aeo-queue-form" id="aeo-queue-form" onsubmit="return aeoSubmitQueue(event)">
-          <input type="email" placeholder="you@yourcompany.com" required id="aeo-queue-email">
-          <button type="submit" class="aeo-btn aeo-btn-primary">Notify me →</button>
-        </form>
-        <div class="aeo-queue-success" id="aeo-queue-success">
-          ✓ Got it. We will be in touch within 24 hours at <strong id="aeo-queue-email-display"></strong>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
-// Pre-computed results for URLs we have already transformed. Bluestone
-// demo intentionally omitted per editorial decision.
-const AEO_TRANSFORMS = {
-  'gonellie.com/blogs/the-wayfarer/8-things-you-did-not-know-nellie-could-do': {
-    title: '8 Things You Did Not Know a Luxury Travel Planner Could Do',
-    score: '92 / 100 AEO Score · +58 from original',
-    previewUrl: 'https://gonellie.com/blogs/the-wayfarer/8-things-you-did-not-know-nellie-could-do',
-    downloadFile: 'gonellie-aeo-transformed.html',
-    findings: [
-      { type: 'add', title: 'Article schema with proper author attribution', desc: 'Your post had no Article schema, so LLMs could not reliably attribute this content to Nellie as a publisher. Now wrapped with full Article markup including Organization author and dates.', tag: 'Schema · Article' },
-      { type: 'add', title: 'FAQPage schema, your listicle becomes 8 Q&As', desc: 'This post is literally 8 questions in disguise. Each is now an independently extractable answer for ChatGPT search.', tag: 'Schema · FAQPage' },
-      { type: 'add', title: 'Question-format H2s matching real search intent', desc: 'Headings rewritten to match how people actually type questions into ChatGPT and Perplexity.', tag: 'Content · Query matching' },
-      { type: 'fix', title: 'Shopify lazy-loading was blocking image SEO', desc: 'All 9 section images used Shopify default lazy-loading with empty alt attributes and SVG placeholders, which blocks crawlers from indexing your imagery. Now properly described and loaded.', tag: 'Shopify · Image SEO' },
-      { type: 'add', title: 'BreadcrumbList with proper blog hierarchy', desc: 'Home › The Wayfarer › Post. Gives AI search engines a clear understanding of your site structure.', tag: 'Schema · Navigation' },
-      { type: 'add', title: 'TL;DR and speakable selector for voice search', desc: 'Added a structured summary block tagged with SpeakableSpecification. Voice assistants preferentially read this when answering travel queries.', tag: 'Schema · Voice' },
-      { type: 'add', title: 'Key takeaways for snippet generation', desc: '5 concrete takeaways that AI search engines preferentially extract for featured snippets.', tag: 'Content · Snippets' }
-    ],
-    schemas: [
-      { name: 'Article', meta: 'Nellie as publisher · dateModified · keywords' },
-      { name: 'FAQPage', meta: '8 mainEntity Question/Answer pairs' },
-      { name: 'BreadcrumbList', meta: '3-level: Home › The Wayfarer › Post' },
-      { name: 'SpeakableSpecification', meta: 'Targets .tldr-block and .intro-bold' }
-    ],
-    stats: '4 schema types added · 8 FAQ pairs · 7 image alt fixes · 5 takeaways structured'
-  }
-};
-
-const AEO_LOADING_MESSAGES = [
-  'Fetching page content…',
-  'Parsing HTML structure…',
-  'Detecting schema gaps…',
-  'Extracting FAQ candidates…',
-  'Auditing meta tags…',
-  'Generating structured output…'
-];
-
-function aeoRunTransform(e) {
-  e.preventDefault();
-  const url = document.getElementById('aeo-url-input').value.trim();
-  if (!url) return false;
-  aeoOpenResultPanel(url);
-  if (window.gtag) gtag('event', 'aeo_transform_submit', { url });
-  return false;
-}
-
-function aeoOpenResultPanel(url) {
-  const overlay = document.getElementById('aeo-overlay');
-  const loading = document.getElementById('aeo-loading');
-  const result = document.getElementById('aeo-result');
-  const queue = document.getElementById('aeo-queue');
-  const status = document.getElementById('aeo-loading-status');
-  result.classList.remove('show');
-  queue.classList.remove('show');
-  queue.style.display = 'none';
-  loading.style.display = 'block';
-  overlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  let i = 0;
-  status.textContent = AEO_LOADING_MESSAGES[0];
-  const interval = setInterval(() => {
-    i++;
-    if (i < AEO_LOADING_MESSAGES.length) status.textContent = AEO_LOADING_MESSAGES[i];
-  }, 400);
-  setTimeout(() => {
-    clearInterval(interval);
-    loading.style.display = 'none';
-    const match = aeoMatchUrl(url);
-    if (match) {
-      aeoRenderResult(url, match);
-      result.classList.add('show');
-    } else {
-      queue.classList.add('show');
-      queue.style.display = 'block';
+// AEO Transformer lead form — submits to FormSubmit, which emails the
+// full submission (URL + name + email + company + website) to
+// hello@afuerai.com. Same plumbing as the community signup form.
+(function() {
+  const form = document.getElementById('aeo-form');
+  if (!form) return;
+  const thanks = document.getElementById('aeo-thanks');
+  const errorBox = document.getElementById('aeo-error');
+  const thanksEmail = document.getElementById('aeo-thanks-email');
+  const btn = form.querySelector('button[type="submit"]');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const originalLabel = btn.innerHTML;
+    btn.innerHTML = 'Sending…';
+    btn.disabled = true;
+    errorBox.classList.remove('show');
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(form),
+      });
+      if (!res.ok) throw new Error('Network error');
+      const email = document.getElementById('aeo-email').value;
+      if (thanksEmail) thanksEmail.textContent = email;
+      form.style.display = 'none';
+      thanks.classList.add('show');
+      if (window.gtag) gtag('event', 'aeo_transform_request', {
+        company: document.getElementById('aeo-company').value,
+      });
+    } catch (err) {
+      btn.innerHTML = originalLabel;
+      btn.disabled = false;
+      errorBox.classList.add('show');
     }
-  }, 2400);
-}
-
-function aeoMatchUrl(url) {
-  for (const key in AEO_TRANSFORMS) {
-    if (url.includes(key)) return AEO_TRANSFORMS[key];
-  }
-  return null;
-}
-
-function aeoRenderResult(url, data) {
-  document.getElementById('aeo-result-url').textContent = url;
-  document.getElementById('aeo-result-title').textContent = data.title;
-  document.getElementById('aeo-result-score').textContent = data.score;
-  document.getElementById('aeo-result-stats').innerHTML = data.stats;
-  document.getElementById('aeo-download').href = data.downloadFile;
-  document.getElementById('aeo-download').setAttribute('download', data.downloadFile);
-  document.getElementById('aeo-findings').innerHTML = data.findings.map(f =>
-    '<div class="aeo-finding ' + f.type + '"><div class="aeo-finding-icon"></div><div><div class="aeo-finding-title">' + f.title + '</div><div class="aeo-finding-desc">' + f.desc + '</div><div class="aeo-finding-tag">' + f.tag + '</div></div></div>'
-  ).join('');
-  document.getElementById('aeo-schemas').innerHTML = data.schemas.map(s =>
-    '<div class="aeo-schema"><div><div class="aeo-schema-name">' + s.name + '</div><div class="aeo-schema-meta">' + s.meta + '</div></div><div class="aeo-schema-status">✓ Added</div></div>'
-  ).join('');
-  document.getElementById('aeo-preview-frame').innerHTML = '<iframe src="' + data.downloadFile + '" sandbox="allow-same-origin"></iframe>';
-}
-
-function aeoCloseResult() {
-  document.getElementById('aeo-overlay').classList.remove('open');
-  document.body.style.overflow = '';
-  document.getElementById('aeo-queue').style.display = 'none';
-  document.getElementById('aeo-queue-success').classList.remove('show');
-  document.getElementById('aeo-queue-form').style.display = 'flex';
-}
-
-function aeoSubmitQueue(e) {
-  e.preventDefault();
-  const email = document.getElementById('aeo-queue-email').value;
-  document.getElementById('aeo-queue-email-display').textContent = email;
-  document.getElementById('aeo-queue-form').style.display = 'none';
-  document.getElementById('aeo-queue-success').classList.add('show');
-  if (window.gtag) gtag('event', 'aeo_queue_signup', { email });
-  return false;
-}
-
-document.querySelectorAll('.aeo-tab').forEach(btn => {
-  btn.onclick = () => {
-    const tab = btn.dataset.tab;
-    document.querySelectorAll('.aeo-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-    document.querySelectorAll('.aeo-tab-content').forEach(c => c.classList.toggle('active', c.dataset.tab === tab));
-  };
-});
-
-document.getElementById('aeo-overlay').onclick = (e) => {
-  if (e.target.id === 'aeo-overlay') aeoCloseResult();
-};
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') aeoCloseResult();
-});
+  });
+})();
 </script>
 `;
 
