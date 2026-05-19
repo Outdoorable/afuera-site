@@ -941,8 +941,8 @@ function writeLegalPages() {
 function renderAeoTransformerPage() {
   const url = `${SITE_URL}/aeo-transformer/`;
   const head = siteHead({
-    title: `AEO Transformer | Afuera`,
-    description: `Paste any travel blog or destination URL. Get a structured, AEO-optimized version with schema markup, FAQ structure, and the bugs costing you AI search citations. Built for luxury and bespoke tour operators.`,
+    title: `Free AEO + SEO Audit for Bespoke Tour Operators | Afuera`,
+    description: `Drop your business URL and get a free AEO and SEO audit with concrete recommendations within 48 hours. No strings. Built for bespoke and independent tour operators and trip designers growing in the AI era.`,
     canonical: url,
     ogType: 'website',
     jsonLd: [
@@ -950,9 +950,9 @@ function renderAeoTransformerPage() {
       {
         '@context': 'https://schema.org',
         '@type': 'WebPage',
-        name: 'AEO Transformer',
+        name: 'Free AEO + SEO Audit',
         url,
-        description: 'Paste any travel blog URL. Get a structured, AEO-optimized version with schema markup, FAQ structure, and the bugs costing you AI search citations.',
+        description: 'Drop your business URL and get a free AEO and SEO audit with concrete recommendations. No strings. Built for bespoke and independent tour operators and trip designers.',
         publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
       },
     ],
@@ -1634,16 +1634,16 @@ ${pageStyles}
 <section class="aeo-hero">
   <div class="aeo-eyebrow">
     <span class="pulse-dot"></span>
-    Built for luxury and bespoke tour operators
+    Free for bespoke and independent tour operators + trip designers
   </div>
-  <h1>Your travel content is invisible to <em>AI search.</em> We fix that.</h1>
-  <p class="aeo-hero-sub">Paste any blog or destination page URL. Get a structured version with proper schema markup, FAQ pairs, semantic HTML, and the bugs costing you ChatGPT and Perplexity citations, delivered as a single file your dev can implement.</p>
+  <h1>Find out why ChatGPT isn't <em>recommending you.</em></h1>
+  <p class="aeo-hero-sub">Drop your business URL. We will run a full AEO and SEO audit and send you concrete recommendations on what to fix, what to add, and where you are losing AI search citations. Free. No strings. Because bespoke and independent operators deserve to grow in the AI era too.</p>
 
   <div class="aeo-transformer-card">
     <form id="aeo-form" class="aeo-lead-form" action="https://formsubmit.co/ajax/hello@afuerai.com" method="POST">
       <div class="aeo-field aeo-field-full">
-        <label class="aeo-transformer-label" for="aeo-url-input">Page you want transformed</label>
-        <input type="url" id="aeo-url-input" name="page_url" class="aeo-transformer-input" placeholder="https://yoursite.com/blog/post-title" required>
+        <label class="aeo-transformer-label" for="aeo-url-input">Your business URL</label>
+        <input type="url" id="aeo-url-input" name="business_url" class="aeo-transformer-input" placeholder="https://yourcompany.com" required>
       </div>
 
       <div class="aeo-field-row">
@@ -1657,60 +1657,54 @@ ${pageStyles}
         </div>
       </div>
 
-      <div class="aeo-field-row">
-        <div class="aeo-field">
-          <label class="aeo-transformer-label" for="aeo-company">Company name</label>
-          <input type="text" id="aeo-company" name="company_name" class="aeo-transformer-input" placeholder="Acme Travel Co." required>
-        </div>
-        <div class="aeo-field">
-          <label class="aeo-transformer-label" for="aeo-website">Company website</label>
-          <input type="url" id="aeo-website" name="company_website" class="aeo-transformer-input" placeholder="https://yourcompany.com" required>
-        </div>
+      <div class="aeo-field aeo-field-full">
+        <label class="aeo-transformer-label" for="aeo-company">Company name</label>
+        <input type="text" id="aeo-company" name="company_name" class="aeo-transformer-input" placeholder="Acme Travel Co." required>
       </div>
 
       <!-- FormSubmit config -->
-      <input type="hidden" name="_subject" value="New AEO Transformer request. Afuera.">
+      <input type="hidden" name="_subject" value="New free AEO audit request. Afuera.">
       <input type="hidden" name="_template" value="table">
       <input type="hidden" name="_captcha" value="false">
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
 
-      <button type="submit" class="aeo-transformer-btn aeo-transformer-btn-full">Request transform <span class="arrow">→</span></button>
-      <p class="aeo-form-note">Free for the first 20 requests. We will send your transformed HTML file plus a short Loom walking through what changed within 24 hours.</p>
+      <button type="submit" class="aeo-transformer-btn aeo-transformer-btn-full">Get my free audit <span class="arrow">→</span></button>
+      <p class="aeo-form-note">Truly free. No sales call required. We will send your audit and recommendations to your inbox within 48 hours.</p>
     </form>
   </div>
 
   <div class="aeo-thanks" id="aeo-thanks">
     <div class="aeo-thanks-icon">✓</div>
     <h3>Got it. We are on it.</h3>
-    <p>Your transform is in the queue. You will receive an email at <strong id="aeo-thanks-email"></strong> within 24 hours with the structured HTML file and a 5-minute Loom explaining exactly what changed.</p>
+    <p>Your free audit is in the queue. You will receive a written report plus a short Loom walking through the recommendations at <strong id="aeo-thanks-email"></strong> within 48 hours. No call required.</p>
   </div>
 
   <div class="aeo-error" id="aeo-error">
-    Something went wrong sending your request. Please email <a href="mailto:hello@afuerai.com">hello@afuerai.com</a> directly and we will get back to you within 24 hours.
+    Something went wrong sending your request. Please email <a href="mailto:hello@afuerai.com">hello@afuerai.com</a> directly with your business URL and we will get back to you within 48 hours.
   </div>
 </section>
 
 <div class="section-light">
   <section class="aeo-section" id="how">
     <div class="aeo-section-eyebrow">How it works</div>
-    <h2>One URL in. One implementation-ready HTML file out.</h2>
-    <p class="aeo-section-lead">Most travel sites have great content trapped in markup that AI search engines cannot parse. We do not redesign your site. We restructure the underlying HTML so ChatGPT, Perplexity, and Google AI Overview can find and cite you.</p>
+    <h2>One URL in. A real audit out. Free.</h2>
+    <p class="aeo-section-lead">Most bespoke and independent operators have great content that AI search engines cannot see. We help you fix that, starting with a free audit so you know exactly where you stand and what to do next. No call required. No upsell. Just the recommendations.</p>
 
     <div class="aeo-steps">
       <div class="aeo-step">
         <div class="aeo-step-num">01</div>
-        <h3>Paste your URL</h3>
-        <p>Any blog post, destination page, or itinerary. We analyze your existing content, structure, and metadata.</p>
+        <h3>Drop your URL</h3>
+        <p>Your homepage is fine. We will audit your full site: blog posts, destination pages, itineraries, and the structural layer underneath all of it.</p>
       </div>
       <div class="aeo-step">
         <div class="aeo-step-num">02</div>
-        <h3>We restructure</h3>
-        <p>Schema markup, FAQ extraction, semantic HTML, proper internal linking, and meta description fixes. All preserving your existing brand and copy.</p>
+        <h3>We audit</h3>
+        <p>A human (Ali) reviews your site for schema gaps, FAQ structure, semantic HTML issues, meta description bugs, and the specific things blocking AI search citations. Not a tool. A read.</p>
       </div>
       <div class="aeo-step">
         <div class="aeo-step-num">03</div>
-        <h3>You ship it</h3>
-        <p>Get a single self-contained HTML file. Hand it to your dev, your Webflow agency, or your Shopify partner. Or hire us to implement.</p>
+        <h3>You get the recommendations</h3>
+        <p>A written report plus a 5-minute Loom in your inbox within 48 hours. Implement it yourself, hand it to your dev, or hire us. Up to you.</p>
       </div>
     </div>
   </section>
@@ -1718,9 +1712,9 @@ ${pageStyles}
 
 <div class="section-secondary">
   <section class="aeo-section" id="features">
-    <div class="aeo-section-eyebrow">What gets added</div>
-    <h2>The exact AEO improvements, line by line.</h2>
-    <p class="aeo-section-lead">Schema markup is the language AI search engines speak. Most travel sites are missing 80% of what they should have.</p>
+    <div class="aeo-section-eyebrow">What the audit covers</div>
+    <h2>The eight things we look at, line by line.</h2>
+    <p class="aeo-section-lead">Schema markup is the language AI search engines speak. Most travel sites are missing 80% of what they should have. The audit tells you which 80%, on your specific site, and what to do about each one.</p>
 
     <div class="aeo-features-grid">
       <div class="aeo-feature">
@@ -1770,12 +1764,12 @@ ${pageStyles}
 <div class="section-light">
   <section class="aeo-cta" id="book">
     <div class="aeo-cta-inner">
-      <div class="aeo-section-eyebrow">Want this implemented?</div>
-      <h2>We restructure. <em>You ship.</em></h2>
-      <p class="aeo-cta-sub">Most travel operators can implement the transformed HTML themselves or hand it to their existing dev partner. If you would rather have us do it, we offer single-page transforms and full-site audits.</p>
+      <div class="aeo-section-eyebrow">Already have the audit?</div>
+      <h2>We can <em>implement it</em> too.</h2>
+      <p class="aeo-cta-sub">Most operators can implement the audit recommendations themselves or hand them to their existing dev partner. If you would rather have us do it, we offer single-page transforms and full-site rebuilds. Get the free audit first, then decide.</p>
       <div class="aeo-cta-buttons">
-        <a href="/#contact" class="aeo-btn aeo-btn-primary">Book a free 45-min call →</a>
-        <a href="#" class="aeo-btn aeo-btn-secondary" onclick="document.getElementById('aeo-url-input').focus();return false;">Try the transformer</a>
+        <a href="#" class="aeo-btn aeo-btn-primary" onclick="document.getElementById('aeo-url-input').focus();return false;">Start with the free audit →</a>
+        <a href="/#contact" class="aeo-btn aeo-btn-secondary">Or book a call</a>
       </div>
     </div>
   </section>
@@ -1809,7 +1803,7 @@ ${pageStyles}
       if (thanksEmail) thanksEmail.textContent = email;
       form.style.display = 'none';
       thanks.classList.add('show');
-      if (window.gtag) gtag('event', 'aeo_transform_request', {
+      if (window.gtag) gtag('event', 'aeo_audit_request', {
         company: document.getElementById('aeo-company').value,
       });
     } catch (err) {
