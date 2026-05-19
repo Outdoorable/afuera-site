@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KVQGBHKENH"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-KVQGBHKENH');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog Transformer | AEO for Travel Operators | Afuera</title>
+<meta name="description" content="Paste any travel blog or destination URL. Get a structured, AEO-optimized version with schema markup, FAQ structure, and the bugs costing you AI search citations. Built for luxury and bespoke tour operators.">
+<link rel="canonical" href="https://www.afuerai.com/transformer/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Afuera">
+<meta property="og:title" content="Blog Transformer | AEO for Travel Operators | Afuera">
+<meta property="og:description" content="Paste any travel blog or destination URL. Get a structured, AEO-optimized version with schema markup, FAQ structure, and the bugs costing you AI search citations.">
+<meta property="og:url" content="https://www.afuerai.com/transformer/">
+<meta property="og:image" content="https://www.afuerai.com/hero-graphic.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blog Transformer | AEO for Travel Operators | Afuera">
+<meta name="twitter:description" content="Paste any travel blog or destination URL. Get a structured, AEO-optimized version with schema markup, FAQ structure, and the bugs costing you AI search citations.">
+<meta name="twitter:image" content="https://www.afuerai.com/hero-graphic.png">
+
+<link rel="icon" href="/hero-graphic.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  /* Backgrounds */
+  --bg-light: #FAF7F5;
+  --bg-secondary: #F1ECE9;
+  --bg-elev: #FDFCF8;
+
+  /* Dark sections */
+  --bg-eggplant: #2E2A39;
+  --bg-deep-teal: #24333A;
+
+  /* Text */
+  --text-primary: #1F1F1F;
+  --text-secondary: #4A4A4A;
+  --text-muted: #7A7872;
+  --text-light: #F0EDE5;
+  --text-light-secondary: rgba(240, 237, 229, 0.7);
+
+  /* Accents */
+  --accent-orange: #FF7A59;
+  --accent-orange-hover: #E66345;
+  --accent-teal: #2EC4B6;
+  --accent-yellow: #FFD166;
+  --accent-pink: #F4A6B5;
+  --accent-good: #0F7A3F;
+  --accent-warn: #B8651E;
+
+  /* Rules + shadows */
+  --rule: rgba(31, 31, 31, 0.10);
+  --rule-strong: rgba(31, 31, 31, 0.18);
+  --shadow: 0 24px 70px rgba(31, 31, 31, 0.10);
+  --shadow-sm: 0 8px 24px rgba(31, 31, 31, 0.06);
+
+  /* Type stacks */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-italic: 'Fraunces', Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text-primary);
+  background: var(--bg-light);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+/* ── Nav ─────────────────────────────────────────────── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(250, 247, 245, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-transform: lowercase;
+}
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+.nav-links a {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color 0.25s;
+}
+.nav-links a:hover { color: var(--text-primary); }
+.nav-cta {
+  background: var(--accent-orange);
+  color: #fff !important;
+  padding: 0.65rem 1.25rem;
+  border-radius: 100px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: background 0.25s, transform 0.25s;
+}
+.nav-cta:hover { background: var(--accent-orange-hover); transform: translateY(-1px); }
+
+/* ── Hero ─────────────────────────────────────────────── */
+.hero {
+  padding: 7rem 2rem 5rem;
+  max-width: 1240px;
+  margin: 0 auto;
+  text-align: center;
+}
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-orange);
+  background: rgba(255, 122, 89, 0.10);
+  padding: 0.5rem 1rem;
+  border-radius: 100px;
+  margin-bottom: 1.75rem;
+}
+.hero-eyebrow .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent-orange);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 6.5vw, 5rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+.hero h1 em {
+  font-family: var(--font-italic);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--accent-orange);
+}
+.hero-sub {
+  font-family: var(--font-body);
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 680px;
+  margin: 0 auto 2.5rem;
+}
+
+/* ── URL input form ──────────────────────────────────── */
+.transformer {
+  max-width: 680px;
+  margin: 0 auto;
+  background: var(--bg-elev);
+  border: 1px solid var(--rule-strong);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+.transformer-label {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: left;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+.transformer-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.transformer-input {
+  flex: 1;
+  background: var(--bg-light);
+  border: 1px solid var(--rule-strong);
+  border-radius: 10px;
+  padding: 1rem 1.15rem;
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  transition: border-color 0.25s;
+}
+.transformer-input:focus { outline: none; border-color: var(--accent-orange); }
+.transformer-input::placeholder { color: var(--text-muted); font-family: var(--font-mono); }
+.transformer-btn {
+  background: var(--accent-orange);
+  color: #fff;
+  padding: 1rem 1.75rem;
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: background 0.25s, transform 0.25s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+.transformer-btn:hover { background: var(--accent-orange-hover); transform: translateY(-1px); }
+.transformer-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.transformer-btn .arrow { transition: transform 0.25s; }
+.transformer-btn:hover .arrow { transform: translateX(3px); }
+
+/* ── Result panel (hidden by default) ─────────────────── */
+.result-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(46, 42, 57, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 100;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2.5rem 1.25rem;
+  overflow-y: auto;
+}
+.result-overlay.open { display: flex; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.result-panel {
+  background: var(--bg-light);
+  max-width: 980px;
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  position: relative;
+  animation: slideUp 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.result-close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--bg-elev);
+  border: 1px solid var(--rule-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  transition: all 0.25s;
+  z-index: 2;
+}
+.result-close:hover {
+  background: var(--text-primary);
+  color: #fff;
+  border-color: var(--text-primary);
+}
+
+.result-loading { padding: 5rem 2.5rem; text-align: center; }
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--rule-strong);
+  border-top-color: var(--accent-orange);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1.5rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-status {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  min-height: 20px;
+}
+
+.result-content { display: none; padding: 0; }
+.result-content.show { display: block; }
+
+.result-header { padding: 2.5rem 2.5rem 1.5rem; border-bottom: 1px solid var(--rule); }
+.result-url {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  word-break: break-all;
+}
+.result-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+.result-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(15, 122, 63, 0.10);
+  color: var(--accent-good);
+  padding: 0.4rem 0.9rem;
+  border-radius: 100px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-top: 0.85rem;
+}
+
+.result-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--rule);
+  padding: 0 2.5rem;
+}
+.result-tab {
+  padding: 1.15rem 0;
+  margin-right: 2rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  transition: all 0.25s;
+  background: none;
+}
+.result-tab.active { color: var(--text-primary); border-bottom-color: var(--accent-orange); }
+.result-tab:hover { color: var(--text-primary); }
+
+.result-body { padding: 2rem 2.5rem 2.5rem; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.findings-list { display: flex; flex-direction: column; gap: 1rem; }
+.finding {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 1rem;
+  padding: 1.15rem;
+  background: var(--bg-elev);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  align-items: flex-start;
+}
+.finding-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+.finding.fix .finding-icon { background: rgba(184, 101, 30, 0.12); color: var(--accent-warn); }
+.finding.add .finding-icon { background: rgba(15, 122, 63, 0.12); color: var(--accent-good); }
+.finding.add .finding-icon::before { content: '+'; }
+.finding.fix .finding-icon::before { content: '!'; }
+.finding-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.finding-desc {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+.finding-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 0.6rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--bg-light);
+  border-radius: 6px;
+  border: 1px solid var(--rule);
+}
+
+.schema-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.schema-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-elev);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  align-items: center;
+}
+.schema-name {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.schema-meta {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+.schema-status {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.65rem;
+  border-radius: 100px;
+  background: rgba(15, 122, 63, 0.12);
+  color: var(--accent-good);
+  font-weight: 600;
+}
+
+.preview-frame {
+  width: 100%;
+  height: 520px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+}
+.preview-frame iframe { width: 100%; height: 100%; border: none; }
+.preview-note {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.9rem;
+  text-align: center;
+}
+
+.result-footer {
+  padding: 1.5rem 2.5rem;
+  background: var(--bg-elev);
+  border-top: 1px solid var(--rule);
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  border-radius: 0 0 16px 16px;
+}
+.result-stats {
+  display: flex;
+  gap: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.result-stats strong { color: var(--text-primary); font-weight: 600; }
+.result-actions { display: flex; gap: 0.6rem; }
+
+.btn {
+  padding: 0.85rem 1.5rem;
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.25s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.btn-primary { background: var(--accent-orange); color: #fff; }
+.btn-primary:hover { background: var(--accent-orange-hover); transform: translateY(-1px); }
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--rule-strong);
+}
+.btn-secondary:hover { border-color: var(--text-primary); }
+
+/* ── Queue / waitlist state ──────────────────────────── */
+.queue-content { padding: 3rem 2.5rem; text-align: center; }
+.queue-icon {
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 122, 89, 0.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 1.6rem;
+  color: var(--accent-orange);
+}
+.queue-content h3 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.85rem;
+  color: var(--text-primary);
+}
+.queue-content p {
+  font-family: var(--font-body);
+  color: var(--text-secondary);
+  max-width: 480px;
+  margin: 0 auto 1.75rem;
+  line-height: 1.6;
+}
+.queue-form { display: flex; gap: 0.5rem; max-width: 440px; margin: 0 auto; }
+.queue-form input {
+  flex: 1;
+  background: var(--bg-elev);
+  border: 1px solid var(--rule-strong);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+}
+.queue-form input:focus { outline: none; border-color: var(--accent-orange); }
+.queue-success {
+  display: none;
+  padding: 1.5rem;
+  background: rgba(15, 122, 63, 0.08);
+  border-radius: 10px;
+  color: var(--accent-good);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  margin-top: 1.5rem;
+}
+.queue-success.show { display: block; }
+
+/* ── Sections ─────────────────────────────────────────── */
+.section { padding: 6rem 2rem; max-width: 1240px; margin: 0 auto; }
+.section-eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-orange);
+  margin-bottom: 1rem;
+}
+.section h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  max-width: 22ch;
+}
+.section-lead {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 640px;
+  margin-bottom: 4rem;
+}
+
+/* ── How it works ─────────────────────────────────────── */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; }
+.step { position: relative; }
+.step-num {
+  font-family: var(--font-italic);
+  font-size: 4rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--accent-orange);
+  line-height: 1;
+  margin-bottom: 1rem;
+  letter-spacing: -0.03em;
+}
+.step h3 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+}
+.step p {
+  font-family: var(--font-body);
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+/* ── Features ─────────────────────────────────────────── */
+.features {
+  background: var(--bg-elev);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.features-inner { max-width: 1240px; margin: 0 auto; padding: 6rem 2rem; }
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 3rem;
+}
+.feature { padding: 2rem; background: var(--bg-elev); }
+.feature-tag {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-orange);
+  margin-bottom: 0.85rem;
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  background: rgba(255, 122, 89, 0.10);
+  border-radius: 100px;
+}
+.feature h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin-bottom: 0.6rem;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+.feature p {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+/* ── CTA ──────────────────────────────────────────────── */
+.cta { padding: 7rem 2rem; text-align: center; }
+.cta-inner { max-width: 780px; margin: 0 auto; }
+.cta h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5.5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+.cta h2 em {
+  font-family: var(--font-italic);
+  font-style: italic;
+  color: var(--accent-orange);
+  font-weight: 500;
+}
+.cta-sub {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 540px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.6;
+}
+.cta-buttons { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+.btn-large { padding: 1.1rem 2rem; font-size: 0.95rem; }
+
+/* ── Footer ───────────────────────────────────────────── */
+.footer {
+  background: var(--bg-eggplant);
+  color: var(--text-light-secondary);
+  padding: 3rem 2rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+}
+.footer-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+.footer .brand { color: var(--text-light); font-size: 1.25rem; }
+.footer a { color: var(--text-light-secondary); transition: color 0.25s; }
+.footer a:hover { color: var(--text-light); }
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 900px) {
+  .steps { grid-template-columns: 1fr; gap: 3rem; }
+  .features-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .nav-inner { padding: 0.9rem 1.25rem; }
+  .nav-links { display: none; }
+  .nav-links .nav-cta { display: inline-flex; }
+  .nav-inner > .nav-links {
+    display: flex;
+    gap: 0;
+  }
+  .nav-inner > .nav-links > a:not(.nav-cta) { display: none; }
+  .hero { padding: 3rem 1.25rem 2.5rem; }
+  .transformer { padding: 1rem; }
+  .transformer-form { flex-direction: column; }
+  .transformer-btn { width: 100%; justify-content: center; }
+  .section { padding: 4rem 1.25rem; }
+  .features-inner { padding: 4rem 1.25rem; }
+  .cta { padding: 4rem 1.25rem; }
+  .result-overlay { padding: 0; }
+  .result-panel { border-radius: 0; }
+  .result-header, .result-body, .result-footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .result-tabs { padding: 0 1.5rem; }
+  .result-tab { margin-right: 1.25rem; font-size: 0.82rem; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="brand">afuera</a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#features">What gets fixed</a>
+      <a href="/blog/">Blog</a>
+      <a href="/#contact" class="nav-cta">Book a call</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="dot"></span>
+    Built for luxury and bespoke tour operators
+  </div>
+  <h1>Your travel content is invisible to <em>AI search.</em><br>We fix that.</h1>
+  <p class="hero-sub">Paste any blog or destination page URL. Get a structured version with proper schema markup, FAQ pairs, semantic HTML, and the bugs costing you ChatGPT and Perplexity citations, delivered as a single file your dev can implement.</p>
+
+  <div class="transformer">
+    <label class="transformer-label" for="url-input">Your blog or destination URL</label>
+    <form class="transformer-form" id="transform-form" onsubmit="return runTransform(event)">
+      <input type="url" id="url-input" class="transformer-input" placeholder="https://yoursite.com/blog/post-title" required>
+      <button type="submit" class="transformer-btn">
+        Transform <span class="arrow">→</span>
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="section-eyebrow">How it works</div>
+  <h2>One URL in. One implementation-ready HTML file out.</h2>
+  <p class="section-lead">Most travel sites have great content trapped in markup that AI search engines cannot parse. We do not redesign your site. We restructure the underlying HTML so ChatGPT, Perplexity, and Google AI Overview can find and cite you.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Paste your URL</h3>
+      <p>Any blog post, destination page, or itinerary. We analyze your existing content, structure, and metadata.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>We restructure</h3>
+      <p>Schema markup, FAQ extraction, semantic HTML, proper internal linking, and meta description fixes. All preserving your existing brand and copy.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>You ship it</h3>
+      <p>Get a single self-contained HTML file. Hand it to your dev, your Webflow agency, or your Shopify partner. Or hire us to implement.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="features-inner">
+    <div class="section-eyebrow">What gets added</div>
+    <h2>The exact AEO improvements, line by line.</h2>
+    <p class="section-lead" style="margin-bottom:0">Schema markup is the language AI search engines speak. Most travel sites are missing 80% of what they should have.</p>
+
+    <div class="features-grid">
+      <div class="feature">
+        <span class="feature-tag">Schema</span>
+        <h3>TouristTrip and Article schema</h3>
+        <p>So ChatGPT understands "this is a 12-day private tour to Sri Lanka," not just "a webpage with text on it."</p>
+      </div>
+      <div class="feature">
+        <span class="feature-tag">Schema</span>
+        <h3>FAQPage with extracted Q&amp;As</h3>
+        <p>Every traveler question on your page becomes an independently extractable answer for AI search engines.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-tag">Schema</span>
+        <h3>Review and AggregateRating</h3>
+        <p>Your testimonials become structured reviews, eligible for ★★★★★ display in Google search results.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-tag">Schema</span>
+        <h3>BreadcrumbList and Place entities</h3>
+        <p>Every destination on your itinerary becomes a named Place. Every breadcrumb properly hierarchical.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-tag">Content</span>
+        <h3>Semantic HTML restructuring</h3>
+        <p>We fix itineraries trapped in H6 tags, lists hiding in paragraphs, and content invisible to crawlers.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-tag">Content</span>
+        <h3>Question-format headings</h3>
+        <p>Match how people actually search ChatGPT and Perplexity. Headings become natural search queries.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-tag">Audit</span>
+        <h3>Meta description fixes</h3>
+        <p>Wrong-page meta descriptions, missing OG tags, broken canonicals. Flagged and corrected.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-tag">Audit</span>
+        <h3>Image alt text generation</h3>
+        <p>Empty alt attributes filled with descriptive context. Helps image search, accessibility, and AI parsing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="book">
+  <div class="cta-inner">
+    <div class="section-eyebrow">Want this implemented?</div>
+    <h2>We restructure. <em>You ship.</em></h2>
+    <p class="cta-sub">Most travel operators can implement the transformed HTML themselves or hand it to their existing dev partner. If you would rather have us do it, we offer single-page transforms and full-site audits.</p>
+    <div class="cta-buttons">
+      <a href="/#contact" class="btn btn-primary btn-large">Book a free 45-min call →</a>
+      <a href="#" class="btn btn-secondary btn-large" onclick="document.getElementById('url-input').focus();return false;">Try the transformer</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <a href="/" class="brand">afuera</a>
+    <div class="footer-links">
+      <a href="mailto:hello@afuerai.com">hello@afuerai.com</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="https://www.linkedin.com/in/alimariemurphy">LinkedIn</a>
+    </div>
+  </div>
+</footer>
+
+<!-- RESULT OVERLAY -->
+<div class="result-overlay" id="result-overlay">
+  <div class="result-panel">
+    <button class="result-close" onclick="closeResult()">×</button>
+
+    <!-- Loading state -->
+    <div class="result-loading" id="result-loading">
+      <div class="spinner"></div>
+      <p class="loading-status" id="loading-status">Fetching page content…</p>
+    </div>
+
+    <!-- Result content -->
+    <div class="result-content" id="result-content">
+      <div class="result-header">
+        <div class="result-url" id="result-url"></div>
+        <div class="result-title" id="result-title"></div>
+        <div class="result-score" id="result-score"></div>
+      </div>
+
+      <div class="result-tabs">
+        <button class="result-tab active" data-tab="findings">Findings</button>
+        <button class="result-tab" data-tab="schema">Schema added</button>
+        <button class="result-tab" data-tab="preview">Preview</button>
+      </div>
+
+      <div class="result-body">
+        <div class="tab-content active" data-tab="findings">
+          <div class="findings-list" id="findings-list"></div>
+        </div>
+        <div class="tab-content" data-tab="schema">
+          <div class="schema-list" id="schema-list"></div>
+        </div>
+        <div class="tab-content" data-tab="preview">
+          <div class="preview-frame" id="preview-frame"></div>
+          <p class="preview-note">Live preview of your restructured page. Same brand, same content, with proper structure underneath.</p>
+        </div>
+      </div>
+
+      <div class="result-footer">
+        <div class="result-stats" id="result-stats"></div>
+        <div class="result-actions">
+          <a class="btn btn-secondary" href="#" id="download-btn" download>Download HTML</a>
+          <a class="btn btn-primary" href="/#contact">Book a call →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Queue state (unknown URL) -->
+    <div class="result-content" id="result-queue">
+      <div class="queue-content">
+        <div class="queue-icon">⏱</div>
+        <h3>Not in our library yet. Let's get it on the queue.</h3>
+        <p>We have transformed a handful of operators so far. For new URLs, our process takes around 24 hours. Drop your email and we will send the result plus a 5-minute Loom explaining what changed.</p>
+        <form class="queue-form" id="queue-form" onsubmit="return submitQueue(event)">
+          <input type="email" placeholder="you@yourcompany.com" required id="queue-email">
+          <button type="submit" class="btn btn-primary">Notify me →</button>
+        </form>
+        <div class="queue-success" id="queue-success">
+          ✓ Got it. We will be in touch within 24 hours at <strong id="queue-email-display"></strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Pre-computed results for URLs we have already transformed.
+// (Bluestone demo removed per editorial decision; only Nellie remains as a live demo.)
+const TRANSFORMS = {
+  'gonellie.com/blogs/the-wayfarer/8-things-you-did-not-know-nellie-could-do': {
+    title: '8 Things You Did Not Know a Luxury Travel Planner Could Do',
+    score: '92 / 100 AEO Score · +58 from original',
+    previewUrl: 'https://gonellie.com/blogs/the-wayfarer/8-things-you-did-not-know-nellie-could-do',
+    downloadFile: 'gonellie-aeo-transformed.html',
+    findings: [
+      { type: 'add', title: 'Article schema with proper author attribution', desc: 'Your post had no Article schema, so LLMs could not reliably attribute this content to Nellie as a publisher. Now wrapped with full Article markup including Organization author and dates.', tag: 'Schema · Article' },
+      { type: 'add', title: 'FAQPage schema, your listicle becomes 8 Q&As', desc: 'This post is literally 8 questions in disguise ("Can Nellie get me tickets to Wimbledon?", "Does Nellie charter yachts?"). Each is now an independently extractable answer for ChatGPT search.', tag: 'Schema · FAQPage' },
+      { type: 'add', title: 'Question-format H2s matching real search intent', desc: '"Tickets That Make Unforgettable Memories" does not match how people search. Rewritten as "What hard-to-get event tickets can a luxury travel planner secure?" Matches real ChatGPT query patterns.', tag: 'Content · Query matching' },
+      { type: 'fix', title: 'Shopify lazy-loading was blocking image SEO', desc: 'All 9 section images used Shopify\'s default lazy-loading with empty alt attributes and SVG placeholders, which blocks crawlers from indexing your imagery. Now properly described and loaded.', tag: 'Shopify · Image SEO' },
+      { type: 'add', title: 'BreadcrumbList with proper blog hierarchy', desc: 'Home › The Wayfarer › Post. Gives AI search engines a clear understanding of your site structure and the post\'s context within Nellie\'s broader content.', tag: 'Schema · Navigation' },
+      { type: 'add', title: 'TL;DR and speakable selector for voice search', desc: 'Added a structured summary block tagged with SpeakableSpecification. Voice assistants (Alexa, Google) preferentially read this when answering travel queries.', tag: 'Schema · Voice' },
+      { type: 'add', title: 'Key takeaways for snippet generation', desc: '5 concrete takeaways that AI search engines preferentially extract for featured snippets. Replaces vague topic descriptions with specific claims and named examples.', tag: 'Content · Snippets' }
+    ],
+    schemas: [
+      { name: 'Article', meta: 'Nellie as publisher · dateModified · keywords' },
+      { name: 'FAQPage', meta: '8 mainEntity Question/Answer pairs' },
+      { name: 'BreadcrumbList', meta: '3-level: Home › The Wayfarer › Post' },
+      { name: 'SpeakableSpecification', meta: 'Targets .tldr-block and .intro-bold' }
+    ],
+    stats: '4 schema types added · 8 FAQ pairs · 7 image alt fixes · 5 takeaways structured'
+  }
+};
+
+const LOADING_MESSAGES = [
+  'Fetching page content…',
+  'Parsing HTML structure…',
+  'Detecting schema gaps…',
+  'Extracting FAQ candidates…',
+  'Auditing meta tags…',
+  'Generating structured output…'
+];
+
+function runTransform(e) {
+  e.preventDefault();
+  const url = document.getElementById('url-input').value.trim();
+  if (!url) return false;
+  openResultPanel(url);
+  if (window.gtag) gtag('event', 'transformer_submit', { url });
+  return false;
+}
+
+function openResultPanel(url) {
+  const overlay = document.getElementById('result-overlay');
+  const loading = document.getElementById('result-loading');
+  const content = document.getElementById('result-content');
+  const queue = document.getElementById('result-queue');
+  const status = document.getElementById('loading-status');
+
+  content.classList.remove('show');
+  queue.classList.remove('show');
+  queue.style.display = 'none';
+  loading.style.display = 'block';
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Cycle through loading messages
+  let msgIdx = 0;
+  status.textContent = LOADING_MESSAGES[0];
+  const msgInterval = setInterval(() => {
+    msgIdx++;
+    if (msgIdx < LOADING_MESSAGES.length) {
+      status.textContent = LOADING_MESSAGES[msgIdx];
+    }
+  }, 400);
+
+  // Match URL to a known transform
+  setTimeout(() => {
+    clearInterval(msgInterval);
+    loading.style.display = 'none';
+
+    const match = matchUrl(url);
+    if (match) {
+      renderResult(url, match);
+      content.classList.add('show');
+    } else {
+      queue.classList.add('show');
+      queue.style.display = 'block';
+    }
+  }, 2400);
+}
+
+function matchUrl(url) {
+  for (const key in TRANSFORMS) {
+    if (url.includes(key)) return TRANSFORMS[key];
+  }
+  return null;
+}
+
+function renderResult(url, data) {
+  document.getElementById('result-url').textContent = url;
+  document.getElementById('result-title').textContent = data.title;
+  document.getElementById('result-score').textContent = data.score;
+  document.getElementById('result-stats').innerHTML = data.stats;
+  document.getElementById('download-btn').href = data.downloadFile;
+  document.getElementById('download-btn').setAttribute('download', data.downloadFile);
+
+  // Findings
+  const findings = document.getElementById('findings-list');
+  findings.innerHTML = data.findings.map(f => `
+    <div class="finding ${f.type}">
+      <div class="finding-icon"></div>
+      <div>
+        <div class="finding-title">${f.title}</div>
+        <div class="finding-desc">${f.desc}</div>
+        <div class="finding-tag">${f.tag}</div>
+      </div>
+    </div>
+  `).join('');
+
+  // Schema
+  const schemaList = document.getElementById('schema-list');
+  schemaList.innerHTML = data.schemas.map(s => `
+    <div class="schema-item">
+      <div>
+        <div class="schema-name">${s.name}</div>
+        <div class="schema-meta">${s.meta}</div>
+      </div>
+      <div class="schema-status">✓ Added</div>
+    </div>
+  `).join('');
+
+  // Preview
+  const preview = document.getElementById('preview-frame');
+  preview.innerHTML = `<iframe src="${data.downloadFile}" sandbox="allow-same-origin"></iframe>`;
+}
+
+function closeResult() {
+  document.getElementById('result-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  document.getElementById('result-queue').style.display = 'none';
+  document.getElementById('queue-success').classList.remove('show');
+  document.getElementById('queue-form').style.display = 'flex';
+}
+
+function submitQueue(e) {
+  e.preventDefault();
+  const email = document.getElementById('queue-email').value;
+  document.getElementById('queue-email-display').textContent = email;
+  document.getElementById('queue-form').style.display = 'none';
+  document.getElementById('queue-success').classList.add('show');
+  if (window.gtag) gtag('event', 'transformer_queue_signup', { email });
+  return false;
+}
+
+// Tab switching
+document.querySelectorAll('.result-tab').forEach(btn => {
+  btn.onclick = () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.result-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.dataset.tab === tab));
+  };
+});
+
+// Close on overlay click
+document.getElementById('result-overlay').onclick = (e) => {
+  if (e.target.id === 'result-overlay') closeResult();
+};
+
+// Close on escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeResult();
+});
+</script>
+
+</body>
+</html>
