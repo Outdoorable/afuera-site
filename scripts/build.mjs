@@ -1805,6 +1805,27 @@ ${pageStyles}
   </section>
 </div>
 
+<div class="aeo-demo-wrap">
+  <section class="aeo-section aeo-demo" id="demo">
+    <span class="aeo-demo-badge">Live example</span>
+    <div class="aeo-section-eyebrow">See it on a real page</div>
+    <h2>This is what an AEO rebuild actually looks like.</h2>
+    <p class="aeo-section-lead">Below is a bespoke Bhutan operator's destination page after an Afuera transformation: TouristTrip and Article schema, a structured FAQ, named in-country partners, real author attribution, and semantic HTML underneath. Same brand, same story, now legible to ChatGPT, Perplexity, and Google AI Overview. Scroll and click around inside the window.</p>
+
+    <div class="aeo-browser">
+      <div class="aeo-browser-bar">
+        <span class="aeo-browser-dots"><i></i><i></i><i></i></span>
+        <span class="aeo-browser-url">winderly.travel/experiences/bhutan/</span>
+      </div>
+      <div class="aeo-browser-frame">
+        <iframe src="/demos/winderly-bhutan-aeo/" loading="lazy" title="Live example: a bespoke Bhutan operator's destination page after an Afuera AEO transformation"></iframe>
+      </div>
+    </div>
+
+    <p class="aeo-demo-note">This is a sample build for an illustrative operator. <a href="#" onclick="document.getElementById('aeo-url-input').focus();return false;">Drop your URL above</a> to see what yours could look like.</p>
+  </section>
+</div>
+
 <div class="section-secondary">
   <section class="aeo-section" id="features">
     <div class="aeo-section-eyebrow">What the audit covers</div>
@@ -1853,27 +1874,6 @@ ${pageStyles}
         <p>Empty alt attributes filled with descriptive context. Helps image search, accessibility, and AI parsing.</p>
       </div>
     </div>
-  </section>
-</div>
-
-<div class="aeo-demo-wrap">
-  <section class="aeo-section aeo-demo" id="demo">
-    <span class="aeo-demo-badge">Live example</span>
-    <div class="aeo-section-eyebrow">See it on a real page</div>
-    <h2>This is what an AEO rebuild actually looks like.</h2>
-    <p class="aeo-section-lead">Below is a bespoke Bhutan operator's destination page after an Afuera transformation: TouristTrip and Article schema, a structured FAQ, named in-country partners, real author attribution, and semantic HTML underneath. Same brand, same story, now legible to ChatGPT, Perplexity, and Google AI Overview. Scroll and click around inside the window.</p>
-
-    <div class="aeo-browser">
-      <div class="aeo-browser-bar">
-        <span class="aeo-browser-dots"><i></i><i></i><i></i></span>
-        <span class="aeo-browser-url">winderly.travel/experiences/bhutan/</span>
-      </div>
-      <div class="aeo-browser-frame">
-        <iframe src="/demos/winderly-bhutan-aeo/" loading="lazy" title="Live example: a bespoke Bhutan operator's destination page after an Afuera AEO transformation"></iframe>
-      </div>
-    </div>
-
-    <p class="aeo-demo-note">This is a sample build for an illustrative operator. <a href="#" onclick="document.getElementById('aeo-url-input').focus();return false;">Drop your URL above</a> to see what yours could look like.</p>
   </section>
 </div>
 
