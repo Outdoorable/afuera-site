@@ -1031,31 +1031,43 @@ function renderAeoTransformerPage() {
       line-height: 1.6;
       color: var(--text-light-secondary);
       max-width: 680px;
-      margin: 0 auto 1.5rem;
+      margin: 0 auto 2.5rem;
     }
-    .aeo-hero-seelink {
+    /* Floating pink "see an example" button — tucked in the hero's
+       top-right corner so it stays discoverable without competing
+       with the audit form. */
+    .aeo-hero-float {
+      position: absolute;
+      top: 8rem;
+      right: 2rem;
+      z-index: 5;
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
       font-family: 'DM Sans', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 600;
+      font-size: 0.85rem;
+      font-weight: 700;
       letter-spacing: 0.02em;
-      color: var(--text-light);
+      color: var(--bg-eggplant);
+      background: var(--accent-pink);
       text-decoration: none;
-      padding: 0.7rem 1.4rem;
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 0.7rem 1.3rem;
       border-radius: 100px;
-      margin-bottom: 2.5rem;
-      transition: border-color 0.25s, background 0.25s, transform 0.25s;
+      box-shadow: 0 8px 24px rgba(244, 166, 181, 0.35);
+      transition: transform 0.25s, box-shadow 0.25s;
     }
-    .aeo-hero-seelink:hover {
-      border-color: var(--accent-orange);
-      background: rgba(255, 122, 89, 0.10);
-      transform: translateY(-1px);
+    .aeo-hero-float:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 34px rgba(244, 166, 181, 0.5);
     }
-    .aeo-hero-seelink .arrow { transition: transform 0.25s; }
-    .aeo-hero-seelink:hover .arrow { transform: translateY(2px); }
+    .aeo-hero-float .arrow { transition: transform 0.25s; }
+    .aeo-hero-float:hover .arrow { transform: translateY(2px); }
+    @media (max-width: 820px) {
+      .aeo-hero-float {
+        position: static;
+        margin: 0 auto 1.75rem;
+      }
+    }
 
     /* URL input card — sits on the dark hero */
     .aeo-transformer-card {
@@ -1750,16 +1762,13 @@ function renderAeoTransformerPage() {
 ${pageStyles}
 
 <section class="aeo-hero">
+  <a href="#demo" class="aeo-hero-float">See an example transformed site <span class="arrow">↓</span></a>
   <div class="aeo-eyebrow">
     <span class="pulse-dot"></span>
     Free for bespoke and independent tour operators + trip designers
   </div>
   <h1>Find out why ChatGPT isn't <em>recommending you.</em></h1>
   <p class="aeo-hero-sub">Drop your business URL. We will run a full AEO and SEO audit and send you concrete recommendations on what to fix, what to add, and where you are losing AI search citations. Free. No strings. Because bespoke and independent operators deserve to grow in the AI era too.</p>
-
-  <div>
-    <a href="#demo" class="aeo-hero-seelink">See an example transformed site <span class="arrow">↓</span></a>
-  </div>
 
   <div class="aeo-transformer-card">
     <form id="aeo-form" class="aeo-lead-form" action="https://formsubmit.co/ajax/hello@afuerai.com" method="POST">
