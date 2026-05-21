@@ -1932,7 +1932,15 @@ ${pageStyles}
 </script>
 `;
 
-  return head + siteBodyOpen('aeo-page') + body + siteBodyClose();
+  // Inject a "See an Example" button into the nav, on this page only,
+  // anchored to the live demo section. Done as a post-process on the
+  // shared nav so other pages stay unchanged.
+  const bodyOpen = siteBodyOpen('aeo-page').replace(
+    '<li><a href="/#community" class="nav-cta-secondary">Join the Community</a></li>',
+    '<li><a href="#demo" class="nav-cta-secondary">See an Example</a></li>\n    <li><a href="/#community" class="nav-cta-secondary">Join the Community</a></li>'
+  );
+
+  return head + bodyOpen + body + siteBodyClose();
 }
 
 function writeAeoTransformerPage() {
