@@ -1269,6 +1269,101 @@ function renderAeoTransformerPage() {
       margin: 0;
     }
 
+    /* ── Live transformation demo ── */
+    .aeo-demo-wrap {
+      width: 100%;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 20%, rgba(255, 122, 89, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at center, #352F44 0%, #2E2A39 50%, #231F2E 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .aeo-demo h2 { color: var(--text-light); }
+    .aeo-demo .aeo-section-lead { color: var(--text-light-secondary); }
+    .aeo-demo .aeo-section-eyebrow { color: var(--accent-orange); }
+
+    .aeo-browser {
+      max-width: 1100px;
+      margin: 0 auto;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 40px 90px rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      background: #fff;
+    }
+    .aeo-browser-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 1.1rem;
+      background: #E9E4DE;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    .aeo-browser-dots { display: flex; gap: 0.4rem; flex-shrink: 0; }
+    .aeo-browser-dots i {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      background: #C9C2B9;
+      display: block;
+    }
+    .aeo-browser-dots i:nth-child(1) { background: #FF7A59; }
+    .aeo-browser-dots i:nth-child(2) { background: #FFD166; }
+    .aeo-browser-dots i:nth-child(3) { background: #2EC4B6; }
+    .aeo-browser-url {
+      flex: 1;
+      background: #FBF9F7;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 100px;
+      padding: 0.4rem 0.95rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .aeo-browser-url::before { content: '🔒 '; opacity: 0.5; }
+    .aeo-browser-frame {
+      height: 620px;
+      background: #fff;
+      position: relative;
+    }
+    .aeo-browser-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+    .aeo-demo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-teal);
+      background: rgba(46, 196, 182, 0.12);
+      padding: 0.45rem 0.9rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+    }
+    .aeo-demo-note {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text-light-secondary);
+      text-align: center;
+      margin: 1.5rem auto 0;
+      max-width: 560px;
+      line-height: 1.55;
+    }
+    .aeo-demo-note a { color: var(--accent-orange); text-decoration: underline; text-underline-offset: 3px; }
+    @media (max-width: 640px) {
+      .aeo-browser-frame { height: 460px; }
+      .aeo-browser-url { font-size: 0.7rem; }
+    }
+
     /* CTA */
     .aeo-cta { padding: 7rem 2rem; text-align: center; }
     .aeo-cta-inner { max-width: 780px; margin: 0 auto; }
@@ -1758,6 +1853,27 @@ ${pageStyles}
         <p>Empty alt attributes filled with descriptive context. Helps image search, accessibility, and AI parsing.</p>
       </div>
     </div>
+  </section>
+</div>
+
+<div class="aeo-demo-wrap">
+  <section class="aeo-section aeo-demo" id="demo">
+    <span class="aeo-demo-badge">Live example</span>
+    <div class="aeo-section-eyebrow">See it on a real page</div>
+    <h2>This is what an AEO rebuild actually looks like.</h2>
+    <p class="aeo-section-lead">Below is a bespoke Bhutan operator's destination page after an Afuera transformation: TouristTrip and Article schema, a structured FAQ, named in-country partners, real author attribution, and semantic HTML underneath. Same brand, same story, now legible to ChatGPT, Perplexity, and Google AI Overview. Scroll and click around inside the window.</p>
+
+    <div class="aeo-browser">
+      <div class="aeo-browser-bar">
+        <span class="aeo-browser-dots"><i></i><i></i><i></i></span>
+        <span class="aeo-browser-url">winderly.travel/experiences/bhutan/</span>
+      </div>
+      <div class="aeo-browser-frame">
+        <iframe src="/demos/winderly-bhutan-aeo/" loading="lazy" title="Live example: a bespoke Bhutan operator's destination page after an Afuera AEO transformation"></iframe>
+      </div>
+    </div>
+
+    <p class="aeo-demo-note">This is a sample build for an illustrative operator. <a href="#" onclick="document.getElementById('aeo-url-input').focus();return false;">Drop your URL above</a> to see what yours could look like.</p>
   </section>
 </div>
 
