@@ -1774,7 +1774,7 @@ ${pageStyles}
     <form id="aeo-form" class="aeo-lead-form" action="https://formsubmit.co/ajax/hello@afuerai.com" method="POST">
       <div class="aeo-field aeo-field-full">
         <label class="aeo-transformer-label" for="aeo-url-input">Your business URL</label>
-        <input type="url" id="aeo-url-input" name="business_url" class="aeo-transformer-input" placeholder="https://yourcompany.com" required>
+        <input type="text" inputmode="url" autocomplete="url" id="aeo-url-input" name="business_url" class="aeo-transformer-input" placeholder="yourcompany.com" required>
       </div>
 
       <div class="aeo-field-row">
